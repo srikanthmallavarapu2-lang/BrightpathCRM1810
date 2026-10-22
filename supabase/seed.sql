@@ -144,7 +144,7 @@ INSERT INTO public.activities (
 )
 VALUES
   (
-    'act11111-1111-1111-1111-111111111111',
+    'ac111111-1111-1111-1111-111111111111',
     'a1111111-1111-1111-1111-111111111111',
     'lead_created',
     'Enquiry received from Website Form for Full Stack Web Dev',
@@ -152,7 +152,7 @@ VALUES
     NOW() - INTERVAL '3 hours'
   ),
   (
-    'act22222-2222-2222-2222-222222222222',
+    'ac222222-2222-2222-2222-222222222222',
     'b2222222-2222-2222-2222-222222222222',
     'status_changed',
     'Status updated from New to Contacted during in-person counselling',
@@ -160,7 +160,7 @@ VALUES
     NOW() - INTERVAL '1 day'
   ),
   (
-    'act33333-3333-3333-3333-333333333333',
+    'ac333333-3333-3333-3333-333333333333',
     'd4444444-4444-4444-4444-444444444444',
     'status_changed',
     'Student converted and enrolled in Cybersecurity Fundamentals',
