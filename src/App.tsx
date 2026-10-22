@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { NavigationTab } from './components/layout/Sidebar';
 import { DashboardView } from './features/dashboard/DashboardView';
@@ -6,12 +7,16 @@ import { LeadsView } from './features/leads/LeadsView';
 import { FollowUpsView } from './features/followups/FollowUpsView';
 import { SettingsView } from './features/settings/SettingsView';
 import { ConnectionAssistant } from './components/common/ConnectionAssistant';
-import { X, Check } from 'lucide-react';
+import { AuthModal } from './components/auth/AuthModal';
+import { X, Check, Lock, LogIn } from 'lucide-react';
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const { user, profile, role, isAuthenticated, signOut } = useAuth();
 
   // Simple state for quick-add lead demonstration
   const [leadForm, setLeadForm] = useState({
@@ -24,7 +29,7 @@ export const App: React.FC = () => {
 
   const handleCreateLeadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Phase 1 Prototype: Lead "${leadForm.fullName}" form validated! Real Supabase persistence is connected in Phase 5.`);
+    alert(`Lead "${leadForm.fullName}" form validated! In Phase 5, this will insert directly into public.leads.`);
     setIsNewLeadModalOpen(false);
     setLeadForm({
       fullName: '',
@@ -35,15 +40,54 @@ export const App: React.FC = () => {
     });
   };
 
+  const displayName = profile?.full_name || (user?.email ? user.email.split('@')[0] : 'Guest Counsellor');
+  const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
+
   return (
     <Layout
       currentTab={currentTab}
       onSelectTab={setCurrentTab}
       onQuickAction={() => setIsNewLeadModalOpen(true)}
       onOpenAssistant={() => setIsAssistantOpen(true)}
-      userRole="Counsellor"
-      userName="Sarah Jenkins"
+      onOpenAuthModal={() => setIsAuthModalOpen(true)}
+      onSignOut={signOut}
+      isAuthenticated={isAuthenticated}
+      userRole={formattedRole}
+      userName={displayName}
     >
+      {/* Guest Mode Banner when not logged in */}
+      {!isAuthenticated && (
+        <div 
+          style={{
+            background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(79, 70, 229, 0.04))',
+            border: '1px solid rgba(37, 99, 235, 0.25)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.85rem 1.25rem',
+            marginBottom: '1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <Lock size={18} color="#2563eb" />
+            <div style={{ fontSize: '0.85rem' }}>
+              <strong>Phase 4 Auth Active (Guest Preview Mode).</strong> Sign in or create an account to access live RLS-protected database records.
+            </div>
+          </div>
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="btn btn-primary"
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem', gap: '5px' }}
+          >
+            <LogIn size={14} />
+            <span>Sign In / Create Account</span>
+          </button>
+        </div>
+      )}
+
       {currentTab === 'dashboard' && (
         <DashboardView
           onNavigateToLeads={() => setCurrentTab('leads')}
@@ -68,7 +112,13 @@ export const App: React.FC = () => {
         onClose={() => setIsAssistantOpen(false)}
       />
 
-      {/* Phase 1 Interactive Modal Demo */}
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+
+      {/* Interactive Quick Modal Demo */}
       {isNewLeadModalOpen && (
         <div 
           style={{
@@ -205,6 +255,14 @@ export const App: React.FC = () => {
         </div>
       )}
     </Layout>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

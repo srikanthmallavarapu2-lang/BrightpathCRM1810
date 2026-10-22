@@ -8,6 +8,9 @@ interface LayoutProps {
   onSelectTab: (tab: NavigationTab) => void;
   onQuickAction?: () => void;
   onOpenAssistant?: () => void;
+  onOpenAuthModal?: () => void;
+  onSignOut?: () => void;
+  isAuthenticated?: boolean;
   children: React.ReactNode;
   userRole?: string;
   userName?: string;
@@ -18,6 +21,9 @@ export const Layout: React.FC<LayoutProps> = ({
   onSelectTab,
   onQuickAction,
   onOpenAssistant,
+  onOpenAuthModal,
+  onSignOut,
+  isAuthenticated = false,
   children,
   userRole = 'Counsellor',
   userName = 'Demo Counsellor',
@@ -54,6 +60,9 @@ export const Layout: React.FC<LayoutProps> = ({
           onOpenMobileDrawer={() => setIsMobileDrawerOpen(true)}
           onQuickAction={onQuickAction}
           onOpenAssistant={onOpenAssistant}
+          onOpenAuthModal={onOpenAuthModal}
+          onSignOut={onSignOut}
+          isAuthenticated={isAuthenticated}
           userRole={userRole}
           userName={userName}
         />
