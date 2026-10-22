@@ -222,9 +222,9 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 
 ---
 
-## 5. Current Project Status
-
 - [x] Master specification completely reviewed.
 - [x] Initial project inspected (Vanilla Vite TS starter detected).
 - [x] Implementation Plan created (`plan.md`).
-- [ ] **Phase 0 & Phase 1 pending user approval**.
+- [x] **Phase 0: Workspace Security & Repo Hygiene** completed (Git initialized, .gitignore secured, commit `b9242cb`).
+- [x] **Phase 1: React 18/19 Migration & SaaS Design System Shell** completed (React 19, TypeScript, bespoke design system, responsive navigation shell, commit `d9f4146`, build verified).
+- [ ] **Phase 2: Supabase Integration & Environment Resilience Layer** ready for inspection.
