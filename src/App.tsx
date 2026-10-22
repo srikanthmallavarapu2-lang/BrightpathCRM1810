@@ -9,6 +9,7 @@ import { SettingsView } from './features/settings/SettingsView';
 import { ConnectionAssistant } from './components/common/ConnectionAssistant';
 import { AuthModal } from './components/auth/AuthModal';
 import { LeadFormModal } from './features/leads/LeadFormModal';
+import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModal';
 import { Lead } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
@@ -21,6 +22,9 @@ const AppContent: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [overdueCount, setOverdueCount] = useState(0);
+  const [targetLeadFilterQuery, setTargetLeadFilterQuery] = useState<string | undefined>(undefined);
+  const [scheduleModalLeadId, setScheduleModalLeadId] = useState<string | undefined>(undefined);
+  const [isAppScheduleModalOpen, setIsAppScheduleModalOpen] = useState(false);
 
   const { user, profile, role, isAuthenticated, signOut } = useAuth();
 
@@ -32,6 +36,16 @@ const AppContent: React.FC = () => {
   const handleEditLead = (lead: Lead) => {
     setLeadToEdit(lead);
     setIsNewLeadModalOpen(true);
+  };
+
+  const handleScheduleForLead = (lead: Lead) => {
+    setScheduleModalLeadId(lead.id);
+    setIsAppScheduleModalOpen(true);
+  };
+
+  const handleViewLeadFromFollowUp = (_leadId: string, leadName: string) => {
+    setTargetLeadFilterQuery(leadName);
+    setCurrentTab('leads');
   };
 
   const handleLeadSaved = () => {
@@ -49,7 +63,12 @@ const AppContent: React.FC = () => {
   return (
     <Layout
       currentTab={currentTab}
-      onSelectTab={setCurrentTab}
+      onSelectTab={(tab) => {
+        if (tab !== 'leads') {
+          setTargetLeadFilterQuery(undefined);
+        }
+        setCurrentTab(tab);
+      }}
       onQuickAction={handleOpenCreateLead}
       onOpenAssistant={() => setIsAssistantOpen(true)}
       onOpenAuthModal={() => setIsAuthModalOpen(true)}
@@ -105,12 +124,17 @@ const AppContent: React.FC = () => {
         <LeadsView 
           onOpenCreateModal={handleOpenCreateLead}
           onEditLead={handleEditLead}
+          onScheduleFollowUpForLead={handleScheduleForLead}
+          initialSearchQuery={targetLeadFilterQuery}
           refreshTrigger={refreshTrigger}
         />
       )}
 
       {currentTab === 'followups' && (
-        <FollowUpsView onScheduleCountChange={setOverdueCount} />
+        <FollowUpsView 
+          onScheduleCountChange={setOverdueCount} 
+          onViewLead={handleViewLeadFromFollowUp}
+        />
       )}
 
       {currentTab === 'settings' && (
@@ -138,6 +162,19 @@ const AppContent: React.FC = () => {
         }}
         leadToEdit={leadToEdit}
         onLeadSaved={handleLeadSaved}
+      />
+
+      {/* Quick Schedule Follow-up Modal for specific lead */}
+      <ScheduleFollowUpModal
+        isOpen={isAppScheduleModalOpen}
+        onClose={() => {
+          setIsAppScheduleModalOpen(false);
+          setScheduleModalLeadId(undefined);
+        }}
+        initialLeadId={scheduleModalLeadId}
+        onScheduled={() => {
+          setRefreshTrigger((prev) => prev + 1);
+        }}
       />
     </Layout>
   );

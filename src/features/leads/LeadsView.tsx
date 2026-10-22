@@ -12,7 +12,8 @@ import {
   Trash2,
   AlertCircle,
   RefreshCw,
-  FolderOpen
+  FolderOpen,
+  CalendarPlus
 } from 'lucide-react';
 import { Lead, LeadStatus, Profile } from '../../types/database';
 import { leadService } from '../../services/leadService';
@@ -22,12 +23,16 @@ import { useAuth } from '../../context/AuthContext';
 interface LeadsViewProps {
   onOpenCreateModal: () => void;
   onEditLead?: (lead: Lead) => void;
+  onScheduleFollowUpForLead?: (lead: Lead) => void;
+  initialSearchQuery?: string;
   refreshTrigger?: number;
 }
 
 export const LeadsView: React.FC<LeadsViewProps> = ({ 
   onOpenCreateModal,
   onEditLead,
+  onScheduleFollowUpForLead,
+  initialSearchQuery,
   refreshTrigger = 0,
 }) => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -36,10 +41,16 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Filters state
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [selectedAssignee, setSelectedAssignee] = useState<string>('all');
+
+  useEffect(() => {
+    if (initialSearchQuery !== undefined) {
+      setSearchQuery(initialSearchQuery);
+    }
+  }, [initialSearchQuery]);
 
   // Status transition state for LostReasonModal
   const [lostModalState, setLostModalState] = useState<{ isOpen: boolean; lead: Lead | null }>({
@@ -423,6 +434,17 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                     {/* Actions */}
                     <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                        {onScheduleFollowUpForLead && (
+                          <button
+                            onClick={() => onScheduleFollowUpForLead(lead)}
+                            className="btn-icon"
+                            style={{ width: 30, height: 30, color: '#2563eb' }}
+                            title="Schedule Follow-up Reminder"
+                            aria-label={`Schedule follow-up for ${lead.full_name}`}
+                          >
+                            <CalendarPlus size={14} />
+                          </button>
+                        )}
                         {onEditLead && (
                           <button
                             onClick={() => onEditLead(lead)}

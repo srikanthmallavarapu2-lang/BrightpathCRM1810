@@ -42,12 +42,14 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
       // Load active leads
       leadService.getLeads().then(({ leads: data }) => {
         setLeads(data);
-        if (!selectedLeadId && data.length > 0) {
+        if (initialLeadId) {
+          setSelectedLeadId(initialLeadId);
+        } else if (!selectedLeadId && data.length > 0) {
           setSelectedLeadId(data[0].id);
         }
       });
     }
-  }, [isOpen, selectedLeadId]);
+  }, [isOpen, initialLeadId]);
 
   if (!isOpen) return null;
 
