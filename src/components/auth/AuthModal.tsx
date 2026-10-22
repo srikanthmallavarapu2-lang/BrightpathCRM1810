@@ -190,20 +190,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {errorMessage && (
           <div 
             style={{
-              padding: '0.75rem 1rem',
+              padding: '0.85rem 1rem',
               borderRadius: 'var(--radius-md)',
               background: '#fef2f2',
               border: '1px solid #fee2e2',
               color: '#b91c1c',
               fontSize: '0.8rem',
-              marginBottom: '1rem',
+              marginBottom: '1.25rem',
               display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
+              flexDirection: 'column',
+              gap: '0.4rem',
             }}
           >
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
-            <span>{errorMessage}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              <span>{errorMessage}</span>
+            </div>
+            {errorMessage.toLowerCase().includes('rate limit') && (
+              <div style={{ fontSize: '0.75rem', color: '#7f1d1d', marginTop: '0.25rem', lineHeight: 1.4, background: 'rgba(255,255,255,0.7)', padding: '0.5rem', borderRadius: 4 }}>
+                💡 <strong>Quick Fix:</strong> In your Supabase Dashboard under <strong>Authentication &rarr; Providers &rarr; Email</strong>, toggle <strong>"Confirm email" OFF</strong> and click <strong>Save</strong>. This eliminates the email sending rate limit for development signups!
+              </div>
+            )}
           </div>
         )}
 
