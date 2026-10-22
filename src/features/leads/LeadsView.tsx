@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Search, 
   Filter, 
@@ -6,97 +6,135 @@ import {
   Phone, 
   Mail, 
   GraduationCap, 
-  Calendar,
-  RotateCcw
+  Calendar, 
+  RotateCcw,
+  Edit2,
+  Trash2,
+  AlertCircle,
+  RefreshCw,
+  FolderOpen
 } from 'lucide-react';
-
-interface LeadItem {
-  id: string;
-  fullName: string;
-  phone: string;
-  email: string;
-  courseInterest: string;
-  source: string;
-  status: 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost';
-  assignedTo: string;
-  createdDate: string;
-}
-
-const SAMPLE_LEADS: LeadItem[] = [
-  {
-    id: '1',
-    fullName: 'Aarav Sharma',
-    phone: '+91 98765 43210',
-    email: 'aarav.sharma@example.com',
-    courseInterest: 'Full Stack Web Dev',
-    source: 'Website Form',
-    status: 'New',
-    assignedTo: 'Demo Counsellor',
-    createdDate: '2026-10-22',
-  },
-  {
-    id: '2',
-    fullName: 'Diya Patel',
-    phone: '+91 98234 56789',
-    email: 'diya.p@example.com',
-    courseInterest: 'Data Science & AI',
-    source: 'Walk-in Visit',
-    status: 'Contacted',
-    assignedTo: 'Demo Counsellor',
-    createdDate: '2026-10-21',
-  },
-  {
-    id: '3',
-    fullName: 'Rohan Verma',
-    phone: '+91 97123 45678',
-    email: 'rohan.v@example.com',
-    courseInterest: 'Cloud Computing & DevOps',
-    source: 'Inbound Phone Call',
-    status: 'Qualified',
-    assignedTo: 'Demo Counsellor',
-    createdDate: '2026-10-20',
-  },
-  {
-    id: '4',
-    fullName: 'Ananya Iyer',
-    phone: '+91 98456 78901',
-    email: 'ananya.iyer@example.com',
-    courseInterest: 'Cybersecurity Fundamentals',
-    source: 'Student Referral',
-    status: 'Converted',
-    assignedTo: 'Demo Counsellor',
-    createdDate: '2026-10-19',
-  },
-];
+import { Lead, LeadStatus, Profile } from '../../types/database';
+import { leadService } from '../../services/leadService';
+import { LostReasonModal } from './LostReasonModal';
+import { useAuth } from '../../context/AuthContext';
 
 interface LeadsViewProps {
   onOpenCreateModal: () => void;
+  onEditLead?: (lead: Lead) => void;
+  refreshTrigger?: number;
 }
 
-export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
+export const LeadsView: React.FC<LeadsViewProps> = ({ 
+  onOpenCreateModal,
+  onEditLead,
+  refreshTrigger = 0,
+}) => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [staffProfiles, setStaffProfiles] = useState<Profile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Filters state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedSource, setSelectedSource] = useState<string>('all');
+  const [selectedAssignee, setSelectedAssignee] = useState<string>('all');
 
-  const filteredLeads = SAMPLE_LEADS.filter((lead) => {
-    const matchesSearch = 
-      lead.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.phone.includes(searchQuery) ||
-      lead.email.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = selectedStatus === 'all' || lead.status === selectedStatus;
-    const matchesSource = selectedSource === 'all' || lead.source === selectedSource;
-
-    return matchesSearch && matchesStatus && matchesSource;
+  // Status transition state for LostReasonModal
+  const [lostModalState, setLostModalState] = useState<{ isOpen: boolean; lead: Lead | null }>({
+    isOpen: false,
+    lead: null,
   });
 
-  const getStatusBadgeClass = (status: LeadItem['status']) => {
+  const { isAdmin, isManager } = useAuth();
+
+  // Load staff profiles once on mount for filter dropdown
+  useEffect(() => {
+    leadService.getStaffProfiles().then(({ profiles }) => {
+      if (profiles && profiles.length > 0) {
+        setStaffProfiles(profiles);
+      }
+    });
+  }, []);
+
+  const fetchLeads = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    const { leads: data, error } = await leadService.getLeads({
+      status: selectedStatus,
+      source: selectedSource,
+      assignee: selectedAssignee,
+      search: searchQuery,
+    });
+
+    if (error) {
+      setErrorMessage(error);
+    } else {
+      setLeads(data);
+    }
+    setIsLoading(false);
+  }, [selectedStatus, selectedSource, selectedAssignee, searchQuery]);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads, refreshTrigger]);
+
+  const handleStatusChange = async (lead: Lead, newStatus: LeadStatus) => {
+    if (newStatus === 'Lost') {
+      // Prompt for mandatory lost reason
+      setLostModalState({ isOpen: true, lead });
+      return;
+    }
+
+    const { success, error } = await leadService.updateLeadStatus(lead.id, newStatus);
+    if (success) {
+      fetchLeads();
+    } else {
+      alert(error || 'Failed to update status.');
+    }
+  };
+
+  const handleConfirmLostReason = async (reason: string) => {
+    if (!lostModalState.lead) return;
+    const { success, error } = await leadService.updateLeadStatus(lostModalState.lead.id, 'Lost', reason);
+    if (success) {
+      fetchLeads();
+    } else {
+      throw new Error(error || 'Failed to update status.');
+    }
+  };
+
+  const handleDeleteLead = async (lead: Lead) => {
+    if (!window.confirm(`Are you sure you want to delete the enquiry for "${lead.full_name}"?`)) {
+      return;
+    }
+
+    const { success, error } = await leadService.deleteLead(lead.id);
+    if (success) {
+      fetchLeads();
+    } else {
+      alert(error || 'Could not delete lead.');
+    }
+  };
+
+  const getStatusBadgeClass = (status: LeadStatus) => {
     switch (status) {
       case 'New': return 'status-badge new';
       case 'Contacted': return 'status-badge contacted';
       case 'Qualified': return 'status-badge qualified';
       case 'Converted': return 'status-badge converted';
       case 'Lost': return 'status-badge lost';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const d = new Date(dateString);
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch {
+      return dateString;
     }
   };
 
@@ -108,7 +146,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
         style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-          {/* Search Box */}
+          {/* Live Search Box */}
           <div style={{ position: 'relative', flex: '1', minWidth: '240px' }}>
             <Search 
               size={18} 
@@ -117,7 +155,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
             />
             <input
               type="text"
-              placeholder="Search by student name, phone, email..."
+              placeholder="Search by student name, phone, email, course..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -131,11 +169,24 @@ export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
             />
           </div>
 
-          {/* Quick Create Button */}
-          <button onClick={onOpenCreateModal} className="btn btn-primary">
-            <Plus size={16} />
-            <span>Create Lead</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Refresh Button */}
+            <button 
+              onClick={fetchLeads} 
+              className="btn btn-outline" 
+              title="Refresh database records"
+              style={{ padding: '0.55rem 0.75rem' }}
+            >
+              <RefreshCw size={15} className={isLoading ? 'spin' : ''} />
+              <span>Sync</span>
+            </button>
+
+            {/* Quick Create Button */}
+            <button onClick={onOpenCreateModal} className="btn btn-primary">
+              <Plus size={16} />
+              <span>Record Enquiry</span>
+            </button>
+          </div>
         </div>
 
         {/* Filter Dropdowns */}
@@ -182,15 +233,37 @@ export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
             <option value="Student Referral">Student Referral</option>
           </select>
 
-          {(selectedStatus !== 'all' || selectedSource !== 'all' || searchQuery !== '') && (
+          <select
+            value={selectedAssignee}
+            onChange={(e) => setSelectedAssignee(e.target.value)}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid var(--border-subtle)',
+              background: 'white',
+              fontSize: '0.8rem',
+            }}
+          >
+            <option value="all">All Assignees</option>
+            <option value="me">Assigned to Me</option>
+            <option value="unassigned">Unassigned (Pool)</option>
+            {staffProfiles.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.full_name || 'Staff Member'} ({p.role})
+              </option>
+            ))}
+          </select>
+
+          {(selectedStatus !== 'all' || selectedSource !== 'all' || selectedAssignee !== 'all' || searchQuery !== '') && (
             <button
               onClick={() => {
                 setSelectedStatus('all');
                 setSelectedSource('all');
+                setSelectedAssignee('all');
                 setSearchQuery('');
               }}
               className="btn btn-secondary"
-              style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem' }}
+              style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', gap: '4px' }}
             >
               <RotateCcw size={12} />
               <span>Reset</span>
@@ -198,80 +271,197 @@ export const LeadsView: React.FC<LeadsViewProps> = ({ onOpenCreateModal }) => {
           )}
 
           <div style={{ marginLeft: 'auto', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Showing <strong>{filteredLeads.length}</strong> enquiries
+            Showing <strong>{leads.length}</strong> live database enquiries
           </div>
         </div>
       </div>
 
-      {/* Leads Table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600 }}>Student Name</th>
-                <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Contact Info</th>
-                <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Course Interest</th>
-                <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Source</th>
-                <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Assignee</th>
-                <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600, textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLeads.map((lead) => (
-                <tr 
-                  key={lead.id}
-                  style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.15s ease' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                >
-                  <td style={{ padding: '0.85rem 1.25rem' }}>
-                    <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{lead.fullName}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
-                      <Calendar size={12} /> Added {lead.createdDate}
-                    </div>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
-                      <Phone size={13} color="#2563eb" /> {lead.phone}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.785rem', marginTop: '2px' }}>
-                      <Mail size={13} /> {lead.email}
-                    </div>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: 500 }}>
-                      <GraduationCap size={15} color="#4f46e5" />
-                      {lead.courseInterest}
-                    </span>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                    {lead.source}
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <span className={getStatusBadgeClass(lead.status)}>
-                      {lead.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                    {lead.assignedTo}
-                  </td>
-                  <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
-                    <button 
-                      onClick={onOpenCreateModal}
-                      className="btn btn-outline" 
-                      style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Error State */}
+      {errorMessage && (
+        <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertCircle size={18} />
+          <span>{errorMessage}</span>
         </div>
+      )}
+
+      {/* Leads Table Container */}
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        {isLoading ? (
+          /* Loading Skeleton */
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
+              <RefreshCw size={20} className="spin" color="#2563eb" />
+              <span>Querying live Supabase leads...</span>
+            </div>
+          </div>
+        ) : leads.length === 0 ? (
+          /* Empty / No Results State */
+          <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+            <div 
+              style={{ 
+                width: 56, 
+                height: 56, 
+                borderRadius: 'var(--radius-full)', 
+                background: '#f1f5f9', 
+                color: '#64748b', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginBottom: '1rem',
+              }}
+            >
+              <FolderOpen size={28} />
+            </div>
+            <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+              {searchQuery || selectedStatus !== 'all' || selectedSource !== 'all' || selectedAssignee !== 'all'
+                ? 'No matching enquiries found' 
+                : 'No student leads recorded yet'}
+            </h4>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto 1.25rem auto' }}>
+              {searchQuery || selectedStatus !== 'all' || selectedSource !== 'all' || selectedAssignee !== 'all'
+                ? 'Try broadening your search term or clearing filters to see more results.'
+                : 'Your live database is ready. Record your first enquiry to begin tracking the student admission pipeline.'}
+            </p>
+            {searchQuery || selectedStatus !== 'all' || selectedSource !== 'all' || selectedAssignee !== 'all' ? (
+              <button 
+                onClick={() => { setSelectedStatus('all'); setSelectedSource('all'); setSelectedAssignee('all'); setSearchQuery(''); }}
+                className="btn btn-outline"
+                style={{ fontSize: '0.85rem' }}
+              >
+                Clear Search & Filters
+              </button>
+            ) : (
+              <button onClick={onOpenCreateModal} className="btn btn-primary" style={{ fontSize: '0.85rem' }}>
+                <Plus size={16} />
+                <span>Create Your First Lead</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          /* Live Data Table */
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+              <thead>
+                <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+                  <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600 }}>Student Name</th>
+                  <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Contact Info</th>
+                  <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Course Interest</th>
+                  <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Source</th>
+                  <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Status</th>
+                  <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Assignee</th>
+                  <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((lead) => (
+                  <tr 
+                    key={lead.id}
+                    style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.15s ease' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  >
+                    {/* Student Name */}
+                    <td style={{ padding: '0.85rem 1.25rem' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{lead.full_name}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                        <Calendar size={12} /> {formatDate(lead.created_at)}
+                      </div>
+                      {lead.lost_reason && (
+                        <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '3px' }}>
+                          Reason: {lead.lost_reason}
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Contact Info */}
+                    <td style={{ padding: '0.85rem 1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
+                        <Phone size={13} color="#2563eb" /> {lead.phone}
+                      </div>
+                      {lead.email && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.785rem', marginTop: '2px' }}>
+                          <Mail size={13} /> {lead.email}
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Course Interest */}
+                    <td style={{ padding: '0.85rem 1rem' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: 500 }}>
+                        <GraduationCap size={15} color="#4f46e5" />
+                        {lead.course_interest}
+                      </span>
+                    </td>
+
+                    {/* Source */}
+                    <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
+                      {lead.source}
+                    </td>
+
+                    {/* Interactive Status Selector */}
+                    <td style={{ padding: '0.85rem 1rem' }}>
+                      <select
+                        value={lead.status}
+                        onChange={(e) => handleStatusChange(lead, e.target.value as LeadStatus)}
+                        className={getStatusBadgeClass(lead.status)}
+                        style={{ cursor: 'pointer', border: '1px solid transparent', outline: 'none' }}
+                        title="Click to update status"
+                      >
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Converted">Converted</option>
+                        <option value="Lost">Lost</option>
+                      </select>
+                    </td>
+
+                    {/* Assignee */}
+                    <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
+                      {lead.assigned_profile?.full_name || 'Unassigned (Pool)'}
+                    </td>
+
+                    {/* Actions */}
+                    <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                        {onEditLead && (
+                          <button
+                            onClick={() => onEditLead(lead)}
+                            className="btn-icon"
+                            style={{ width: 30, height: 30 }}
+                            title="Edit Enquiry Details"
+                            aria-label={`Edit ${lead.full_name}`}
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                        )}
+                        {(isAdmin || isManager) && (
+                          <button
+                            onClick={() => handleDeleteLead(lead)}
+                            className="btn-icon"
+                            style={{ width: 30, height: 30, color: '#ef4444' }}
+                            title="Delete Lead (Admin/Manager)"
+                            aria-label={`Delete ${lead.full_name}`}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
+
+      {/* Lost Reason Modal */}
+      <LostReasonModal
+        isOpen={lostModalState.isOpen}
+        onClose={() => setLostModalState({ isOpen: false, lead: null })}
+        leadName={lostModalState.lead?.full_name || ''}
+        onConfirm={handleConfirmLostReason}
+      />
     </div>
   );
 };
