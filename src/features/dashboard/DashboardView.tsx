@@ -4,27 +4,37 @@ import {
   UserCheck, 
   ClockAlert, 
   TrendingUp, 
-  Sparkles, 
   ArrowUpRight,
-  ArrowRight
+  ArrowRight,
+  Database,
+  CheckCircle2,
+  AlertTriangle,
+  Sparkles
 } from 'lucide-react';
+import { isSupabaseConfigured } from '../../lib/supabaseClient';
 
 interface DashboardViewProps {
   onNavigateToLeads: () => void;
   onNavigateToFollowUps: () => void;
+  onOpenAssistant?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToLeads,
   onNavigateToFollowUps,
+  onOpenAssistant,
 }) => {
+  const isConfigured = isSupabaseConfigured();
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Workshop Phase Progress Banner */}
       <div 
         style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(59, 130, 246, 0.03))',
-          border: '1px solid rgba(37, 99, 235, 0.2)',
+          background: isConfigured 
+            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.03))'
+            : 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.03))',
+          border: `1px solid ${isConfigured ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
           borderRadius: 'var(--radius-lg)',
           padding: '1.25rem 1.5rem',
           display: 'flex',
@@ -40,27 +50,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               width: 40, 
               height: 40, 
               borderRadius: 'var(--radius-md)', 
-              background: 'var(--primary-500)', 
+              background: isConfigured ? '#059669' : '#d97706', 
               color: 'white', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)'
+              boxShadow: isConfigured ? '0 2px 8px rgba(5, 150, 105, 0.3)' : '0 2px 8px rgba(217, 119, 6, 0.3)'
             }}
           >
-            <Sparkles size={20} />
+            {isConfigured ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
           </div>
           <div>
-            <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              Phase 1 Deployed: Design System & Navigation Shell
+            <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>Phase 2 Active: Supabase Resilience Layer</span>
+              <span className={`radar-dot ${isConfigured ? 'connected' : 'setup'}`} />
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Next step: Phase 2 connects Supabase client & environment resilience. Fictional preview active.
+              {isConfigured 
+                ? 'Supabase client initialized with valid runtime credentials. Ready for Phase 3 migrations.'
+                : 'Development setup mode active. Click Database Assistant to configure your credentials.'}
             </p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={onNavigateToLeads} className="btn btn-outline" style={{ fontSize: '0.8rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {onOpenAssistant && (
+            <button onClick={onOpenAssistant} className="btn btn-outline" style={{ fontSize: '0.8rem', gap: '6px' }}>
+              <Database size={14} color="#059669" />
+              <span>Database Assistant</span>
+            </button>
+          )}
+          <button onClick={onNavigateToLeads} className="btn btn-secondary" style={{ fontSize: '0.8rem' }}>
             <span>View Leads</span>
             <ArrowRight size={14} />
           </button>

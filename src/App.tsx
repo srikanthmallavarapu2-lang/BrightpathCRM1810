@@ -5,11 +5,13 @@ import { DashboardView } from './features/dashboard/DashboardView';
 import { LeadsView } from './features/leads/LeadsView';
 import { FollowUpsView } from './features/followups/FollowUpsView';
 import { SettingsView } from './features/settings/SettingsView';
+import { ConnectionAssistant } from './components/common/ConnectionAssistant';
 import { X, Check } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   // Simple state for quick-add lead demonstration
   const [leadForm, setLeadForm] = useState({
@@ -38,6 +40,7 @@ export const App: React.FC = () => {
       currentTab={currentTab}
       onSelectTab={setCurrentTab}
       onQuickAction={() => setIsNewLeadModalOpen(true)}
+      onOpenAssistant={() => setIsAssistantOpen(true)}
       userRole="Counsellor"
       userName="Sarah Jenkins"
     >
@@ -45,6 +48,7 @@ export const App: React.FC = () => {
         <DashboardView
           onNavigateToLeads={() => setCurrentTab('leads')}
           onNavigateToFollowUps={() => setCurrentTab('followups')}
+          onOpenAssistant={() => setIsAssistantOpen(true)}
         />
       )}
 
@@ -54,7 +58,15 @@ export const App: React.FC = () => {
 
       {currentTab === 'followups' && <FollowUpsView />}
 
-      {currentTab === 'settings' && <SettingsView />}
+      {currentTab === 'settings' && (
+        <SettingsView onOpenAssistant={() => setIsAssistantOpen(true)} />
+      )}
+
+      {/* Supabase Connection Assistant Modal */}
+      <ConnectionAssistant
+        isOpen={isAssistantOpen}
+        onClose={() => setIsAssistantOpen(false)}
+      />
 
       {/* Phase 1 Interactive Modal Demo */}
       {isNewLeadModalOpen && (

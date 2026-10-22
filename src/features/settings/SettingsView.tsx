@@ -1,7 +1,11 @@
 import React from 'react';
-import { Shield, Building, Database, AlertTriangle } from 'lucide-react';
+import { Shield, Building, Database } from 'lucide-react';
 
-export const SettingsView: React.FC = () => {
+interface SettingsViewProps {
+  onOpenAssistant?: () => void;
+}
+
+export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '840px' }}>
       {/* Institute Profile Card */}
@@ -69,19 +73,30 @@ export const SettingsView: React.FC = () => {
 
       {/* Database Connection Status Card */}
       <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-          <Database size={20} color="#059669" />
-          <div>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Supabase Backend Status</h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PostgreSQL connection and environment configuration</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Database size={20} color="#059669" />
+            <div>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Supabase Backend Health</h2>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>PostgreSQL connection, environment resilience, and diagnostics</p>
+            </div>
           </div>
+          {onOpenAssistant && (
+            <button onClick={onOpenAssistant} className="btn btn-primary" style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}>
+              <Database size={14} />
+              <span>Launch Assistant</span>
+            </button>
+          )}
         </div>
 
-        <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: '#fffbeb', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <AlertTriangle size={20} color="#d97706" style={{ flexShrink: 0 }} />
-          <div style={{ fontSize: '0.825rem', color: '#92400e' }}>
-            <strong>Phase 1 UI Shell active.</strong> Supabase client initialization and environment validation are scheduled for <strong>Phase 2</strong>.
+        <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', background: '#f8fafc', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+            <span className="radar-dot setup" />
+            <strong>Runtime Status:</strong> Client initialized with graceful resilience guards
           </div>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            To configure your live Supabase project, click <strong>Launch Assistant</strong> above or update your local <code className="code-font" style={{ background: '#e2e8f0', padding: '1px 5px', borderRadius: 3 }}>.env</code> file.
+          </p>
         </div>
       </div>
     </div>

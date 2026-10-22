@@ -1,10 +1,13 @@
+import React from 'react';
 import { Menu, Plus, Bell, Shield } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
+import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 
 interface HeaderProps {
   currentTab: NavigationTab;
   onOpenMobileDrawer: () => void;
   onQuickAction?: () => void;
+  onOpenAssistant?: () => void;
   userRole?: string;
   userName?: string;
 }
@@ -13,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentTab,
   onOpenMobileDrawer,
   onQuickAction,
+  onOpenAssistant,
   userRole = 'Counsellor',
 }) => {
   const getTabTitles = (tab: NavigationTab) => {
@@ -61,6 +65,9 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="header-right">
+        {/* Database Status Pill */}
+        <DatabaseStatusBadge onOpenAssistant={onOpenAssistant} />
+
         {/* Role Badge */}
         <div 
           style={{

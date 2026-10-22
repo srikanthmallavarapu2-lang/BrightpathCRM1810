@@ -7,6 +7,7 @@ interface LayoutProps {
   currentTab: NavigationTab;
   onSelectTab: (tab: NavigationTab) => void;
   onQuickAction?: () => void;
+  onOpenAssistant?: () => void;
   children: React.ReactNode;
   userRole?: string;
   userName?: string;
@@ -16,6 +17,7 @@ export const Layout: React.FC<LayoutProps> = ({
   currentTab,
   onSelectTab,
   onQuickAction,
+  onOpenAssistant,
   children,
   userRole = 'Counsellor',
   userName = 'Demo Counsellor',
@@ -51,6 +53,7 @@ export const Layout: React.FC<LayoutProps> = ({
           currentTab={currentTab}
           onOpenMobileDrawer={() => setIsMobileDrawerOpen(true)}
           onQuickAction={onQuickAction}
+          onOpenAssistant={onOpenAssistant}
           userRole={userRole}
           userName={userName}
         />
