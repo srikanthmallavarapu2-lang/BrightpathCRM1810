@@ -19,6 +19,7 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   userRole?: string;
   userName?: string;
+  overdueCount?: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -28,11 +29,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   userRole = 'Counsellor',
   userName = 'Demo Counsellor',
+  overdueCount = 0,
 }) => {
   const navItems = [
     { id: 'dashboard' as NavigationTab, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'leads' as NavigationTab, label: 'Leads Pipeline', icon: Users },
-    { id: 'followups' as NavigationTab, label: 'Follow-ups', icon: Clock, badge: '2 Overdue' },
+    { 
+      id: 'followups' as NavigationTab, 
+      label: 'Follow-ups', 
+      icon: Clock, 
+      badge: overdueCount > 0 ? `${overdueCount} Overdue` : undefined 
+    },
     { id: 'settings' as NavigationTab, label: 'Settings', icon: Settings },
   ];
 

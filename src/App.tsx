@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { NavigationTab } from './components/layout/Sidebar';
@@ -10,6 +10,7 @@ import { ConnectionAssistant } from './components/common/ConnectionAssistant';
 import { AuthModal } from './components/auth/AuthModal';
 import { LeadFormModal } from './features/leads/LeadFormModal';
 import { Lead } from './types/database';
+import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -19,6 +20,7 @@ const AppContent: React.FC = () => {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [overdueCount, setOverdueCount] = useState(0);
 
   const { user, profile, role, isAuthenticated, signOut } = useAuth();
 
@@ -36,6 +38,11 @@ const AppContent: React.FC = () => {
     setRefreshTrigger((prev) => prev + 1);
   };
 
+  // Sync overdue tasks count across the app shell
+  useEffect(() => {
+    followUpService.getOverdueCount().then(setOverdueCount);
+  }, [refreshTrigger, currentTab]);
+
   const displayName = profile?.full_name || (user?.email ? user.email.split('@')[0] : 'Guest Counsellor');
   const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
 
@@ -50,6 +57,7 @@ const AppContent: React.FC = () => {
       isAuthenticated={isAuthenticated}
       userRole={formattedRole}
       userName={displayName}
+      overdueCount={overdueCount}
     >
       {/* Guest Mode Banner when not logged in */}
       {!isAuthenticated && (
@@ -89,6 +97,7 @@ const AppContent: React.FC = () => {
           onNavigateToLeads={() => setCurrentTab('leads')}
           onNavigateToFollowUps={() => setCurrentTab('followups')}
           onOpenAssistant={() => setIsAssistantOpen(true)}
+          onOpenCreateLead={handleOpenCreateLead}
         />
       )}
 
@@ -100,7 +109,9 @@ const AppContent: React.FC = () => {
         />
       )}
 
-      {currentTab === 'followups' && <FollowUpsView />}
+      {currentTab === 'followups' && (
+        <FollowUpsView onScheduleCountChange={setOverdueCount} />
+      )}
 
       {currentTab === 'settings' && (
         <SettingsView onOpenAssistant={() => setIsAssistantOpen(true)} />

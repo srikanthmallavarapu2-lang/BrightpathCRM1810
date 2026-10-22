@@ -14,6 +14,7 @@ interface LayoutProps {
   children: React.ReactNode;
   userRole?: string;
   userName?: string;
+  overdueCount?: number;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
@@ -27,6 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({
   children,
   userRole = 'Counsellor',
   userName = 'Demo Counsellor',
+  overdueCount = 0,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -41,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
         userRole={userRole}
         userName={userName}
+        overdueCount={overdueCount}
       />
 
       {/* Mobile Navigation Drawer */}
@@ -51,6 +54,7 @@ export const Layout: React.FC<LayoutProps> = ({
         onSelectTab={onSelectTab}
         userRole={userRole}
         userName={userName}
+        overdueCount={overdueCount}
       />
 
       {/* Main Workspace Frame */}
