@@ -13,11 +13,13 @@ import {
   AlertCircle,
   RefreshCw,
   FolderOpen,
-  CalendarPlus
+  CalendarPlus,
+  ExternalLink
 } from 'lucide-react';
 import { Lead, LeadStatus, Profile } from '../../types/database';
 import { leadService } from '../../services/leadService';
 import { LostReasonModal } from './LostReasonModal';
+import { LeadDetailModal } from './LeadDetailModal';
 import { useAuth } from '../../context/AuthContext';
 
 interface LeadsViewProps {
@@ -39,6 +41,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   const [staffProfiles, setStaffProfiles] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedLeadForDetail, setSelectedLeadForDetail] = useState<Lead | null>(null);
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
@@ -373,8 +376,27 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                   >
                     {/* Student Name */}
                     <td style={{ padding: '0.85rem 1.25rem' }}>
-                      <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{lead.full_name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                      <button
+                        onClick={() => setSelectedLeadForDetail(lead)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                          color: '#1d4ed8',
+                          textAlign: 'left',
+                          fontSize: '0.875rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                        title="View student dossier & activity history"
+                      >
+                        <span style={{ textDecoration: 'underline', textDecorationColor: '#93c5fd' }}>{lead.full_name}</span>
+                        <ExternalLink size={12} color="#2563eb" />
+                      </button>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '3px' }}>
                         <Calendar size={12} /> {formatDate(lead.created_at)}
                       </div>
                       {lead.lost_reason && (
@@ -483,6 +505,22 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
         onClose={() => setLostModalState({ isOpen: false, lead: null })}
         leadName={lostModalState.lead?.full_name || ''}
         onConfirm={handleConfirmLostReason}
+      />
+
+      {/* Lead Detail & Activity History Modal */}
+      <LeadDetailModal
+        isOpen={Boolean(selectedLeadForDetail)}
+        onClose={() => setSelectedLeadForDetail(null)}
+        leadId={selectedLeadForDetail?.id || null}
+        onLeadUpdated={fetchLeads}
+        onScheduleFollowUp={(lead) => {
+          setSelectedLeadForDetail(null);
+          if (onScheduleFollowUpForLead) onScheduleFollowUpForLead(lead);
+        }}
+        onEditLead={(lead) => {
+          setSelectedLeadForDetail(null);
+          if (onEditLead) onEditLead(lead);
+        }}
       />
     </div>
   );
