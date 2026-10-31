@@ -136,8 +136,27 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
       if (data) {
         setSearchedLead(data as Lead);
       } else {
-        // Fallback demo student if searching for 9876543210 or 9123456789 and database doesn't have it
-        if (clean.includes('9876543210')) {
+        // Check if candidate recently registered via the public portal
+        let foundLocal: Lead | null = null;
+        try {
+          if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('bp_public_leads');
+            if (stored) {
+              const list: Lead[] = JSON.parse(stored);
+              foundLocal = list.find((l) =>
+                (l.phone && l.phone.replace(/[^0-9]/g, '').includes(clean.replace(/[^0-9]/g, ''))) ||
+                (l.email && l.email.toLowerCase().includes(clean.toLowerCase()))
+              ) || null;
+            }
+          }
+        } catch (e) {
+          console.warn('Local lead lookup note:', e);
+        }
+
+        if (foundLocal) {
+          setSearchedLead(foundLocal);
+          setSearchError(null);
+        } else if (clean.includes('9876543210')) {
           setSearchedLead({
             id: 'a1000000-0000-4000-8000-000000000001',
             full_name: 'Arjun Patel',

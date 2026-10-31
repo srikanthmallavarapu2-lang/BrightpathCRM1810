@@ -181,12 +181,12 @@ CREATE POLICY "leads_select_policy" ON public.leads
     OR public.is_admin_or_manager()
   );
 
--- Any authenticated user can create a lead
+-- Any user (including public unauthenticated website students) can create a lead
 DROP POLICY IF EXISTS "leads_insert_policy" ON public.leads;
 CREATE POLICY "leads_insert_policy" ON public.leads
   FOR INSERT
   WITH CHECK (
-    auth.role() = 'authenticated'
+    true
   );
 
 -- Counsellors update their own leads; Admins/Managers update all
