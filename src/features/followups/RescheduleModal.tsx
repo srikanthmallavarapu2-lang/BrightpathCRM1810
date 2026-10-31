@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CalendarClock, Check, AlertCircle } from 'lucide-react';
 import { FollowUp } from '../../types/database';
 import { followUpService } from '../../services/followUpService';
+import { useToast } from '../../context/ToastContext';
 
 interface RescheduleModalProps {
   isOpen: boolean;
@@ -20,6 +21,18 @@ export const RescheduleModal: React.FC<RescheduleModalProps> = ({
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const toast = useToast();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (isOpen && followUp) {
@@ -58,9 +71,11 @@ export const RescheduleModal: React.FC<RescheduleModalProps> = ({
       );
 
       if (result.success) {
+        toast.success('Follow-up task rescheduled successfully.');
         onRescheduled();
         onClose();
       } else {
+        toast.error(result.error || 'Failed to reschedule follow-up.');
         setErrorMessage(result.error);
       }
     } finally {

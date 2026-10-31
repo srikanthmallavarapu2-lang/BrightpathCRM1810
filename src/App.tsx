@@ -13,6 +13,9 @@ import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModa
 import { Lead, LeadStatus } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ToastProvider } from './context/ToastContext';
+import { SkipLink } from './components/layout/SkipLink';
 
 const AppContent: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('leads');
@@ -79,8 +82,10 @@ const AppContent: React.FC = () => {
   const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
 
   return (
-    <Layout
-      currentTab={currentTab}
+    <>
+      <SkipLink />
+      <Layout
+        currentTab={currentTab}
       onSelectTab={(tab) => {
         if (tab !== 'leads') {
           setTargetLeadFilterQuery(undefined);
@@ -207,15 +212,20 @@ const AppContent: React.FC = () => {
           setRefreshTrigger((prev) => prev + 1);
         }}
       />
-    </Layout>
+      </Layout>
+    </>
   );
 };
 
 export const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

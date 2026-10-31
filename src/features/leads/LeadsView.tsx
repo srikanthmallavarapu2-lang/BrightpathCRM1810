@@ -21,6 +21,7 @@ import { leadService } from '../../services/leadService';
 import { LostReasonModal } from './LostReasonModal';
 import { LeadDetailModal } from './LeadDetailModal';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 interface LeadsViewProps {
   onOpenCreateModal: () => void;
@@ -78,6 +79,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   });
 
   const { isAdmin, isManager } = useAuth();
+  const toast = useToast();
 
   // Load staff profiles once on mount for filter dropdown
   useEffect(() => {
@@ -120,9 +122,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
     const { success, error } = await leadService.updateLeadStatus(lead.id, newStatus);
     if (success) {
+      toast.success(`Updated status to ${newStatus} for ${lead.full_name}.`);
       fetchLeads();
     } else {
-      alert(error || 'Failed to update status.');
+      toast.error(error || 'Failed to update status.');
     }
   };
 
@@ -130,8 +133,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
     if (!lostModalState.lead) return;
     const { success, error } = await leadService.updateLeadStatus(lostModalState.lead.id, 'Lost', reason);
     if (success) {
+      toast.info(`Marked enquiry for ${lostModalState.lead.full_name} as Lost.`);
       fetchLeads();
     } else {
+      toast.error(error || 'Failed to update status.');
       throw new Error(error || 'Failed to update status.');
     }
   };
@@ -143,9 +148,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
     const { success, error } = await leadService.deleteLead(lead.id);
     if (success) {
+      toast.info(`Deleted enquiry for ${lead.full_name}.`);
       fetchLeads();
     } else {
-      alert(error || 'Could not delete lead.');
+      toast.error(error || 'Could not delete lead.');
     }
   };
 
@@ -369,8 +375,8 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
           </div>
         ) : (
           /* Live Data Table */
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+          <div className="table-responsive">
+            <table style={{ width: '100%', minWidth: '680px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
               <thead>
                 <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
                   <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600 }}>Student Name</th>

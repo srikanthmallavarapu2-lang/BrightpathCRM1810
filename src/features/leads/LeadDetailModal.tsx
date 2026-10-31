@@ -21,6 +21,7 @@ import { followUpService } from '../../services/followUpService';
 import { ActivityTimeline } from '../activities/ActivityTimeline';
 import { LostReasonModal } from './LostReasonModal';
 import { OverdueBadge } from '../../components/common/OverdueBadge';
+import { useToast } from '../../context/ToastContext';
 
 interface LeadDetailModalProps {
   isOpen: boolean;
@@ -47,6 +48,19 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLostModalOpen, setIsLostModalOpen] = useState(false);
+
+  const toast = useToast();
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const fetchLeadData = useCallback(async () => {
     if (!leadId) return;
@@ -88,10 +102,11 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
 
     const { success, error } = await leadService.updateLeadStatus(lead.id, newStatus);
     if (success) {
+      toast.success(`Pipeline status updated to ${newStatus}.`);
       await fetchLeadData();
       onLeadUpdated();
     } else {
-      alert(error || 'Failed to update status.');
+      toast.error(error || 'Failed to update status.');
     }
   };
 
@@ -99,9 +114,11 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
     if (!lead) return;
     const { success, error } = await leadService.updateLeadStatus(lead.id, 'Lost', reason);
     if (success) {
+      toast.info('Student enquiry marked as Lost.');
       await fetchLeadData();
       onLeadUpdated();
     } else {
+      toast.error(error || 'Failed to update status.');
       throw new Error(error || 'Failed to update status.');
     }
   };
@@ -113,20 +130,24 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
     setIsSubmittingNote(true);
     const { success, error } = await activityService.addCounsellorNote(lead.id, newNote);
     if (success) {
+      toast.success('Interaction note posted to timeline.');
       setNewNote('');
       await fetchLeadData();
       onLeadUpdated();
     } else {
-      alert(error || 'Failed to add note.');
+      toast.error(error || 'Failed to add note.');
     }
     setIsSubmittingNote(false);
   };
 
   const handleMarkFollowUpDone = async (followUpId: string) => {
-    const { success } = await followUpService.completeFollowUp(followUpId);
+    const { success, error } = await followUpService.completeFollowUp(followUpId);
     if (success) {
+      toast.success('Follow-up task marked as completed.');
       await fetchLeadData();
       onLeadUpdated();
+    } else {
+      toast.error(error || 'Could not complete follow-up task.');
     }
   };
 

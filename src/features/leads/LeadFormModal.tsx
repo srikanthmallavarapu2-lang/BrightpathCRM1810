@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check, User, Phone, Mail } from 'lucide-react';
 import { Lead, LeadStatus, Profile } from '../../types/database';
 import { leadService, CreateLeadInput } from '../../services/leadService';
+import { useToast } from '../../context/ToastContext';
 
 interface LeadFormModalProps {
   isOpen: boolean;
@@ -27,6 +28,19 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const toast = useToast();
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     leadService.getStaffProfiles().then(({ profiles }) => {
@@ -92,9 +106,11 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         });
 
         if (result.success) {
+          toast.success(`Updated enquiry for ${fullName.trim()}.`);
           onLeadSaved();
           onClose();
         } else {
+          toast.error(result.error || 'Failed to update lead.');
           setErrorMessage(result.error);
         }
       } else {
@@ -113,9 +129,11 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         const result = await leadService.createLead(input);
 
         if (result.lead) {
+          toast.success(`Enquiry recorded for ${result.lead.full_name}.`);
           onLeadSaved();
           onClose();
         } else {
+          toast.error(result.error || 'Failed to create lead.');
           setErrorMessage(result.error);
         }
       }

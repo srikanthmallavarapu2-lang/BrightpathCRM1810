@@ -3,6 +3,7 @@ import { X, Clock, Check, AlertCircle } from 'lucide-react';
 import { followUpService } from '../../services/followUpService';
 import { leadService } from '../../services/leadService';
 import { Lead } from '../../types/database';
+import { useToast } from '../../context/ToastContext';
 
 interface ScheduleFollowUpModalProps {
   isOpen: boolean;
@@ -23,6 +24,19 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
   const [note, setNote] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const toast = useToast();
+
+  // Escape key handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   // Default to tomorrow 10:00 AM
   useEffect(() => {
@@ -82,9 +96,11 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
       });
 
       if (result.followUp) {
+        toast.success('Follow-up scheduled successfully.');
         onScheduled();
         onClose();
       } else {
+        toast.error(result.error || 'Failed to schedule follow-up.');
         setErrorMessage(result.error);
       }
     } finally {

@@ -21,6 +21,7 @@ import { SourceDistribution } from './SourceDistribution';
 import { ActionCenter } from './ActionCenter';
 import { LeadDetailModal } from '../leads/LeadDetailModal';
 import { RescheduleModal } from '../followups/RescheduleModal';
+import { useToast } from '../../context/ToastContext';
 
 export interface DashboardViewProps {
   onNavigateToLeads: () => void;
@@ -52,6 +53,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [selectedLeadIdForDossier, setSelectedLeadIdForDossier] = useState<string | null>(null);
   const [rescheduleItem, setRescheduleItem] = useState<FollowUp | null>(null);
 
+  const toast = useToast();
+
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage(null);
@@ -78,9 +81,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const handleCompleteFollowUp = async (id: string) => {
     const { success, error } = await followUpService.completeFollowUp(id);
     if (success) {
+      toast.success('Follow-up task completed.');
       await fetchDashboardData();
     } else {
-      alert(error || 'Failed to complete follow-up task.');
+      toast.error(error || 'Failed to complete follow-up task.');
     }
   };
 

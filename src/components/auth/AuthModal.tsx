@@ -13,6 +13,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -35,6 +36,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [showSwitchForm, setShowSwitchForm] = useState(false);
 
   const { user, profile, role, isAuthenticated, signIn, signUp, signOut } = useAuth();
+  const toast = useToast();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -58,6 +70,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (mode === 'signin') {
         const result = await signIn(email, password);
         if (result.success) {
+          toast.success('Signed in successfully.');
           onClose();
         } else {
           setErrorMessage(result.error);
@@ -70,6 +83,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         }
         const result = await signUp(email, password, fullName);
         if (result.success) {
+          toast.success('Account created and signed in.');
           onClose();
         } else {
           setErrorMessage(result.error);
@@ -82,6 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSignOut = async () => {
     await signOut();
+    toast.info('Signed out of session.');
     setShowSwitchForm(true);
   };
 

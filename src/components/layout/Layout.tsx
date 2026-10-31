@@ -70,7 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({
           userRole={userRole}
           userName={userName}
         />
-        <main className="content-area">
+        <main id="main-content" tabIndex={-1} className="content-area" style={{ outline: 'none' }}>
           {children}
         </main>
       </div>

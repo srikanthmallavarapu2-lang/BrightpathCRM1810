@@ -5,6 +5,7 @@ import { followUpService } from '../../services/followUpService';
 import { FollowUpList } from './FollowUpList';
 import { ScheduleFollowUpModal } from './ScheduleFollowUpModal';
 import { RescheduleModal } from './RescheduleModal';
+import { useToast } from '../../context/ToastContext';
 
 interface FollowUpsViewProps {
   onScheduleCountChange?: (count: number) => void;
@@ -20,6 +21,8 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [rescheduleTarget, setRescheduleTarget] = useState<FollowUp | null>(null);
+
+  const toast = useToast();
 
   const fetchFollowUps = useCallback(async () => {
     setIsLoading(true);
@@ -47,18 +50,20 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
   const handleMarkDone = async (id: string) => {
     const { success, error } = await followUpService.completeFollowUp(id);
     if (success) {
+      toast.success('Follow-up task marked as completed.');
       await fetchFollowUps();
     } else {
-      alert(error || 'Failed to complete follow-up.');
+      toast.error(error || 'Failed to complete follow-up.');
     }
   };
 
   const handleDelete = async (id: string) => {
     const { success, error } = await followUpService.deleteFollowUp(id);
     if (success) {
+      toast.info('Follow-up task deleted.');
       await fetchFollowUps();
     } else {
-      alert(error || 'Could not delete follow-up.');
+      toast.error(error || 'Could not delete follow-up.');
     }
   };
 
