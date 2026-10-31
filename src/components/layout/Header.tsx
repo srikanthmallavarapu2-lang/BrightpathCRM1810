@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Plus, Bell, Shield, LogIn, LogOut } from 'lucide-react';
+import { Menu, Plus, Bell, Shield, LogIn, LogOut, Globe } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
 import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 
@@ -10,6 +10,7 @@ interface HeaderProps {
   onOpenAssistant?: () => void;
   onOpenAuthModal?: () => void;
   onSignOut?: () => void;
+  onOpenSimulator?: () => void;
   isAuthenticated?: boolean;
   userRole?: string;
   userName?: string;
@@ -22,6 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAssistant,
   onOpenAuthModal,
   onSignOut,
+  onOpenSimulator,
   isAuthenticated = false,
   userRole = 'Counsellor',
   userName = 'Sarah Jenkins',
@@ -87,6 +89,25 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-right">
         {/* Database Status Pill */}
         <DatabaseStatusBadge onOpenAssistant={onOpenAssistant} />
+
+        {onOpenSimulator && (
+          <button
+            onClick={onOpenSimulator}
+            className="btn btn-outline"
+            style={{ 
+              padding: '0.4rem 0.75rem', 
+              fontSize: '0.8rem', 
+              gap: '6px', 
+              borderColor: '#c4b5fd', 
+              color: '#6d28d9',
+              background: '#f5f3ff',
+            }}
+            title="Open Website Enquiry Form Simulator (Simulates student leads ingestion)"
+          >
+            <Globe size={14} color="#7c3aed" />
+            <span>Web Simulator</span>
+          </button>
+        )}
 
         {isAuthenticated ? (
           <>

@@ -10,6 +10,7 @@ import { ConnectionAssistant } from './components/common/ConnectionAssistant';
 import { AuthModal } from './components/auth/AuthModal';
 import { LeadFormModal } from './features/leads/LeadFormModal';
 import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModal';
+import { PublicEnquiryModal } from './features/simulator/PublicEnquiryModal';
 import { Lead, LeadStatus } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
@@ -30,6 +31,7 @@ const AppContent: React.FC = () => {
   const [targetSourceFilter, setTargetSourceFilter] = useState<string | undefined>(undefined);
   const [scheduleModalLeadId, setScheduleModalLeadId] = useState<string | undefined>(undefined);
   const [isAppScheduleModalOpen, setIsAppScheduleModalOpen] = useState(false);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   const { user, profile, role, isAuthenticated, signOut } = useAuth();
 
@@ -97,6 +99,7 @@ const AppContent: React.FC = () => {
       onQuickAction={handleOpenCreateLead}
       onOpenAssistant={() => setIsAssistantOpen(true)}
       onOpenAuthModal={() => setIsAuthModalOpen(true)}
+      onOpenSimulator={() => setIsSimulatorOpen(true)}
       onSignOut={signOut}
       isAuthenticated={isAuthenticated}
       userRole={formattedRole}
@@ -211,6 +214,13 @@ const AppContent: React.FC = () => {
         onScheduled={() => {
           setRefreshTrigger((prev) => prev + 1);
         }}
+      />
+
+      {/* Global Public Website Enquiry Simulator Modal */}
+      <PublicEnquiryModal
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+        onLeadIngested={handleLeadSaved}
       />
       </Layout>
     </>

@@ -10,7 +10,8 @@ import {
   Plus, 
   Database, 
   ArrowRight,
-  AlertCircle
+  AlertCircle,
+  Globe
 } from 'lucide-react';
 import { dashboardService, DashboardMetrics } from '../../services/dashboardService';
 import { followUpService } from '../../services/followUpService';
@@ -19,6 +20,8 @@ import { KPICard } from './KPICard';
 import { StatusDistribution } from './StatusDistribution';
 import { SourceDistribution } from './SourceDistribution';
 import { ActionCenter } from './ActionCenter';
+import { CounsellorLeaderboard } from './CounsellorLeaderboard';
+import { PublicEnquiryModal } from '../simulator/PublicEnquiryModal';
 import { LeadDetailModal } from '../leads/LeadDetailModal';
 import { RescheduleModal } from '../followups/RescheduleModal';
 import { useToast } from '../../context/ToastContext';
@@ -52,6 +55,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // In-dashboard modal states
   const [selectedLeadIdForDossier, setSelectedLeadIdForDossier] = useState<string | null>(null);
   const [rescheduleItem, setRescheduleItem] = useState<FollowUp | null>(null);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   const toast = useToast();
 
@@ -140,6 +144,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           >
             <RefreshCw size={13} className={isLoading ? 'spin' : ''} />
             <span>Sync KPIs</span>
+          </button>
+
+          <button 
+            onClick={() => setIsSimulatorOpen(true)}
+            className="btn btn-outline"
+            style={{ fontSize: '0.8rem', gap: '5px', borderColor: '#a78bfa', color: '#6d28d9', background: '#faf5ff' }}
+            title="Simulate live student website enquiry submission"
+          >
+            <Globe size={13} color="#7c3aed" />
+            <span>Website Form Simulator</span>
           </button>
 
           {onOpenCreateLead && (
@@ -280,6 +294,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           onSelectSource={onNavigateToLeadsWithSource}
         />
       </div>
+
+      {/* Counsellor Conversion Leaderboard */}
+      <CounsellorLeaderboard />
+
+      {/* Public Website Enquiry Simulator Modal */}
+      <PublicEnquiryModal
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+        onLeadIngested={fetchDashboardData}
+      />
 
       {/* Student Dossier Modal opened directly from Action Center */}
       <LeadDetailModal

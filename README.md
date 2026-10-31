@@ -229,3 +229,4 @@ Refer to [`TESTING_CHECKLIST.md`](./TESTING_CHECKLIST.md) for the complete 8-sui
 ---
 
 *BrightPath CRM &copy; 2026. Handover documentation for training and production deployment.*
+

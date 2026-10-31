@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, RefreshCw, AlertCircle } from 'lucide-react';
+import { Plus, RefreshCw, AlertCircle, Download } from 'lucide-react';
 import { FollowUp } from '../../types/database';
 import { followUpService } from '../../services/followUpService';
 import { FollowUpList } from './FollowUpList';
 import { ScheduleFollowUpModal } from './ScheduleFollowUpModal';
 import { RescheduleModal } from './RescheduleModal';
 import { useToast } from '../../context/ToastContext';
+import { exportFollowUpsToCSV } from '../../utils/csvExport';
 
 interface FollowUpsViewProps {
   onScheduleCountChange?: (count: number) => void;
@@ -79,7 +80,7 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
             Track pending callbacks, admissions consultations, and time-sensitive reminders from live Supabase.
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button 
             onClick={fetchFollowUps} 
             className="btn btn-outline" 
@@ -88,6 +89,22 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
           >
             <RefreshCw size={15} className={isLoading ? 'spin' : ''} />
             <span>Sync</span>
+          </button>
+          <button
+            onClick={() => {
+              if (followUps.length === 0) {
+                toast.info('No follow-up tasks to export.');
+                return;
+              }
+              exportFollowUpsToCSV(followUps);
+              toast.success(`Exported ${followUps.length} follow-up tasks to CSV.`);
+            }}
+            className="btn btn-outline"
+            title="Export all follow-up tasks to CSV/Excel format"
+            style={{ padding: '0.55rem 0.75rem', gap: '6px' }}
+          >
+            <Download size={15} />
+            <span>Export CSV</span>
           </button>
           <button onClick={() => setIsScheduleModalOpen(true)} className="btn btn-primary">
             <Plus size={16} />

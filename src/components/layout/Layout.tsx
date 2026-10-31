@@ -10,6 +10,7 @@ interface LayoutProps {
   onOpenAssistant?: () => void;
   onOpenAuthModal?: () => void;
   onSignOut?: () => void;
+  onOpenSimulator?: () => void;
   isAuthenticated?: boolean;
   children: React.ReactNode;
   userRole?: string;
@@ -24,6 +25,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onOpenAssistant,
   onOpenAuthModal,
   onSignOut,
+  onOpenSimulator,
   isAuthenticated = false,
   children,
   userRole = 'Counsellor',
@@ -66,6 +68,7 @@ export const Layout: React.FC<LayoutProps> = ({
           onOpenAssistant={onOpenAssistant}
           onOpenAuthModal={onOpenAuthModal}
           onSignOut={onSignOut}
+          onOpenSimulator={onOpenSimulator}
           isAuthenticated={isAuthenticated}
           userRole={userRole}
           userName={userName}
