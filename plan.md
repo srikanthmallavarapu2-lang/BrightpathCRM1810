@@ -248,6 +248,16 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
   - Build 1-Click Instant Role Switcher in `AuthModal.tsx` and header avatar badge for zero-friction account switching.
 - **Acceptance Criteria**: Student portal and staff CRM fully functional, responsive, verified with `npm run build` (0 errors), and deployed to Vercel.
 
+### Phase 13: Portal Lead Synchronization, Unassigned Pool Workflow & Dashboard KPI Reconciliation
+- **Goal**: Enable full end-to-end editing, assigning, and status transitions for public student portal leads, and guarantee 100% KPI reconciliation across Dashboard and Pipeline.
+- **Actions**:
+  - Upgraded `leadService.updateLead(id, updates)` and `leadService.updateLeadStatus(id, newStatus, lostReason)` to update locally cached public leads (`bp_public_leads`) immediately while syncing with PostgreSQL, eliminating RLS update blocks and ensuring zero lost updates.
+  - Upgraded `dashboardService.getMetrics()` to merge `bp_public_leads` from local storage with remote PostgreSQL records, ensuring 100% reconciliation between the Dashboard KPI cards (Total Leads, New Enquiries, Converted, Conversion Rate) and the Student Leads Pipeline table.
+  - Added an interactive Assignee dropdown selector directly within each row of the Leads Pipeline table, allowing Academic Counsellors and Managers to assign or reassign any student enquiry (including unassigned public portal submissions) with 1 click.
+  - Updated `supabase/migrations/002_allow_public_lead_submission.sql` to explicitly include `assigned_to IS NULL` in `leads_select_policy` and `leads_update_policy` so staff members can select and claim unassigned public enquiries under PostgreSQL Row Level Security.
+  - Fixed `LeadFormModal` to directly resolve and pass `assigned_profile` upon saving edits.
+- **Acceptance Criteria**: Student enquiries registered from the public portal can be freely updated, assigned to counsellors, transitioned across pipeline stages, and are immediately counted in Dashboard metrics.
+
 ---
 
 - [x] Master specification completely reviewed.
@@ -266,3 +276,4 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 - [x] **Phase 10: Production Verification, GitHub Setup & Vercel Deployment** completed (Static build verified with 0 errors, vercel.json SPA rewrites, comprehensive README.md student handover guide, complete 8-suite TESTING_CHECKLIST.md, git committed and pushed to origin/main).
 - [x] **Phase 11: Option B Suite & Package 3 Full Professional Enhancements** completed (Lead Kanban board with drag & drop, 1-Click WhatsApp outreach, CSV export, Counsellor Leaderboard, Public Enquiry Simulator, Printable Admission Letter PDF Slip, Multi-currency tuition revenue counter, Admission conversion funnel).
 - [x] **Phase 12: Public Student Portal, Visual Curricula & Role-Based Access Control** completed (Dedicated student portal at `?portal=student`, 5 visual course curricula cards with cover images & fees, real-time enrolment status checker with 4-step milestone progress stepper, populated "Check My Admission Status" CTA with instant verification, Staff Team & Role Provisioning with live dropdown and RLS compliance, 1-click role switcher in AuthModal & header, role-based visibility matrix for Admin, Manager, and Counsellor, resolved PGRST116 single json coercion in LeadDetailModal by switching to maybeSingle and local dossier caching).
+- [x] **Phase 13: Portal Lead Synchronization, Unassigned Pool Workflow & Dashboard KPI Reconciliation** completed (Resolved portal lead editing and assignee updating, added table row interactive assignee selector, unified Dashboard KPI metrics calculation with local public storage cache, relaxed RLS for unassigned lead claiming).

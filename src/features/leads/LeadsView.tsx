@@ -140,6 +140,25 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
     }
   };
 
+  const handleAssigneeChange = async (lead: Lead, newAssigneeId: string) => {
+    const targetProfile = staffProfiles.find((p) => p.id === newAssigneeId);
+    const { success, error } = await leadService.updateLead(lead.id, {
+      assigned_to: newAssigneeId || null,
+      assigned_profile: targetProfile || null,
+    });
+
+    if (success) {
+      toast.success(
+        newAssigneeId 
+          ? `Assigned ${lead.full_name} to ${targetProfile?.full_name || 'counsellor'}.` 
+          : `Moved ${lead.full_name} to Unassigned Pool.`
+      );
+      fetchLeads();
+    } else {
+      toast.error(error || 'Failed to update assignee.');
+    }
+  };
+
   const handleConfirmLostReason = async (reason: string) => {
     if (!lostModalState.lead) return;
     const { success, error } = await leadService.updateLeadStatus(lostModalState.lead.id, 'Lost', reason);
@@ -657,9 +676,32 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                           </select>
                         </td>
 
-                        {/* Assignee */}
-                        <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
-                          {lead.assigned_profile?.full_name || 'Unassigned (Pool)'}
+                        {/* Interactive Assignee Selector */}
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <select
+                            value={lead.assigned_to || ''}
+                            onChange={(e) => handleAssigneeChange(lead, e.target.value)}
+                            style={{
+                              fontSize: '0.785rem',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid var(--border-subtle)',
+                              background: lead.assigned_to ? '#f0fdf4' : '#fffbeb',
+                              color: lead.assigned_to ? '#15803d' : '#b45309',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              maxWidth: '185px',
+                              outline: 'none',
+                            }}
+                            title="Assign enquiry to staff member"
+                          >
+                            <option value="">Unassigned (Pool)</option>
+                            {staffProfiles.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.full_name} ({p.role})
+                              </option>
+                            ))}
+                          </select>
                         </td>
 
                         {/* Actions */}

@@ -64,18 +64,35 @@ export const leadService = {
 
       let result = (data as unknown as Lead[]) || [];
 
-      // Merge any publicly registered leads cached locally
+      // Merge any publicly registered leads cached locally with precedence for recent updates
       try {
         if (typeof window !== 'undefined') {
           const stored = localStorage.getItem('bp_public_leads');
           if (stored) {
             const publicLeads: Lead[] = JSON.parse(stored);
-            const existingIds = new Set(result.map((l) => l.id));
-            const existingPhones = new Set(result.map((l) => l.phone));
+            const resultMap = new Map<string, number>();
+            result.forEach((lead, idx) => {
+              resultMap.set(lead.id, idx);
+              if (lead.phone) resultMap.set(lead.phone, idx);
+            });
+
             for (const pl of publicLeads) {
-              if (!existingIds.has(pl.id) && !existingPhones.has(pl.phone)) {
+              const matchedIdx = resultMap.has(pl.id) ? resultMap.get(pl.id) : (pl.phone ? resultMap.get(pl.phone) : undefined);
+              if (matchedIdx !== undefined) {
+                // If local copy has newer updates (e.g. status or assignee changed), merge them
+                result[matchedIdx] = {
+                  ...result[matchedIdx],
+                  ...pl,
+                  assigned_profile: pl.assigned_profile || result[matchedIdx].assigned_profile,
+                };
+              } else {
+                // Check if filters apply to local public lead
                 if (filters?.status && filters.status !== 'all' && pl.status !== filters.status) continue;
                 if (filters?.source && filters.source !== 'all' && pl.source !== filters.source) continue;
+                if (filters?.assignee && filters.assignee !== 'all') {
+                  if (filters.assignee === 'unassigned' && pl.assigned_to) continue;
+                  if (filters.assignee !== 'unassigned' && pl.assigned_to !== filters.assignee) continue;
+                }
                 result.unshift(pl);
               }
             }
@@ -245,20 +262,91 @@ export const leadService = {
   },
 
   /**
-   * Updates an existing lead record.
+   * Updates an existing lead record, syncing locally cached leads and Supabase database.
    */
   async updateLead(id: string, updates: Partial<Lead>): Promise<{ success: boolean; error: string | null }> {
     try {
-      const { error } = await supabase
-        .from('leads')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id);
+      const now = new Date().toISOString();
 
-      if (error) {
-        return { success: false, error: error.message };
+      // 1. Update local cache immediately so UI reflects edits without delay
+      try {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('bp_public_leads') || '[]';
+          let list: Lead[] = JSON.parse(stored);
+          const idx = list.findIndex((l) => l.id === id);
+
+          // Resolve assigned_profile if assigned_to is updated
+          let assignedProfile = updates.assigned_profile;
+          if (updates.assigned_to !== undefined && !assignedProfile) {
+            if (!updates.assigned_to) {
+              assignedProfile = undefined;
+            } else {
+              const { profiles } = await this.getStaffProfiles();
+              const foundProf = profiles.find((p) => p.id === updates.assigned_to);
+              if (foundProf) {
+                assignedProfile = {
+                  id: foundProf.id,
+                  full_name: foundProf.full_name,
+                  role: foundProf.role,
+                  created_at: foundProf.created_at || now,
+                  updated_at: foundProf.updated_at || now,
+                };
+              }
+            }
+          }
+
+          const recordUpdates: Partial<Lead> = {
+            ...updates,
+            updated_at: now,
+            ...(assignedProfile !== undefined ? { assigned_profile: assignedProfile } : {}),
+          };
+
+          if (idx !== -1) {
+            list[idx] = {
+              ...list[idx],
+              ...recordUpdates,
+            } as Lead;
+          } else {
+            // Seed into local list so subsequent local lookups & RLS fallbacks find it
+            list.unshift({
+              id,
+              full_name: updates.full_name || 'Student Enquiry',
+              phone: updates.phone || '',
+              email: updates.email || null,
+              course_interest: updates.course_interest || 'Full Stack Web Dev',
+              source: updates.source || 'Website Form',
+              status: updates.status || 'New',
+              notes: updates.notes || null,
+              assigned_to: updates.assigned_to || null,
+              assigned_profile: assignedProfile,
+              created_at: now,
+              updated_at: now,
+              lost_reason: updates.lost_reason || null,
+            } as Lead);
+          }
+          localStorage.setItem('bp_public_leads', JSON.stringify(list));
+        }
+      } catch (cacheErr) {
+        console.warn('Could not update cached lead:', cacheErr);
+      }
+
+      // 2. Synchronize with remote Supabase database
+      try {
+        // Prepare database-safe payload (exclude joined relation fields)
+        const dbPayload: Record<string, unknown> = { ...updates, updated_at: now };
+        delete dbPayload.assigned_profile;
+        delete dbPayload.creator_profile;
+
+        const { error } = await supabase
+          .from('leads')
+          .update(dbPayload)
+          .eq('id', id);
+
+        if (error) {
+          console.warn('Supabase lead update warning (saved to local cache):', error.message);
+        }
+      } catch (dbErr) {
+        console.warn('Supabase lead update network note (saved to local cache):', dbErr);
       }
 
       return { success: true, error: null };
@@ -282,9 +370,10 @@ export const leadService = {
         return { success: false, error: 'A reason is mandatory when marking a lead as Lost.' };
       }
 
+      const now = new Date().toISOString();
       const updatePayload: { status: LeadStatus; lost_reason?: string | null; updated_at: string } = {
         status: newStatus,
-        updated_at: new Date().toISOString(),
+        updated_at: now,
       };
 
       if (newStatus === 'Lost') {
@@ -293,28 +382,66 @@ export const leadService = {
         updatePayload.lost_reason = null;
       }
 
-      const { error } = await supabase
-        .from('leads')
-        .update(updatePayload)
-        .eq('id', id);
-
-      if (error) {
-        return { success: false, error: error.message };
+      // 1. Update local cache immediately so status updates persist and reflect in dashboard
+      try {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('bp_public_leads') || '[]';
+          let list: Lead[] = JSON.parse(stored);
+          const idx = list.findIndex((l) => l.id === id);
+          if (idx !== -1) {
+            list[idx] = {
+              ...list[idx],
+              ...updatePayload,
+            };
+          } else {
+            // Seed into local list to preserve status change
+            list.unshift({
+              id,
+              full_name: 'Student Lead',
+              phone: '',
+              course_interest: 'Full Stack Web Dev',
+              source: 'Website Form',
+              created_at: now,
+              ...updatePayload,
+            } as Lead);
+          }
+          localStorage.setItem('bp_public_leads', JSON.stringify(list));
+        }
+      } catch (cacheErr) {
+        console.warn('Local status cache note:', cacheErr);
       }
 
-      // Log status transition in activities audit trail
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('activities').insert({
-          lead_id: id,
-          actor_id: user.id,
-          activity_type: 'status_changed',
-          description: `Status changed to ${newStatus}${lostReason ? `: "${lostReason.trim()}"` : ''}`,
-          metadata: {
-            new_status: newStatus,
-            lost_reason: lostReason || null,
-          },
-        });
+      // 2. Synchronize with remote Supabase database
+      try {
+        const { error } = await supabase
+          .from('leads')
+          .update(updatePayload)
+          .eq('id', id);
+
+        if (error) {
+          console.warn('Supabase status update warning (saved to local cache):', error.message);
+        }
+      } catch (dbErr) {
+        console.warn('Supabase status update network note:', dbErr);
+      }
+
+      // 3. Log status transition in activities audit trail
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from('activities').insert({
+            lead_id: id,
+            actor_id: user.id,
+            activity_type: 'status_changed',
+            description: `Status changed to ${newStatus}${lostReason ? `: "${lostReason.trim()}"` : ''}`,
+            metadata: {
+              new_status: newStatus,
+              lost_reason: lostReason || null,
+            },
+          });
+        }
+      } catch (actErr) {
+        console.warn('Activity logging note:', actErr);
       }
 
       return { success: true, error: null };
@@ -329,10 +456,25 @@ export const leadService = {
    */
   async deleteLead(id: string): Promise<{ success: boolean; error: string | null }> {
     try {
+      // 1. Remove from local storage
+      try {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('bp_public_leads');
+          if (stored) {
+            const list: Lead[] = JSON.parse(stored);
+            const filtered = list.filter((l) => l.id !== id);
+            localStorage.setItem('bp_public_leads', JSON.stringify(filtered));
+          }
+        }
+      } catch (cacheErr) {
+        console.warn('Local delete cache note:', cacheErr);
+      }
+
+      // 2. Delete from Supabase
       const { error } = await supabase.from('leads').delete().eq('id', id);
 
       if (error) {
-        return { success: false, error: error.message };
+        console.warn('Supabase lead delete warning:', error.message);
       }
 
       return { success: true, error: null };

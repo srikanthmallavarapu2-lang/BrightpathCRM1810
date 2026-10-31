@@ -94,6 +94,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
     try {
       if (leadToEdit) {
         // Edit existing lead
+        const targetProfile = staffProfiles.find((p) => p.id === assignedTo);
         const result = await leadService.updateLead(leadToEdit.id, {
           full_name: fullName.trim(),
           phone: phone.trim(),
@@ -103,6 +104,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           status,
           notes: notes.trim() || null,
           assigned_to: assignedTo.trim() ? assignedTo : null,
+          assigned_profile: targetProfile || null,
         });
 
         if (result.success) {
