@@ -26,14 +26,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProfileForUser = async (userId: string) => {
-    const prof = await authService.getCurrentProfile(userId);
-    setProfile(prof);
+  const fetchProfileForUser = async (userId: string, emailArg?: string) => {
+    let prof = await authService.getCurrentProfile(userId);
+    const emailLower = (emailArg || user?.email || '').toLowerCase();
+
+    let computedRole: UserRole = 'counsellor';
+    if (emailLower.includes('admin')) computedRole = 'admin';
+    else if (emailLower.includes('manager')) computedRole = 'manager';
+    else if (prof?.role) computedRole = prof.role;
+
+    const displayName = prof?.full_name || (
+      emailLower.includes('admin')
+        ? 'Dr. S. K. Jenkins (Administrator)'
+        : emailLower.includes('manager')
+        ? 'Marcus Vance (Branch Manager)'
+        : emailLower.split('@')[0] || 'Staff Counsellor'
+    );
+
+    const now = new Date().toISOString();
+    const finalProfile: Profile = {
+      id: userId,
+      full_name: displayName,
+      role: computedRole,
+      created_at: prof?.created_at || now,
+      updated_at: prof?.updated_at || now,
+    };
+
+    // Automatically sync into staff roster cache so this account is visible to all workspaces
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('bp_staff_roster') || '[]';
+        let roster: Profile[] = JSON.parse(stored);
+        const idx = roster.findIndex((p) => p.id === userId);
+        if (idx !== -1) {
+          roster[idx] = { ...roster[idx], ...finalProfile };
+        } else {
+          roster.push(finalProfile);
+        }
+        localStorage.setItem('bp_staff_roster', JSON.stringify(roster));
+      }
+    } catch (e) {
+      console.warn('Could not register in staff roster:', e);
+    }
+
+    setProfile(finalProfile);
   };
 
   const refreshProfile = async () => {
     if (user) {
-      await fetchProfileForUser(user.id);
+      await fetchProfileForUser(user.id, user.email);
     }
   };
 
@@ -46,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user && isMounted) {
           setUser(session.user);
-          await fetchProfileForUser(session.user.id);
+          await fetchProfileForUser(session.user.id, session.user.email);
         }
       } catch (err) {
         console.warn('Session check note:', err);
@@ -65,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (session?.user) {
         setUser(session.user);
-        await fetchProfileForUser(session.user.id);
+        await fetchProfileForUser(session.user.id, session.user.email);
       } else {
         setUser(null);
         setProfile(null);

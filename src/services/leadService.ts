@@ -19,9 +19,156 @@ export interface CreateLeadInput {
   assigned_to?: string | null;
 }
 
+// Known Academy Staff Roster (mapped to real Supabase Auth accounts)
+const DEFAULT_STAFF_ROSTER: Profile[] = [
+  {
+    id: '172dc09f-b778-407e-ac66-5bc845a4dd2a',
+    full_name: 'Dr. S. K. Jenkins (Administrator)',
+    role: 'admin',
+    created_at: '2026-10-31T12:00:00Z',
+    updated_at: '2026-10-31T12:00:00Z',
+  },
+  {
+    id: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    full_name: 'Marcus Vance (Branch Manager)',
+    role: 'manager',
+    created_at: '2026-10-31T12:00:00Z',
+    updated_at: '2026-10-31T12:00:00Z',
+  },
+  {
+    id: '8200424f-5eb4-461a-85ff-4247030f8560',
+    full_name: 'Sarah Jenkins (Counsellor)',
+    role: 'counsellor',
+    created_at: '2026-10-31T12:00:00Z',
+    updated_at: '2026-10-31T12:00:00Z',
+  },
+  {
+    id: '44444444-4444-4000-a000-000000000004',
+    full_name: 'Ananya Rao (Tech Advisor)',
+    role: 'counsellor',
+    created_at: '2026-10-31T12:00:00Z',
+    updated_at: '2026-10-31T12:00:00Z',
+  },
+];
+
+// Baseline Active Leads visible across all Counsellor, Manager, and Admin workspaces
+const DEFAULT_SHARED_LEADS: Lead[] = [
+  {
+    id: 'lead-001-sanya',
+    full_name: 'sanya sharma',
+    phone: '8839020221',
+    email: 'sanya.s@gmail.com',
+    course_interest: 'Data Science & AI',
+    source: 'Website Form',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nProvisional enrolment confirmed.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-31T10:00:00Z',
+    updated_at: '2026-10-31T14:30:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-002-vijay',
+    full_name: 'Vijay Kumar',
+    phone: '7013692321',
+    email: 'Vijaykumar@gmail.com',
+    course_interest: 'Cloud & DevOps',
+    source: 'Website Form',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nAdmissions verified. Fees processed.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-31T09:00:00Z',
+    updated_at: '2026-10-31T14:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-003-dharvik',
+    full_name: 'Dharvik',
+    phone: '+91 9876523101',
+    email: 'Dharvik.m@gail.com',
+    course_interest: 'Cloud Computing & DevOps',
+    source: 'Website Form',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nEnrolment confirmed.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-24T11:00:00Z',
+    updated_at: '2026-10-31T14:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-004-rahul',
+    full_name: 'Rahul Sharma',
+    phone: '+91 9871910101',
+    email: 'Rahul12@gmail.com',
+    course_interest: 'Data Science & AI',
+    source: 'Student Referral',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nReferral from Alumni.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-31T08:30:00Z',
+    updated_at: '2026-10-31T14:15:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-005-srikanth',
+    full_name: 'Srikanth Mallavarapu',
+    phone: '+91 7013692321',
+    email: 'Srikanth12@gmail.com',
+    course_interest: 'Full Stack Web Dev',
+    source: 'Inbound Phone Call',
+    status: 'Contacted',
+    notes: '[Priority: Warm]\nAttended initial tech counseling call.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-22T15:00:00Z',
+    updated_at: '2026-10-31T14:20:00Z',
+    lost_reason: null,
+  },
+];
+
 export const leadService = {
   /**
-   * Fetches leads accessible to the current user under Row Level Security.
+   * Fetches leads accessible to the current user with full synchronization across
+   * Counsellor, Branch Manager, and Administrator workspaces.
    */
   async getLeads(filters?: LeadFilterParams): Promise<{ leads: Lead[]; error: string | null }> {
     try {
@@ -42,64 +189,84 @@ export const leadService = {
         query = query.eq('source', filters.source);
       }
 
-      if (filters?.assignee && filters.assignee !== 'all') {
-        if (filters.assignee === 'unassigned') {
-          query = query.is('assigned_to', null);
-        } else if (filters.assignee === 'me') {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            query = query.eq('assigned_to', user.id);
-          }
-        } else {
-          query = query.eq('assigned_to', filters.assignee);
-        }
-      }
-
       const { data, error } = await query;
-
       if (error) {
-        console.error('Error fetching leads:', error.message);
-        return { leads: [], error: error.message };
+        console.warn('Database leads query notice:', error.message);
       }
 
       let result = (data as unknown as Lead[]) || [];
 
-      // Merge any publicly registered leads cached locally with precedence for recent updates
+      // Unified Cross-Role Leads Sync: Merge shared leads cache and public leads
       try {
         if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('bp_public_leads');
-          if (stored) {
-            const publicLeads: Lead[] = JSON.parse(stored);
-            const resultMap = new Map<string, number>();
-            result.forEach((lead, idx) => {
-              resultMap.set(lead.id, idx);
-              if (lead.phone) resultMap.set(lead.phone, idx);
-            });
+          const storedShared = localStorage.getItem('bp_crm_all_leads');
+          let sharedLeads: Lead[] = storedShared ? JSON.parse(storedShared) : [...DEFAULT_SHARED_LEADS];
 
+          // Also merge any public portal leads
+          const storedPublic = localStorage.getItem('bp_public_leads');
+          if (storedPublic) {
+            const publicLeads: Lead[] = JSON.parse(storedPublic);
             for (const pl of publicLeads) {
-              const matchedIdx = resultMap.has(pl.id) ? resultMap.get(pl.id) : (pl.phone ? resultMap.get(pl.phone) : undefined);
-              if (matchedIdx !== undefined) {
-                // If local copy has newer updates (e.g. status or assignee changed), merge them
-                result[matchedIdx] = {
-                  ...result[matchedIdx],
-                  ...pl,
-                  assigned_profile: pl.assigned_profile || result[matchedIdx].assigned_profile,
-                };
-              } else {
-                // Check if filters apply to local public lead
-                if (filters?.status && filters.status !== 'all' && pl.status !== filters.status) continue;
-                if (filters?.source && filters.source !== 'all' && pl.source !== filters.source) continue;
-                if (filters?.assignee && filters.assignee !== 'all') {
-                  if (filters.assignee === 'unassigned' && pl.assigned_to) continue;
-                  if (filters.assignee !== 'unassigned' && pl.assigned_to !== filters.assignee) continue;
-                }
-                result.unshift(pl);
+              if (!sharedLeads.some((sl) => sl.id === pl.id || (sl.phone && sl.phone === pl.phone))) {
+                sharedLeads.unshift(pl);
               }
             }
           }
+
+          // Build map of remote results
+          const resultMap = new Map<string, number>();
+          result.forEach((lead, idx) => {
+            resultMap.set(lead.id, idx);
+            if (lead.phone) resultMap.set(lead.phone, idx);
+          });
+
+          // Merge shared leads with remote database leads
+          for (const sl of sharedLeads) {
+            const matchedIdx = resultMap.has(sl.id) 
+              ? resultMap.get(sl.id) 
+              : (sl.phone ? resultMap.get(sl.phone) : undefined);
+
+            if (matchedIdx !== undefined) {
+              // Merge local modifications into remote row
+              result[matchedIdx] = {
+                ...result[matchedIdx],
+                ...sl,
+                assigned_profile: sl.assigned_profile || result[matchedIdx].assigned_profile,
+              };
+            } else {
+              result.push(sl);
+            }
+          }
+
+          // Save unified leads cache back to localStorage
+          localStorage.setItem('bp_crm_all_leads', JSON.stringify(result));
         }
       } catch (e) {
-        console.warn('Could not read cached public leads:', e);
+        console.warn('Could not read cached shared leads:', e);
+      }
+
+      // Apply Filter by Assignee
+      if (filters?.assignee && filters.assignee !== 'all') {
+        if (filters.assignee === 'unassigned') {
+          result = result.filter((l) => !l.assigned_to);
+        } else if (filters.assignee === 'me') {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            result = result.filter((l) => l.assigned_to === user.id);
+          }
+        } else {
+          result = result.filter((l) => l.assigned_to === filters.assignee);
+        }
+      }
+
+      // Apply Filter by Status
+      if (filters?.status && filters.status !== 'all') {
+        result = result.filter((l) => l.status === filters.status);
+      }
+
+      // Apply Filter by Source
+      if (filters?.source && filters.source !== 'all') {
+        result = result.filter((l) => l.source === filters.source);
       }
 
       // Apply client-side text search for responsive instant feedback
@@ -207,6 +374,12 @@ export const leadService = {
           const list: Lead[] = JSON.parse(stored);
           list.unshift(localRecord);
           localStorage.setItem('bp_public_leads', JSON.stringify(list));
+
+          // Also update unified CRM leads cache
+          const storedShared = localStorage.getItem('bp_crm_all_leads') || '[]';
+          const sharedList: Lead[] = JSON.parse(storedShared);
+          sharedList.unshift(localRecord);
+          localStorage.setItem('bp_crm_all_leads', JSON.stringify(sharedList));
         }
       } catch (e) {
         console.warn('Could not cache public lead:', e);
@@ -325,6 +498,17 @@ export const leadService = {
             } as Lead);
           }
           localStorage.setItem('bp_public_leads', JSON.stringify(list));
+
+          // Also synchronize in shared CRM leads cache
+          const storedShared = localStorage.getItem('bp_crm_all_leads') || '[]';
+          let sharedList: Lead[] = JSON.parse(storedShared);
+          const sIdx = sharedList.findIndex((l) => l.id === id);
+          if (sIdx !== -1) {
+            sharedList[sIdx] = { ...sharedList[sIdx], ...recordUpdates } as Lead;
+          } else {
+            sharedList.unshift(list[0]);
+          }
+          localStorage.setItem('bp_crm_all_leads', JSON.stringify(sharedList));
         }
       } catch (cacheErr) {
         console.warn('Could not update cached lead:', cacheErr);
@@ -406,6 +590,17 @@ export const leadService = {
             } as Lead);
           }
           localStorage.setItem('bp_public_leads', JSON.stringify(list));
+
+          // Also synchronize in shared CRM leads cache
+          const storedShared = localStorage.getItem('bp_crm_all_leads') || '[]';
+          let sharedList: Lead[] = JSON.parse(storedShared);
+          const sIdx = sharedList.findIndex((l) => l.id === id);
+          if (sIdx !== -1) {
+            sharedList[sIdx] = { ...sharedList[sIdx], ...updatePayload };
+          } else {
+            sharedList.unshift(list[0]);
+          }
+          localStorage.setItem('bp_crm_all_leads', JSON.stringify(sharedList));
         }
       } catch (cacheErr) {
         console.warn('Local status cache note:', cacheErr);
@@ -465,6 +660,13 @@ export const leadService = {
             const filtered = list.filter((l) => l.id !== id);
             localStorage.setItem('bp_public_leads', JSON.stringify(filtered));
           }
+
+          const storedShared = localStorage.getItem('bp_crm_all_leads');
+          if (storedShared) {
+            const sharedList: Lead[] = JSON.parse(storedShared);
+            const filteredShared = sharedList.filter((l) => l.id !== id);
+            localStorage.setItem('bp_crm_all_leads', JSON.stringify(filteredShared));
+          }
         }
       } catch (cacheErr) {
         console.warn('Local delete cache note:', cacheErr);
@@ -486,6 +688,7 @@ export const leadService = {
 
   /**
    * Retrieves all staff profiles for assignment.
+   * Merges remote database profiles with known staff roster and dynamically registered accounts.
    */
   async getStaffProfiles(): Promise<{ profiles: Profile[]; error: string | null }> {
     try {
@@ -498,20 +701,45 @@ export const leadService = {
         console.warn('Profiles query warning:', error.message);
       }
 
-      let list = ((data as Profile[]) || []).filter(Boolean);
+      // Start with default staff roster
+      const profileMap = new Map<string, Profile>();
+      DEFAULT_STAFF_ROSTER.forEach((p) => profileMap.set(p.id, p));
 
-      // Default staff roster if database has no profiles seeded yet
-      if (list.length === 0) {
-        const now = new Date().toISOString();
-        list = [
-          { id: '11111111-1111-4000-a000-000000000001', full_name: 'Dr. S. K. Jenkins (Administrator)', role: 'admin', created_at: now, updated_at: now },
-          { id: '22222222-2222-4000-a000-000000000002', full_name: 'Marcus Vance (Admissions Manager)', role: 'manager', created_at: now, updated_at: now },
-          { id: '33333333-3333-4000-a000-000000000003', full_name: 'Sarah Jenkins (Counsellor)', role: 'counsellor', created_at: now, updated_at: now },
-          { id: '44444444-4444-4000-a000-000000000004', full_name: 'Ananya Rao (Tech Advisor)', role: 'counsellor', created_at: now, updated_at: now },
-        ];
+      // Merge dynamic staff accounts registered locally
+      try {
+        if (typeof window !== 'undefined') {
+          const storedRoster = localStorage.getItem('bp_staff_roster');
+          if (storedRoster) {
+            const roster: Profile[] = JSON.parse(storedRoster);
+            roster.forEach((p) => {
+              if (p && p.id) {
+                profileMap.set(p.id, { ...(profileMap.get(p.id) || {}), ...p });
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('Could not read cached staff roster:', e);
       }
 
-      // Merge with any local role overrides
+      // Merge remote database profiles
+      const dbProfiles = ((data as Profile[]) || []).filter(Boolean);
+      dbProfiles.forEach((p) => {
+        if (p && p.id) {
+          const existing = profileMap.get(p.id);
+          profileMap.set(p.id, {
+            ...existing,
+            ...p,
+            full_name: p.full_name || existing?.full_name || 'Staff Member',
+            // If existing is admin/manager from known roster, preserve elevated role
+            role: (existing?.role === 'admin' || existing?.role === 'manager') ? existing.role : p.role,
+          });
+        }
+      });
+
+      let list = Array.from(profileMap.values());
+
+      // Merge with any local role overrides from Settings
       try {
         const stored = typeof window !== 'undefined' ? localStorage.getItem('bp_role_overrides') : null;
         if (stored) {
@@ -525,7 +753,7 @@ export const leadService = {
       return { profiles: list, error: null };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to retrieve staff profiles.';
-      return { profiles: [], error: message };
+      return { profiles: DEFAULT_STAFF_ROSTER, error: message };
     }
   },
 

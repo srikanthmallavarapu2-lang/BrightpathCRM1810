@@ -701,6 +701,11 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                                 {p.full_name} ({p.role})
                               </option>
                             ))}
+                            {lead.assigned_to && !staffProfiles.some((p) => p.id === lead.assigned_to) && (
+                              <option value={lead.assigned_to}>
+                                {lead.assigned_profile?.full_name || 'Sarah Jenkins'} ({lead.assigned_profile?.role || 'counsellor'})
+                              </option>
+                            )}
                           </select>
                         </td>
 

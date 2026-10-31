@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { FollowUp, LeadStatus } from '../types/database';
+import { leadService } from './leadService';
 
 export interface DashboardMetrics {
   totalLeads: number;
@@ -27,49 +28,14 @@ export const dashboardService = {
    */
   async getMetrics(): Promise<{ metrics: DashboardMetrics; error: string | null }> {
     try {
-      // 1. Fetch leads from database
-      const { data: leadsData, error: leadsError } = await supabase
-        .from('leads')
-        .select('id, status, source, created_at');
-
-      if (leadsError) {
-        console.warn('Dashboard leads query notice (merging local cache):', leadsError.message);
-      }
-
-      let leads: Array<{ id: string; status: string; source: string; created_at: string }> = leadsData ? [...leadsData] : [];
-
-      // Merge cached public / locally-persisted leads so KPIs 100% reconcile with the pipeline table
-      try {
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('bp_public_leads');
-          if (stored) {
-            const publicLeads: Array<{ id: string; status: string; source?: string; created_at?: string }> = JSON.parse(stored);
-            const existingMap = new Map<string, number>();
-            leads.forEach((l, idx) => existingMap.set(l.id, idx));
-
-            for (const pl of publicLeads) {
-              if (existingMap.has(pl.id)) {
-                // If local copy has updated status or source, update in array
-                const idx = existingMap.get(pl.id)!;
-                leads[idx] = {
-                  ...leads[idx],
-                  status: pl.status || leads[idx].status,
-                  source: pl.source || leads[idx].source,
-                };
-              } else {
-                leads.push({
-                  id: pl.id,
-                  status: pl.status || 'New',
-                  source: pl.source || 'Website Form',
-                  created_at: pl.created_at || new Date().toISOString(),
-                });
-              }
-            }
-          }
-        }
-      } catch (cacheErr) {
-        console.warn('Dashboard local lead merge warning:', cacheErr);
-      }
+      // 1. Fetch unified leads ensuring exact alignment with the pipeline table across all roles
+      const { leads: allLeads } = await leadService.getLeads();
+      const leads = allLeads.map((l) => ({
+        id: l.id,
+        status: l.status,
+        source: l.source,
+        created_at: l.created_at,
+      }));
 
       const totalLeads = leads.length;
 
