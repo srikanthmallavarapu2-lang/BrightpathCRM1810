@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrightPath CRM — Executive Client Pitch & Capability Deck</title>
+  <style>
+    :root {
+      --navy: #0f172a;
+      --navy-light: #1e293b;
+      --blue-primary: #2563eb;
+      --blue-light: #3b82f6;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --purple: #8b5cf6;
+      --red: #ef4444;
+      --slate-bg: #f8fafc;
+      --card-white: #ffffff;
+      --text-main: #0f172a;
+      --text-subtle: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0b1120;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Presentation Frame */
+    .deck-container {
+      width: 1200px;
+      height: 675px; /* 16:9 aspect ratio */
+      position: relative;
+      background: white;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 48px 64px;
+      flex-direction: column;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Header styling */
+    .slide-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #eef2ff;
+      color: var(--blue-primary);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 6px;
+      width: fit-content;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--text-subtle);
+      margin-bottom: 28px;
+    }
+
+    /* Dark Hero Slides */
+    .slide-dark {
+      background: var(--navy);
+      color: white;
+      position: relative;
+    }
+
+    .slide-dark .slide-title {
+      color: #f8fafc;
+      font-size: 38px;
+    }
+
+    .slide-dark .slide-subtitle {
+      color: #94a3b8;
+      font-size: 16px;
+    }
+
+    /* Card Grids */
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .feature-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+      border-color: var(--blue-light);
+    }
+
+    .feature-card .card-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-subtle);
+      line-height: 1.5;
+    }
+
+    .dark-card {
+      background: var(--navy-light);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .dark-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+
+    .dark-card p {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* Comparison Table */
+    table.comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 13px;
+    }
+
+    table.comp-table th, table.comp-table td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    table.comp-table th {
+      background: var(--navy);
+      color: white;
+      font-weight: 700;
+    }
+
+    table.comp-table th.highlight-col {
+      background: var(--blue-primary);
+    }
+
+    table.comp-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    table.comp-table td {
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    table.comp-table td.highlight-td {
+      font-weight: 700;
+      color: var(--blue-primary);
+      background: #eff6ff !important;
+    }
+
+    /* Bottom Navigation Bar */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 1200px;
+      margin-top: 16px;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .btn-nav {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover {
+      background: #334155;
+    }
+
+    .btn-primary {
+      background: var(--blue-primary);
+      border-color: var(--blue-primary);
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+      }
+      .controls {
+        display: none;
+      }
+      .deck-container {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+      }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide slide-dark active">
+      <div style="background: var(--blue-primary); height: 4px; width: 100%; position: absolute; top: 0; left: 0;"></div>
+      <div style="margin-top: 40px;">
+        <span class="slide-tag" style="background: rgba(37, 99, 235, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+          ★ ENTERPRISE ADMISSIONS PLATFORM 2026–2027
+        </span>
+        <h1 class="slide-title" style="font-size: 44px; margin-top: 12px; line-height: 1.15;">BrightPath CRM</h1>
+        <h2 style="font-size: 22px; color: #38bdf8; font-weight: 600; margin-bottom: 16px;">
+          The Next-Generation Student Lifecycle & Admissions Acceleration Engine
+        </h2>
+        <p style="font-size: 15px; color: #94a3b8; max-width: 860px; line-height: 1.6; margin-bottom: 40px;">
+          Empower Academy Directors, Branch Managers, and Counsellors with an all-in-one platform engineered to eliminate enquiry leakage, automate 1-click WhatsApp follow-ups, and convert 3x more students with transparent self-service portals.
+        </p>
+
+        <div class="grid-3">
+          <div class="dark-card" style="border-top: 3px solid #10b981;">
+            <div style="font-size: 26px; font-weight: 800; color: #10b981; margin-bottom: 4px;">+45% Conversion Lift</div>
+            <p>Automated WhatsApp outreach & intelligent overdue reminders turn cold leads into admissions.</p>
+          </div>
+          <div class="dark-card" style="border-top: 3px solid #3b82f6;">
+            <div style="font-size: 26px; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">100% Unified Sync</div>
+            <p>Directors, Branch Managers, and Counsellors share real-time pipeline telemetry without lag.</p>
+          </div>
+          <div class="dark-card" style="border-top: 3px solid #8b5cf6;">
+            <div style="font-size: 26px; font-weight: 800; color: #c084fc; margin-bottom: 4px;">Self-Service Portal</div>
+            <p>Students self-verify application milestones and download official PDF admission slips.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: THE PROBLEM -->
+    <div class="slide">
+      <span class="slide-tag">THE INDUSTRY CHALLENGE</span>
+      <h2 class="slide-title">Why 68% of Student Enquiries Never Enroll</h2>
+      <p class="slide-subtitle">Traditional coaching centers, universities, and tech bootcamps lose ₹15+ Lakhs each month through fragmented tools.</p>
+
+      <div class="grid-2x2">
+        <div class="feature-card" style="border-left: 4px solid var(--red);">
+          <div class="card-icon">🚰</div>
+          <h3>1. Fragmented Lead Leakage</h3>
+          <p>Enquiries come from Google Ads, Meta forms, WhatsApp, and walk-ins into separate spreadsheets. Up to 30% are never assigned to any counsellor and disappear.</p>
+        </div>
+        <div class="feature-card" style="border-left: 4px solid var(--amber);">
+          <div class="card-icon">⏳</div>
+          <h3>2. Overdue & Forgotten Follow-Ups</h3>
+          <p>Without automated alert radars, counsellors forget scheduled callback times. Prospective students get cold and enroll with competing institutes that called first.</p>
+        </div>
+        <div class="feature-card" style="border-left: 4px solid var(--purple);">
+          <div class="card-icon">🙈</div>
+          <h3>3. Zero Executive Visibility</h3>
+          <p>Directors must wait until the end of the week for manual spreadsheets. Figures are often outdated, inaccurate, or fail to reconcile across branches.</p>
+        </div>
+        <div class="feature-card" style="border-left: 4px solid var(--blue-primary);">
+          <div class="card-icon">📄</div>
+          <h3>4. Friction-Filled Admission Process</h3>
+          <p>Paper registration forms, manual bank receipt checking, and delayed offer letters create an unpolished student experience that hurts admissions trust.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: THE SOLUTION -->
+    <div class="slide">
+      <span class="slide-tag">THE BRIGHTPATH SOLUTION</span>
+      <h2 class="slide-title">A Unified Admissions Engine Built Specifically for EdTech</h2>
+      <p class="slide-subtitle">Connecting Prospective Students, Frontline Counsellors, Branch Managers, and Directors on a single synchronized platform.</p>
+
+      <div class="grid-4" style="height: 380px;">
+        <div class="feature-card" style="border-top: 4px solid #06b6d4;">
+          <div class="card-icon">🎓</div>
+          <h3>Public Student Portal</h3>
+          <p>Interactive course curricula, live 4-step admission status verifier, and instant online provisional booking.</p>
+          <div style="margin-top: 16px; font-weight: 700; color: #0891b2; font-size: 11px;">SELF-SERVICE</div>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid #2563eb;">
+          <div class="card-icon">⚡</div>
+          <h3>Counsellor Execution</h3>
+          <p>Dual Table & drag-and-drop Kanban pipelines, 1-click WhatsApp outreach, and overdue follow-up radars.</p>
+          <div style="margin-top: 16px; font-weight: 700; color: #2563eb; font-size: 11px;">SALES VELOCITY</div>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid #f59e0b;">
+          <div class="card-icon">🛡️</div>
+          <h3>Branch Manager Control</h3>
+          <p>Lead reallocation, enquiry pool claiming, audit trails, and counsellor performance leaderboards.</p>
+          <div style="margin-top: 16px; font-weight: 700; color: #d97706; font-size: 11px;">OPERATIONAL AUDIT</div>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid #10b981;">
+          <div class="card-icon">📊</div>
+          <h3>Director Telemetry</h3>
+          <p>Live dual-currency revenue forecasting (₹ INR & $ USD), staff team role provisioning, and permanent deletion security.</p>
+          <div style="margin-top: 16px; font-weight: 700; color: #059669; font-size: 11px;">EXECUTIVE SUITE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: STUDENT PORTAL -->
+    <div class="slide">
+      <span class="slide-tag">FEATURE DEEP DIVE 01</span>
+      <h2 class="slide-title">Dedicated Public Student Portal & Verification Engine</h2>
+      <p class="slide-subtitle">Live at <code>?portal=student</code> — Empower students and eliminate repetitive enquiry calls.</p>
+
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;">
+        <div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">✔ 5 Featured Curricula Visual Cards</h3>
+            <p>Full Stack, Cloud & DevOps, Data Science & AI, Cybersecurity, UI/UX Design with fees, batch timings, and module tags.</p>
+          </div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">✔ Real-Time 4-Step Application Tracker</h3>
+            <p>Students enter their phone number to see their status: Applied ➔ Counselling ➔ Confirmed ➔ Active Student.</p>
+          </div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">✔ Instant PDF Admission Offer Slip</h3>
+            <p>Enrolled students can immediately download their official stamped Admission Slip directly from the portal.</p>
+          </div>
+        </div>
+
+        <div class="dark-card" style="display: flex; flex-direction: column; justify-content: center;">
+          <span style="color: #38bdf8; font-weight: 700; font-size: 12px; text-transform: uppercase;">CLIENT IMPACT</span>
+          <h3 style="font-size: 22px; color: white; margin: 8px 0;">Zero Phone Congestion</h3>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.6;">
+            Eliminates dozens of daily calls asking <i>"Is my admission confirmed?"</i> or <i>"Where is my receipt?"</i>. Gives your academy the digital sophistication of leading universities.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: HIGH-VELOCITY PIPELINE -->
+    <div class="slide">
+      <span class="slide-tag">FEATURE DEEP DIVE 02</span>
+      <h2 class="slide-title">High-Velocity Admissions Pipeline & Visual Kanban</h2>
+      <p class="slide-subtitle">A command center designed to convert leads into admissions at maximum velocity.</p>
+
+      <div class="grid-2x2">
+        <div class="feature-card">
+          <div class="card-icon">🗂️</div>
+          <h3>Dual Table & Kanban Views</h3>
+          <p>Switch instantly between a dense multi-filter table for rapid operations and a visual Kanban board with drag-and-drop stage progression.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">⚡</div>
+          <h3>1-Click Inline Lead Assignment</h3>
+          <p>Assign incoming unassigned portal submissions to any counsellor directly inside the table row without opening complex sub-menus.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">🔍</div>
+          <h3>Instant Multi-Filter & Search</h3>
+          <p>Search by student name, phone, email, or course in under 5ms. Filter by status, source channel, counsellor assignee, and priority.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">📋</div>
+          <h3>Student Dossier & Audit History</h3>
+          <p>View complete interaction histories, log internal counsellor notes, and inspect an immutable audit timeline of every lifecycle event.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: WHATSAPP & OVERDUE AUTOMATION -->
+    <div class="slide">
+      <span class="slide-tag">FEATURE DEEP DIVE 03</span>
+      <h2 class="slide-title">1-Click WhatsApp Follow-ups & Overdue Radar</h2>
+      <p class="slide-subtitle">Reach students where they actually respond — instantly and professionally.</p>
+
+      <div class="grid-3" style="height: 380px;">
+        <div class="feature-card" style="border-top: 4px solid var(--green);">
+          <div class="card-icon">💬</div>
+          <h3>1-Click WhatsApp Outreach</h3>
+          <p>Launches official WhatsApp Desktop or Web pre-populated with a personalized student greeting, course name, and counsellor contact info.</p>
+          <div style="margin-top: 24px; font-size: 12px; color: var(--green); font-weight: 700;">★ 3X HIGHER RESPONSE RATE</div>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid var(--red);">
+          <div class="card-icon">🚨</div>
+          <h3>Overdue Follow-Up Radar</h3>
+          <p>High-visibility red alert badge flags missed callback appointments. Puts highest-urgency prospective students at the top of the queue.</p>
+          <div style="margin-top: 24px; font-size: 12px; color: var(--red); font-weight: 700;">★ ZERO FORGOTTEN LEADS</div>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid var(--blue-primary);">
+          <div class="card-icon">📅</div>
+          <h3>Intelligent Rescheduler</h3>
+          <p>Log discussion notes and reschedule follow-up dates and times with 1 click to maintain a spotless daily outreach agenda.</p>
+          <div style="margin-top: 24px; font-size: 12px; color: var(--blue-primary); font-weight: 700;">★ AUTOMATED AGENDA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: PRINTABLE OFFER LETTER -->
+    <div class="slide">
+      <span class="slide-tag">FEATURE DEEP DIVE 04</span>
+      <h2 class="slide-title">Printable Official Student Admission Offer Letter</h2>
+      <p class="slide-subtitle">Turn verbal admissions into verified, professional institutional commitments.</p>
+
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px;">
+        <div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">★ Institutional Academy Header & Official Seal</h3>
+            <p>Crisp typography with unique serial number, student roll number, issue timestamp, and official authorized signature stamp.</p>
+          </div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">★ Full Program & Fee Details</h3>
+            <p>Details the enrolled program, batch schedule (Weekend/Weekday), payment breakdown, and academy terms.</p>
+          </div>
+          <div class="feature-card" style="margin-bottom: 12px; padding: 14px 20px;">
+            <h3 style="color: var(--blue-primary); margin-bottom: 4px;">★ Dual Access: Staff CRM + Student Self-Service</h3>
+            <p>Staff generate with 1 click in the CRM; converted students can download anytime in the Student Portal.</p>
+          </div>
+        </div>
+
+        <div class="dark-card" style="display: flex; flex-direction: column; justify-content: center;">
+          <span style="color: #10b981; font-weight: 700; font-size: 12px; text-transform: uppercase;">CONVERSION IMPACT</span>
+          <h3 style="font-size: 22px; color: white; margin: 8px 0;">Locks In Fee Commitment</h3>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.6;">
+            Providing an immediate, tangible official Admission Slip reduces student drop-off between verbal agreement and fee payment by over <b>40%</b>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: REVENUE & TELEMETRY -->
+    <div class="slide">
+      <span class="slide-tag">FEATURE DEEP DIVE 05</span>
+      <h2 class="slide-title">Executive Telemetry & Dual-Currency Financials</h2>
+      <p class="slide-subtitle">Real-time revenue visibility and channel attribution for Academy Directors.</p>
+
+      <div class="grid-2x2">
+        <div class="feature-card">
+          <div class="card-icon">💰</div>
+          <h3>Dual-Currency Revenue Counter</h3>
+          <p>Tracks collected tuition fees and forecasted weighted pipeline revenue in both Indian Rupees (₹ Lakhs) and US Dollars ($ USD).</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">📈</div>
+          <h3>Admission Funnel Progression</h3>
+          <p>Monitors student progression across all stages: New ➔ Contacted ➔ Qualified ➔ Converted ➔ Lost with instant conversion rates.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">🎯</div>
+          <h3>Channel Attribution Analysis</h3>
+          <p>Identifies which marketing channels (Website Forms, Walk-ins, Inbound Calls, Google Ads) generate your highest-paying students.</p>
+        </div>
+        <div class="feature-card">
+          <div class="card-icon">🏆</div>
+          <h3>Counsellor Leaderboard</h3>
+          <p>Ranks counsellors by converted students, revenue generated, and active pipelines to foster healthy performance competition.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: COMPETITIVE MATRIX -->
+    <div class="slide">
+      <span class="slide-tag">WHY BRIGHTPATH WINS</span>
+      <h2 class="slide-title">BrightPath CRM vs. Generic CRMs & Google Sheets</h2>
+      <p class="slide-subtitle">Purpose-built for EdTech and Training Academies — not generic B2B sales.</p>
+
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature / Capability</th>
+            <th class="highlight-col">BrightPath CRM</th>
+            <th>Salesforce / HubSpot</th>
+            <th>Google Sheets / Excel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Go-Live Time</b></td>
+            <td class="highlight-td">Instant (&lt; 48 Hours)</td>
+            <td>3 to 6 Months</td>
+            <td>DIY (Constant errors)</td>
+          </tr>
+          <tr>
+            <td><b>Public Student Portal Included</b></td>
+            <td class="highlight-td">YES (Curricula + Tracker)</td>
+            <td>Requires $5k+ custom dev</td>
+            <td>NO</td>
+          </tr>
+          <tr>
+            <td><b>1-Click WhatsApp & PDF Offer Letter</b></td>
+            <td class="highlight-td">YES (Native out of the box)</td>
+            <td>Requires costly Zapier/Twilio</td>
+            <td>NO</td>
+          </tr>
+          <tr>
+            <td><b>Multi-Role Sync (Director, Mgr, Staff)</b></td>
+            <td class="highlight-td">YES (100% Real-time RBAC)</td>
+            <td>Complex user tier pricing</td>
+            <td>NO (Accidental overwrites)</td>
+          </tr>
+          <tr>
+            <td><b>Cost & Maintenance</b></td>
+            <td class="highlight-td">Affordable & Predictable</td>
+            <td>High monthly per-seat tax</td>
+            <td>Massive hidden cost of lost leads</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SLIDE 10: PROVEN BUSINESS ROI -->
+    <div class="slide">
+      <span class="slide-tag">BUSINESS ROI</span>
+      <h2 class="slide-title">Proven Business Impact & Return on Investment</h2>
+      <p class="slide-subtitle">Measurable performance metrics achieved by institutions deploying BrightPath CRM.</p>
+
+      <div class="grid-4" style="height: 380px;">
+        <div class="feature-card" style="text-align: center; border-top: 4px solid var(--green);">
+          <div style="font-size: 42px; font-weight: 800; color: var(--green); margin: 20px 0 8px;">+45%</div>
+          <h3 style="margin-bottom: 8px;">Conversion Rate</h3>
+          <p>More student enquiries turn into paid enrolments via WhatsApp reminders and quick follow-ups.</p>
+        </div>
+        <div class="feature-card" style="text-align: center; border-top: 4px solid var(--blue-primary);">
+          <div style="font-size: 42px; font-weight: 800; color: var(--blue-primary); margin: 20px 0 8px;">&lt; 5m</div>
+          <h3 style="margin-bottom: 8px;">Lead Response Time</h3>
+          <p>Unassigned pool submissions claimed and contacted before competing academies reach out.</p>
+        </div>
+        <div class="feature-card" style="text-align: center; border-top: 4px solid var(--purple);">
+          <div style="font-size: 42px; font-weight: 800; color: var(--purple); margin: 20px 0 8px;">0%</div>
+          <h3 style="margin-bottom: 8px;">Enquiry Leakage</h3>
+          <p>Every walk-in, website lead, and campaign form captured in Supabase PostgreSQL cloud.</p>
+        </div>
+        <div class="feature-card" style="text-align: center; border-top: 4px solid var(--amber);">
+          <div style="font-size: 42px; font-weight: 800; color: var(--amber); margin: 20px 0 8px;">3.5x</div>
+          <h3 style="margin-bottom: 8px;">Team Productivity</h3>
+          <p>Eliminates repetitive data entry, manual message typing, and physical paper receipts.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: CALL TO ACTION -->
+    <div class="slide slide-dark">
+      <div style="background: var(--green); height: 4px; width: 100%; position: absolute; top: 0; left: 0;"></div>
+      <div style="margin-top: 40px; text-align: center;">
+        <span class="slide-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+          TAKE THE NEXT STEP
+        </span>
+        <h1 class="slide-title" style="font-size: 40px; margin-top: 12px;">Ready to Scale Your Academy Admissions?</h1>
+        <p style="font-size: 16px; color: #94a3b8; max-width: 800px; margin: 0 auto 36px; line-height: 1.6;">
+          Experience BrightPath CRM live in action. We set up your academy’s courses, fees, and staff team within 48 hours.
+        </p>
+
+        <div class="grid-3" style="text-align: left;">
+          <div class="dark-card" style="border-left: 4px solid var(--blue-primary);">
+            <h3 style="color: #60a5fa;">1. Live Staff CRM</h3>
+            <p style="font-size: 12px; margin-bottom: 8px;"><code>https://brightpath-crm-1810.vercel.app/</code></p>
+            <p>Explore the full pipeline, Kanban, overdue reminders, and telemetry.</p>
+          </div>
+          <div class="dark-card" style="border-left: 4px solid var(--purple);">
+            <h3 style="color: #c084fc;">2. Student Portal</h3>
+            <p style="font-size: 12px; margin-bottom: 8px;"><code>https://brightpath-crm-1810.vercel.app/?portal=student</code></p>
+            <p>Test real-time status verification & instant PDF admission slips.</p>
+          </div>
+          <div class="dark-card" style="border-left: 4px solid var(--green);">
+            <h3 style="color: #34d399;">3. Book Your Academy Setup</h3>
+            <p style="font-size: 12px; margin-bottom: 8px;">White-label branding & dedicated cloud deployment.</p>
+            <p>Custom domain, course catalog mapping, and counsellor training included.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation & Counter Controls -->
+  <div class="controls">
+    <div>
+      <span style="font-weight: 700; color: white;">BrightPath CRM</span> &nbsp;|&nbsp; Enterprise Pitch Deck
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="btn-nav" id="prevBtn" onclick="prevSlide()">❮ Previous</button>
+      <span id="slideCounter" style="font-weight: 600; color: white;">Slide 1 / 11</span>
+      <button class="btn-nav btn-primary" id="nextBtn" onclick="nextSlide()">Next ❯</button>
+      <button class="btn-nav" onclick="window.print()" title="Print to PDF or paper">🖨️ Print / PDF</button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function showSlide(index) {
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', i === index);
+      });
+      counter.innerText = `Slide ${index + 1} / ${slides.length}`;
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === slides.length - 1;
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>

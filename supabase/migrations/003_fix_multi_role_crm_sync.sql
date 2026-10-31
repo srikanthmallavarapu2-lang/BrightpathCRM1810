@@ -157,3 +157,4 @@ CREATE POLICY "activities_insert_policy" ON public.activities
   WITH CHECK (
     auth.role() = 'authenticated'
   );
+
