@@ -92,7 +92,7 @@ export const followUpService = {
           lead:leads(id, full_name, phone, course_interest, status),
           assigned_profile:profiles!assigned_to(id, full_name, role)
         `)
-        .single();
+        .maybeSingle();
 
       if (error) {
         return { followUp: null, error: error.message };
@@ -134,7 +134,7 @@ export const followUpService = {
         .from('follow_ups')
         .select('*, lead:leads(id, full_name)')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (fetchErr || !currentItem) {
         return { success: false, error: fetchErr?.message || 'Follow-up not found.' };
@@ -195,7 +195,7 @@ export const followUpService = {
         })
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         return { success: false, error: error.message };

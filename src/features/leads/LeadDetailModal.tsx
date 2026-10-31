@@ -30,6 +30,7 @@ interface LeadDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   leadId: string | null;
+  initialLead?: Lead | null;
   onLeadUpdated: () => void;
   onScheduleFollowUp: (lead: Lead) => void;
   onEditLead: (lead: Lead) => void;
@@ -39,11 +40,12 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   isOpen,
   onClose,
   leadId,
+  initialLead,
   onLeadUpdated,
   onScheduleFollowUp,
   onEditLead,
 }) => {
-  const [lead, setLead] = useState<Lead | null>(null);
+  const [lead, setLead] = useState<Lead | null>(initialLead || null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [followUps, setFollowUps] = useState<FollowUp[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +56,13 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
 
   const toast = useToast();
+
+  // Sync initialLead when opened
+  useEffect(() => {
+    if (initialLead) {
+      setLead(initialLead);
+    }
+  }, [initialLead]);
 
   // Close on Escape key press
   useEffect(() => {
@@ -77,16 +86,20 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
       followUpService.getFollowUps({ leadId }),
     ]);
 
-    if (leadRes.error) {
-      setErrorMessage(leadRes.error);
-    } else {
+    if (leadRes.lead) {
       setLead(leadRes.lead);
+    } else if (initialLead) {
+      setLead(initialLead);
     }
 
-    setActivities(actRes.activities);
-    setFollowUps(followRes.followUps);
+    if (leadRes.error && !leadRes.lead && !initialLead) {
+      setErrorMessage(leadRes.error);
+    }
+
+    setActivities(actRes.activities || []);
+    setFollowUps(followRes.followUps || []);
     setIsLoading(false);
-  }, [leadId]);
+  }, [leadId, initialLead]);
 
   useEffect(() => {
     if (isOpen && leadId) {

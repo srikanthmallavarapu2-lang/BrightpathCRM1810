@@ -136,7 +136,7 @@ export const authService = {
           role: 'counsellor',
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.warn('Profile fallback insert note:', error.message);

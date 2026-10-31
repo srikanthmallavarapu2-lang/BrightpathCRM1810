@@ -742,6 +742,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
         isOpen={Boolean(selectedLeadForDetail)}
         onClose={() => setSelectedLeadForDetail(null)}
         leadId={selectedLeadForDetail?.id || null}
+        initialLead={selectedLeadForDetail}
         onLeadUpdated={fetchLeads}
         onScheduleFollowUp={(lead) => {
           setSelectedLeadForDetail(null);

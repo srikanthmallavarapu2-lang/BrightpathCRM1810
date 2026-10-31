@@ -10,3 +10,4 @@ CREATE POLICY "leads_insert_policy" ON public.leads
   WITH CHECK (
     true
   );
+

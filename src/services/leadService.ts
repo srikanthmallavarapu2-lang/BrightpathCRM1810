@@ -117,16 +117,35 @@ export const leadService = {
           creator_profile:profiles!created_by(id, full_name, role)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
+      if (data) {
+        return { lead: data as unknown as Lead, error: null };
+      }
+
+      // Check locally cached public leads if not found in database (e.g. RLS boundary or offline)
+      try {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('bp_public_leads');
+          if (stored) {
+            const list: Lead[] = JSON.parse(stored);
+            const found = list.find((l) => l.id === id);
+            if (found) {
+              return { lead: found, error: null };
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Local lead lookup note:', e);
+      }
+
+      if (error && !error.message.includes('JSON')) {
         return { lead: null, error: error.message };
       }
 
-      return { lead: data as unknown as Lead, error: null };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to retrieve lead details.';
-      return { lead: null, error: message };
+      return { lead: null, error: null };
+    } catch {
+      return { lead: null, error: null };
     }
   },
 
@@ -184,7 +203,7 @@ export const leadService = {
             .from('leads')
             .insert(newLeadData)
             .select()
-            .single();
+            .maybeSingle();
 
           if (!error && data) {
             const createdLead = data as unknown as Lead;

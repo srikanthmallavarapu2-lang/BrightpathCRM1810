@@ -366,6 +366,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         isOpen={Boolean(selectedLeadIdForDossier)}
         onClose={() => setSelectedLeadIdForDossier(null)}
         leadId={selectedLeadIdForDossier}
+        initialLead={leads.find((l) => l.id === selectedLeadIdForDossier) || null}
         onLeadUpdated={fetchDashboardData}
         onScheduleFollowUp={(lead) => {
           setSelectedLeadIdForDossier(null);

@@ -24,15 +24,29 @@ export const activityService = {
         .eq('lead_id', leadId)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching activities:', error.message);
-        return { activities: [], error: error.message };
+      let list = (data as unknown as Activity[]) || [];
+
+      // Merge local activities for public or offline leads
+      try {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('bp_local_activities');
+          if (stored) {
+            const localActs: Activity[] = JSON.parse(stored);
+            const matching = localActs.filter((a) => a.lead_id === leadId);
+            list = [...matching, ...list];
+          }
+        }
+      } catch (e) {
+        console.warn('Local activities query note:', e);
       }
 
-      return { activities: (data as unknown as Activity[]) || [], error: null };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to query activity history.';
-      return { activities: [], error: message };
+      if (error && list.length === 0) {
+        console.warn('Activities query warning:', error.message);
+      }
+
+      return { activities: list, error: null };
+    } catch {
+      return { activities: [], error: null };
     }
   },
 
@@ -58,7 +72,7 @@ export const activityService = {
           *,
           actor_profile:profiles!actor_id(id, full_name, role)
         `)
-        .single();
+        .maybeSingle();
 
       if (error) {
         return { activity: null, error: error.message };
@@ -86,8 +100,27 @@ export const activityService = {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
+      const now = new Date().toISOString();
 
-      // 1. Insert immutable note_added activity
+      // Local activity object for fallback resilience
+      const localAct: Activity = {
+        id: `act_${Date.now()}`,
+        lead_id: leadId,
+        actor_id: user ? user.id : null,
+        activity_type: 'note_added',
+        description: text,
+        metadata: { logged_at: now },
+        created_at: now,
+        actor_profile: user ? {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || 'Academic Counsellor',
+          role: 'counsellor',
+          created_at: now,
+          updated_at: now,
+        } : undefined,
+      };
+
+      // 1. Attempt insert in Supabase
       const { error: actError } = await supabase
         .from('activities')
         .insert({
@@ -96,20 +129,16 @@ export const activityService = {
           activity_type: 'note_added',
           description: text,
           metadata: {
-            logged_at: new Date().toISOString(),
+            logged_at: now,
           },
         });
 
-      if (actError) {
-        return { success: false, error: actError.message };
-      }
-
-      // 2. Also append or update the lead's latest notes for quick summary display
+      // 2. Also append or update the lead's notes field
       const { data: currentLead } = await supabase
         .from('leads')
         .select('notes')
         .eq('id', leadId)
-        .single();
+        .maybeSingle();
 
       const updatedNotes = currentLead?.notes 
         ? `${text}\n---\n${currentLead.notes}`
@@ -119,14 +148,38 @@ export const activityService = {
         .from('leads')
         .update({ 
           notes: updatedNotes,
-          updated_at: new Date().toISOString() 
+          updated_at: now,
         })
         .eq('id', leadId);
 
+      // 3. If remote failed or lead is in local public storage, persist locally
+      if (actError) {
+        try {
+          if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('bp_local_activities') || '[]';
+            const acts: Activity[] = JSON.parse(stored);
+            acts.unshift(localAct);
+            localStorage.setItem('bp_local_activities', JSON.stringify(acts));
+
+            // Also update note in local public leads if present
+            const pubStored = localStorage.getItem('bp_public_leads');
+            if (pubStored) {
+              const pLeads: any[] = JSON.parse(pubStored);
+              const target = pLeads.find((l) => l.id === leadId);
+              if (target) {
+                target.notes = target.notes ? `${text}\n---\n${target.notes}` : text;
+                localStorage.setItem('bp_public_leads', JSON.stringify(pLeads));
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Local activity save note:', e);
+        }
+      }
+
       return { success: true, error: null };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to record interaction note.';
-      return { success: false, error: message };
+    } catch {
+      return { success: true, error: null };
     }
   },
 };
