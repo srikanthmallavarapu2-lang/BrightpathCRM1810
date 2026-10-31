@@ -3,7 +3,6 @@ import {
   X, 
   Phone, 
   Mail, 
-  GraduationCap, 
   Calendar, 
   User, 
   CalendarPlus, 
@@ -12,7 +11,8 @@ import {
   Send, 
   CheckCircle2, 
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Printer
 } from 'lucide-react';
 import { Lead, Activity, FollowUp, LeadStatus } from '../../types/database';
 import { leadService } from '../../services/leadService';
@@ -22,6 +22,9 @@ import { ActivityTimeline } from '../activities/ActivityTimeline';
 import { LostReasonModal } from './LostReasonModal';
 import { OverdueBadge } from '../../components/common/OverdueBadge';
 import { useToast } from '../../context/ToastContext';
+import { UserAvatar } from '../../components/common/UserAvatar';
+import { CourseBadge } from '../../components/common/CourseBadge';
+import { AdmissionLetterModal } from './AdmissionLetterModal';
 
 interface LeadDetailModalProps {
   isOpen: boolean;
@@ -48,6 +51,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLostModalOpen, setIsLostModalOpen] = useState(false);
+  const [isAdmissionModalOpen, setIsAdmissionModalOpen] = useState(false);
 
   const toast = useToast();
 
@@ -206,22 +210,7 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 'var(--radius-full)',
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '1.2rem',
-              }}
-            >
-              {lead?.full_name ? lead.full_name.charAt(0).toUpperCase() : 'S'}
-            </div>
+            <UserAvatar name={lead?.full_name || 'Student'} size={44} />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <h2 id="lead-dossier-title" style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)' }}>
@@ -250,9 +239,18 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
           </div>
 
           {/* Quick Top Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             {lead && (
               <>
+                <button
+                  onClick={() => setIsAdmissionModalOpen(true)}
+                  className="btn btn-outline"
+                  style={{ fontSize: '0.8rem', padding: '0.45rem 0.8rem', gap: '5px', borderColor: '#10b981', color: '#047857', background: '#ecfdf5' }}
+                  title="Generate official printable Admission Slip / Offer Letter"
+                >
+                  <Printer size={14} />
+                  <span>Admission Slip</span>
+                </button>
                 <button
                   onClick={() => onScheduleFollowUp(lead)}
                   className="btn btn-primary"
@@ -307,8 +305,8 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-                  <GraduationCap size={15} color="#4f46e5" />
-                  <span>Course: <strong>{lead?.course_interest}</strong></span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Course:</span>
+                  {lead && <CourseBadge courseName={lead.course_interest} size="sm" />}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
@@ -463,6 +461,13 @@ export const LeadDetailModal: React.FC<LeadDetailModalProps> = ({
         onClose={() => setIsLostModalOpen(false)}
         leadName={lead?.full_name || ''}
         onConfirm={handleConfirmLostReason}
+      />
+
+      {/* Official Printable Student Admission Offer Letter Slip */}
+      <AdmissionLetterModal
+        isOpen={isAdmissionModalOpen}
+        onClose={() => setIsAdmissionModalOpen(false)}
+        lead={lead}
       />
     </div>
   );

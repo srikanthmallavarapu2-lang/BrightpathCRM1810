@@ -9,10 +9,12 @@ import {
   Sparkles, 
   ArrowRight,
   ExternalLink,
-  RefreshCw
+  RefreshCw,
+  MessageCircle
 } from 'lucide-react';
 import { FollowUp } from '../../types/database';
 import { OverdueBadge } from '../../components/common/OverdueBadge';
+import { UserAvatar } from '../../components/common/UserAvatar';
 
 export interface ActionCenterProps {
   followUps: FollowUp[];
@@ -161,76 +163,104 @@ export const ActionCenter: React.FC<ActionCenterProps> = ({
                 }}
               >
                 {/* Left details */}
-                <div style={{ flex: '1', minWidth: '240px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
-                    <button
-                      onClick={() => onViewLead(f.lead_id, studentName)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        cursor: 'pointer',
-                        fontWeight: 700,
-                        fontSize: '0.95rem',
-                        color: '#1d4ed8',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        textAlign: 'left',
-                      }}
-                      title="View Student Dossier"
-                    >
-                      <span style={{ textDecoration: 'underline', textDecorationColor: '#93c5fd' }}>
-                        {studentName}
-                      </span>
-                      <ExternalLink size={12} color="#2563eb" />
-                    </button>
-
-                    {f.lead?.course_interest && (
-                      <span
+                <div style={{ flex: '1', minWidth: '240px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  <UserAvatar name={studentName} size={36} />
+                  <div style={{ flex: '1' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                      <button
+                        onClick={() => onViewLead(f.lead_id, studentName)}
                         style={{
-                          fontSize: '0.72rem',
-                          padding: '0.15rem 0.45rem',
-                          borderRadius: 'var(--radius-full)',
-                          background: '#eff6ff',
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                          fontSize: '0.95rem',
                           color: '#1d4ed8',
-                          fontWeight: 600,
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '3px',
+                          gap: '4px',
+                          textAlign: 'left',
                         }}
+                        title="View Student Dossier"
                       >
-                        <GraduationCap size={11} />
-                        {f.lead.course_interest}
+                        <span style={{ textDecoration: 'underline', textDecorationColor: '#93c5fd' }}>
+                          {studentName}
+                        </span>
+                        <ExternalLink size={12} color="#2563eb" />
+                      </button>
+
+                      {f.lead?.course_interest && (
+                        <span
+                          style={{
+                            fontSize: '0.72rem',
+                            padding: '0.15rem 0.45rem',
+                            borderRadius: 'var(--radius-full)',
+                            background: '#eff6ff',
+                            color: '#1d4ed8',
+                            fontWeight: 600,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                          }}
+                        >
+                          <GraduationCap size={11} />
+                          {f.lead.course_interest}
+                        </span>
+                      )}
+
+                      <OverdueBadge dueAt={f.due_at} showRelativeTime={true} />
+                    </div>
+
+                    {/* Note message */}
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500, marginBottom: '0.45rem' }}>
+                      &ldquo;{f.note}&rdquo;
+                    </p>
+
+                    {/* Metadata strip: phone & assignee */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', fontSize: '0.785rem', color: 'var(--text-secondary)' }}>
+                      {f.lead?.phone && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <Phone size={12} color="#2563eb" />
+                          <strong>{f.lead.phone}</strong>
+                        </span>
+                      )}
+
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
+                        <User size={12} />
+                        Assignee: {f.assigned_profile?.full_name || 'Unassigned'}
                       </span>
-                    )}
-
-                    <OverdueBadge dueAt={f.due_at} showRelativeTime={true} />
-                  </div>
-
-                  {/* Note message */}
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500, marginBottom: '0.45rem' }}>
-                    &ldquo;{f.note}&rdquo;
-                  </p>
-
-                  {/* Metadata strip: phone & assignee */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', fontSize: '0.785rem', color: 'var(--text-secondary)' }}>
-                    {f.lead?.phone && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Phone size={12} color="#2563eb" />
-                        <strong>{f.lead.phone}</strong>
-                      </span>
-                    )}
-
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
-                      <User size={12} />
-                      Assignee: {f.assigned_profile?.full_name || 'Unassigned'}
-                    </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Right instant actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {f.lead?.phone && (
+                    <button
+                      onClick={() => {
+                        const cleanPhone = f.lead!.phone.replace(/[^0-9]/g, '');
+                        const msg = encodeURIComponent(
+                          `Hello ${studentName}! 👋 This is your admissions advisor from BrightPath Academy following up regarding your scheduled consultation (${f.note}). Please let us know if this time works for you!`
+                        );
+                        window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
+                      }}
+                      className="btn btn-outline"
+                      style={{
+                        fontSize: '0.785rem',
+                        padding: '0.4rem 0.75rem',
+                        gap: '4px',
+                        color: '#16a34a',
+                        borderColor: '#bbf7d0',
+                        background: '#f0fdf4',
+                      }}
+                      title="Send WhatsApp Follow-up Reminder"
+                    >
+                      <MessageCircle size={14} />
+                      <span>WhatsApp Ping</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => onRescheduleFollowUp(f)}
                     className="btn btn-outline"

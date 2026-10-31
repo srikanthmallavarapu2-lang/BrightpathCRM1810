@@ -1,7 +1,8 @@
 import React from 'react';
-import { Menu, Plus, Bell, Shield, LogIn, LogOut, Globe } from 'lucide-react';
+import { Menu, Plus, Bell, LogIn, LogOut, Globe } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
 import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
+import { UserAvatar } from '../common/UserAvatar';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -111,13 +112,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         {isAuthenticated ? (
           <>
-            {/* Dynamic Role Badge */}
+            {/* Dynamic Role Badge with Avatar */}
             <div 
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.35rem 0.75rem',
+                gap: '0.5rem',
+                padding: '0.25rem 0.65rem',
                 borderRadius: 'var(--radius-full)',
                 background: roleTheme.bg,
                 border: `1px solid ${roleTheme.border}`,
@@ -127,8 +128,8 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               title={`Logged in as ${userName} (${userRole})`}
             >
-              <Shield size={14} />
-              <span>Role: {userRole}</span>
+              <UserAvatar name={userName} size={24} />
+              <span>{userRole}: {userName.split(' ')[0]}</span>
             </div>
 
             {/* Notifications */}

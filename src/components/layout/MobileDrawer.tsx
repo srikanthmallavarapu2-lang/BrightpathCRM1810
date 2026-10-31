@@ -1,14 +1,14 @@
 import React from 'react';
 import { 
   X, 
-  GraduationCap, 
   LayoutDashboard, 
   Users, 
   Clock, 
-  Settings,
+  Settings, 
   ShieldCheck
 } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
+import { AcademyLogo } from '../common/AcademyLogo';
 
 interface MobileDrawerProps {
   isOpen: boolean;
@@ -61,9 +61,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
         {/* Drawer Header */}
         <div className="sidebar-header">
           <div className="brand-wrapper">
-            <div className="brand-icon-box">
-              <GraduationCap size={22} color="#ffffff" />
-            </div>
+            <AcademyLogo size={32} />
             <div>
               <span className="brand-title">BrightPath</span>
               <span className="brand-badge">CRM</span>

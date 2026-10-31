@@ -4,7 +4,6 @@ import {
   UserCheck, 
   ClockAlert, 
   TrendingUp, 
-  CheckCircle2, 
   Sparkles, 
   RefreshCw, 
   Plus, 
@@ -15,12 +14,16 @@ import {
 } from 'lucide-react';
 import { dashboardService, DashboardMetrics } from '../../services/dashboardService';
 import { followUpService } from '../../services/followUpService';
+import { leadService } from '../../services/leadService';
 import { FollowUp, Lead, LeadStatus } from '../../types/database';
 import { KPICard } from './KPICard';
 import { StatusDistribution } from './StatusDistribution';
 import { SourceDistribution } from './SourceDistribution';
 import { ActionCenter } from './ActionCenter';
 import { CounsellorLeaderboard } from './CounsellorLeaderboard';
+import { ConversionFunnel } from './ConversionFunnel';
+import { RevenueMetricsCard } from './RevenueMetricsCard';
+import { AcademyLogo } from '../../components/common/AcademyLogo';
 import { PublicEnquiryModal } from '../simulator/PublicEnquiryModal';
 import { LeadDetailModal } from '../leads/LeadDetailModal';
 import { RescheduleModal } from '../followups/RescheduleModal';
@@ -48,6 +51,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onScheduleFollowUpForLead,
 }) => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [topOverdue, setTopOverdue] = useState<FollowUp[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -63,9 +67,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     setIsLoading(true);
     setErrorMessage(null);
 
-    const [metricsRes, overdueRes] = await Promise.all([
+    const [metricsRes, overdueRes, leadsRes] = await Promise.all([
       dashboardService.getMetrics(),
       dashboardService.getTopOverdueFollowUps(5),
+      leadService.getLeads(),
     ]);
 
     if (metricsRes.error) {
@@ -74,6 +79,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       setMetrics(metricsRes.metrics);
     }
 
+    setLeads(leadsRes.leads || []);
     setTopOverdue(overdueRes.followUps);
     setIsLoading(false);
   }, []);
@@ -109,28 +115,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div 
-            style={{ 
-              width: 42, 
-              height: 42, 
-              borderRadius: 'var(--radius-md)', 
-              background: '#2563eb', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)'
-            }}
-          >
-            <CheckCircle2 size={22} />
-          </div>
+          <AcademyLogo size={42} />
           <div>
             <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>Live Admissions Pipeline &amp; KPI Engine</span>
+              <span>BrightPath Academy &bull; Admissions Pipeline &amp; KPI Engine</span>
               <span className="radar-dot connected" title="Supabase Database Live Connected" />
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Reconciled 100% in real-time with your permitted Supabase PostgreSQL records.
+              Intake Session 2026–2027 &bull; Reconciled 100% in real-time with your permitted Supabase PostgreSQL records.
             </p>
           </div>
         </div>
@@ -267,6 +259,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           isLoading={isLoading}
         />
       </div>
+
+      {/* Financial Tuition Revenue & Pipeline Value Counter */}
+      <RevenueMetricsCard leads={leads} />
+
+      {/* Visual Admissions Conversion Funnel & Drop-off Analysis */}
+      <ConversionFunnel
+        totalLeads={metrics?.totalLeads ?? leads.length}
+        contactedCount={leads.filter((l) => l.status === 'Contacted' || l.status === 'Qualified' || l.status === 'Converted').length}
+        qualifiedCount={leads.filter((l) => l.status === 'Qualified' || l.status === 'Converted').length}
+        convertedCount={metrics?.convertedLeads ?? leads.filter((l) => l.status === 'Converted').length}
+        onSelectStage={onNavigateToLeadsWithStatus}
+      />
 
       {/* Urgent Operational Action Center */}
       <ActionCenter

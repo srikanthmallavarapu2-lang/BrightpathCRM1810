@@ -5,7 +5,6 @@ import {
   Plus, 
   Phone, 
   Mail, 
-  GraduationCap, 
   Calendar, 
   RotateCcw,
   Edit2,
@@ -30,6 +29,8 @@ import { useToast } from '../../context/ToastContext';
 import { exportLeadsToCSV } from '../../utils/csvExport';
 import { extractPriority } from '../../utils/priority';
 import { launchWhatsAppOutreach } from '../../utils/outreach';
+import { UserAvatar } from '../../components/common/UserAvatar';
+import { CourseBadge } from '../../components/common/CourseBadge';
 
 interface LeadsViewProps {
   onOpenCreateModal: () => void;
@@ -507,53 +508,58 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
-                        {/* Student Name */}
+                        {/* Student Name & Avatar */}
                         <td style={{ padding: '0.85rem 1.25rem' }}>
-                          <button
-                            onClick={() => setSelectedLeadForDetail(lead)}
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              padding: 0,
-                              cursor: 'pointer',
-                              fontWeight: 700,
-                              color: '#1d4ed8',
-                              textAlign: 'left',
-                              fontSize: '0.875rem',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                            }}
-                            title="View student dossier & activity history"
-                          >
-                            <span style={{ textDecoration: 'underline', textDecorationColor: '#93c5fd' }}>{lead.full_name}</span>
-                            <ExternalLink size={12} color="#2563eb" />
-                          </button>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <UserAvatar name={lead.full_name} size={34} />
+                            <div>
+                              <button
+                                onClick={() => setSelectedLeadForDetail(lead)}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                  fontWeight: 700,
+                                  color: '#1d4ed8',
+                                  textAlign: 'left',
+                                  fontSize: '0.875rem',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                }}
+                                title="View student dossier & activity history"
+                              >
+                                <span style={{ textDecoration: 'underline', textDecorationColor: '#93c5fd' }}>{lead.full_name}</span>
+                                <ExternalLink size={12} color="#2563eb" />
+                              </button>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
-                            <span
-                              style={{
-                                fontSize: '0.68rem',
-                                fontWeight: 700,
-                                padding: '0.1rem 0.4rem',
-                                borderRadius: 'var(--radius-full)',
-                                background: priority === 'Hot' ? '#fef2f2' : priority === 'Warm' ? '#fffbeb' : '#f1f5f9',
-                                color: priority === 'Hot' ? '#dc2626' : priority === 'Warm' ? '#d97706' : '#64748b',
-                                border: `1px solid ${priority === 'Hot' ? '#fee2e2' : priority === 'Warm' ? '#fef3c7' : '#e2e8f0'}`,
-                              }}
-                            >
-                              {priority === 'Hot' ? '🔥 Hot' : priority === 'Warm' ? '☀️ Warm' : '❄️ Cold'}
-                            </span>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                              <Calendar size={11} /> {formatDate(lead.created_at)}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                <span
+                                  style={{
+                                    fontSize: '0.68rem',
+                                    fontWeight: 700,
+                                    padding: '0.1rem 0.4rem',
+                                    borderRadius: 'var(--radius-full)',
+                                    background: priority === 'Hot' ? '#fef2f2' : priority === 'Warm' ? '#fffbeb' : '#f1f5f9',
+                                    color: priority === 'Hot' ? '#dc2626' : priority === 'Warm' ? '#d97706' : '#64748b',
+                                    border: `1px solid ${priority === 'Hot' ? '#fee2e2' : priority === 'Warm' ? '#fef3c7' : '#e2e8f0'}`,
+                                  }}
+                                >
+                                  {priority === 'Hot' ? '🔥 Hot' : priority === 'Warm' ? '☀️ Warm' : '❄️ Cold'}
+                                </span>
+                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                  <Calendar size={11} /> {formatDate(lead.created_at)}
+                                </div>
+                              </div>
+
+                              {lead.lost_reason && (
+                                <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '3px' }}>
+                                  Reason: {lead.lost_reason}
+                                </div>
+                              )}
                             </div>
                           </div>
-
-                          {lead.lost_reason && (
-                            <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '3px' }}>
-                              Reason: {lead.lost_reason}
-                            </div>
-                          )}
                         </td>
 
                         {/* Contact Info */}
@@ -570,10 +576,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
                         {/* Course Interest */}
                         <td style={{ padding: '0.85rem 1rem' }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontWeight: 500 }}>
-                            <GraduationCap size={15} color="#4f46e5" />
-                            {lead.course_interest}
-                          </span>
+                          <CourseBadge courseName={lead.course_interest} size="sm" />
                         </td>
 
                         {/* Source */}

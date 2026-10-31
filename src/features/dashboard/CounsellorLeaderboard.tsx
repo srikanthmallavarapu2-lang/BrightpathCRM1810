@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Trophy, UserCheck, TrendingUp, RefreshCw, Star } from 'lucide-react';
 import { leadService } from '../../services/leadService';
 import { Profile, Lead } from '../../types/database';
+import { UserAvatar } from '../../components/common/UserAvatar';
 
 interface CounsellorStats {
   profile: Profile;
@@ -114,23 +115,30 @@ export const CounsellorLeaderboard: React.FC = () => {
                   gap: '0.75rem',
                 }}
               >
-                {/* Left: Rank & Staff Name */}
+                {/* Left: Rank, Avatar & Staff Name */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: '50%',
-                      background: rank.bg,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.1rem',
-                      fontWeight: 800,
-                      border: '1px solid var(--border-subtle)',
-                    }}
-                  >
-                    {rank.icon}
+                  <div style={{ position: 'relative' }}>
+                    <UserAvatar name={item.profile.full_name || 'Staff Member'} size={40} />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: -4,
+                        right: -4,
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: rank.bg,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.75rem',
+                        border: '1px solid #cbd5e1',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                      }}
+                      title={rank.label}
+                    >
+                      {rank.icon}
+                    </div>
                   </div>
 
                   <div>

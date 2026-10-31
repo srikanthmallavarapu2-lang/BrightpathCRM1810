@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Send, Globe, Sparkles, AlertCircle } from 'lucide-react';
 import { leadService } from '../../services/leadService';
 import { useToast } from '../../context/ToastContext';
+import { AcademyLogo } from '../../components/common/AcademyLogo';
 
 export interface PublicEnquiryModalProps {
   isOpen: boolean;
@@ -171,6 +172,58 @@ export const PublicEnquiryModal: React.FC<PublicEnquiryModalProps> = ({
           <button onClick={onClose} className="btn-icon" aria-label="Close dialog">
             <X size={18} />
           </button>
+        </div>
+
+        {/* Visual Campus Hero Strip */}
+        <div
+          style={{
+            position: 'relative',
+            background: 'linear-gradient(135deg, #1e3a8a, #2563eb, #4338ca)',
+            padding: '1.25rem 1.5rem',
+            color: 'white',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Background pattern decoration */}
+          <div
+            style={{
+              position: 'absolute',
+              right: '-10px',
+              top: '-15px',
+              opacity: 0.15,
+              pointerEvents: 'none',
+            }}
+          >
+            <AcademyLogo size={120} />
+          </div>
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span
+                style={{
+                  fontSize: '0.65rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(4px)',
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: 'var(--radius-full)',
+                }}
+              >
+                Official Student Admissions Portal
+              </span>
+              <span style={{ fontSize: '0.72rem', color: '#fef08a', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                ⭐ 4.9/5 (2,400+ Alumni)
+              </span>
+            </div>
+            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, margin: '2px 0 4px 0', letterSpacing: '-0.2px' }}>
+              BrightPath Institute of Technology &amp; AI
+            </h4>
+            <p style={{ fontSize: '0.785rem', opacity: 0.9, margin: 0, maxWidth: '440px' }}>
+              Begin your tech career journey. Register your consultation with our career guidance faculty.
+            </p>
+          </div>
         </div>
 
         {/* Modal Form Body */}

@@ -7,11 +7,13 @@ import {
   Trash2, 
   Search, 
   ExternalLink,
-  Check
+  Check,
+  MessageCircle
 } from 'lucide-react';
 import { FollowUp } from '../../types/database';
 import { OverdueBadge } from '../../components/common/OverdueBadge';
 import { useAuth } from '../../context/AuthContext';
+import { UserAvatar } from '../../components/common/UserAvatar';
 
 export type FollowUpTab = 'all' | 'overdue' | 'today' | 'upcoming' | 'completed';
 
@@ -266,76 +268,105 @@ export const FollowUpList: React.FC<FollowUpListProps> = ({
                 }}
               >
                 {/* Left details */}
-                <div style={{ flex: '1', minWidth: '240px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-                    {/* Clickable student name */}
-                    {item.lead ? (
-                      <button
-                        onClick={() => onViewLead && onViewLead(item.lead!.id, item.lead!.full_name)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          fontWeight: 700,
-                          color: 'var(--primary-700)',
-                          fontSize: '0.95rem',
-                          textDecoration: 'none',
-                        }}
-                        title="View student in Leads Pipeline"
-                      >
-                        <span>{item.lead.full_name}</span>
-                        <ExternalLink size={12} color="#2563eb" />
-                      </button>
-                    ) : (
-                      <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem' }}>
-                        Student Enquiry
-                      </span>
-                    )}
+                <div style={{ flex: '1', minWidth: '240px', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  <UserAvatar name={item.lead?.full_name || 'Student'} size={34} />
+                  <div style={{ flex: '1' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                      {/* Clickable student name */}
+                      {item.lead ? (
+                        <button
+                          onClick={() => onViewLead && onViewLead(item.lead!.id, item.lead!.full_name)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 700,
+                            color: 'var(--primary-700)',
+                            fontSize: '0.95rem',
+                            textDecoration: 'none',
+                          }}
+                          title="View student in Leads Pipeline"
+                        >
+                          <span>{item.lead.full_name}</span>
+                          <ExternalLink size={12} color="#2563eb" />
+                        </button>
+                      ) : (
+                        <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                          Student Enquiry
+                        </span>
+                      )}
 
-                    {item.lead?.phone && (
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                        <Phone size={12} /> {item.lead.phone}
-                      </span>
-                    )}
+                      {item.lead?.phone && (
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <Phone size={12} /> {item.lead.phone}
+                        </span>
+                      )}
 
-                    {item.lead?.course_interest && (
-                      <span style={{ fontSize: '0.72rem', padding: '1px 6px', background: '#eff6ff', color: '#1d4ed8', borderRadius: '4px', fontWeight: 500 }}>
-                        {item.lead.course_interest}
-                      </span>
-                    )}
+                      {item.lead?.course_interest && (
+                        <span style={{ fontSize: '0.72rem', padding: '1px 6px', background: '#eff6ff', color: '#1d4ed8', borderRadius: '4px', fontWeight: 500 }}>
+                          {item.lead.course_interest}
+                        </span>
+                      )}
 
-                    {/* Overdue Badge */}
-                    {overdue && <OverdueBadge dueAt={item.due_at} />}
-                  </div>
-
-                  {/* Task note */}
-                  <p style={{ fontSize: '0.875rem', color: overdue ? '#7f1d1d' : 'var(--text-secondary)', marginTop: '0.35rem', lineHeight: 1.4 }}>
-                    {item.note}
-                  </p>
-
-                  {/* Timestamp & Assignee info */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: overdue ? '#dc2626' : undefined, fontWeight: overdue ? 600 : 400 }}>
-                      <Clock size={12} />
-                      <span>{isCompleted ? `Completed: ${formatDueDisplay(item.completed_at || item.due_at)}` : `Due: ${formatDueDisplay(item.due_at)}`}</span>
+                      {/* Overdue Badge */}
+                      {overdue && <OverdueBadge dueAt={item.due_at} />}
                     </div>
 
-                    {item.assigned_profile && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span>&bull; Assignee: <strong>{item.assigned_profile.full_name || 'Staff'}</strong></span>
+                    {/* Task note */}
+                    <p style={{ fontSize: '0.875rem', color: overdue ? '#7f1d1d' : 'var(--text-secondary)', marginTop: '0.35rem', lineHeight: 1.4 }}>
+                      {item.note}
+                    </p>
+
+                    {/* Timestamp & Assignee info */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: overdue ? '#dc2626' : undefined, fontWeight: overdue ? 600 : 400 }}>
+                        <Clock size={12} />
+                        <span>{isCompleted ? `Completed: ${formatDueDisplay(item.completed_at || item.due_at)}` : `Due: ${formatDueDisplay(item.due_at)}`}</span>
                       </div>
-                    )}
+
+                      {item.assigned_profile && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span>&bull; Assignee: <strong>{item.assigned_profile.full_name || 'Staff'}</strong></span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {!isCompleted && (
                     <>
+                      {item.lead?.phone && (
+                        <button
+                          onClick={() => {
+                            const cleanPhone = item.lead!.phone.replace(/[^0-9]/g, '');
+                            const sName = item.lead?.full_name || 'Student';
+                            const msg = encodeURIComponent(
+                              `Hello ${sName}! 👋 This is your admissions advisor from BrightPath Academy following up regarding your consultation (${item.note}). Please let us know if this time works for you!`
+                            );
+                            window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
+                          }}
+                          className="btn btn-outline"
+                          style={{
+                            fontSize: '0.785rem',
+                            padding: '0.4rem 0.75rem',
+                            gap: '4px',
+                            color: '#16a34a',
+                            borderColor: '#bbf7d0',
+                            background: '#f0fdf4',
+                          }}
+                          title="Send WhatsApp Follow-up Reminder"
+                        >
+                          <MessageCircle size={13} />
+                          <span>WhatsApp</span>
+                        </button>
+                      )}
+
                       <button
                         onClick={() => onReschedule(item)}
                         className="btn btn-outline"

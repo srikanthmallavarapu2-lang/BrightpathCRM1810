@@ -5,7 +5,6 @@ import {
   CalendarPlus, 
   Edit2, 
   User, 
-  GraduationCap, 
   Calendar,
   ExternalLink,
   Flame,
@@ -16,6 +15,8 @@ import { Lead, LeadStatus } from '../../types/database';
 import { extractPriority, LeadPriority } from '../../utils/priority';
 import { launchWhatsAppOutreach, launchPhoneCall } from '../../utils/outreach';
 import { useToast } from '../../context/ToastContext';
+import { UserAvatar } from '../../components/common/UserAvatar';
+import { CourseBadge } from '../../components/common/CourseBadge';
 
 export interface LeadKanbanBoardProps {
   leads: Lead[];
@@ -237,38 +238,27 @@ export const LeadKanbanBoard: React.FC<LeadKanbanBoardProps> = ({
                         e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
                       }}
                     >
-                      {/* Top strip: Name & Priority */}
+                      {/* Top strip: Avatar, Name & Priority */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.45rem' }}>
-                        <div>
-                          <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-main)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <span>{lead.full_name}</span>
-                            <ExternalLink size={11} color="#2563eb" />
-                          </div>
-                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
-                            <Calendar size={11} /> {new Date(lead.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <UserAvatar name={lead.full_name} size={30} />
+                          <div>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-main)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span>{lead.full_name}</span>
+                              <ExternalLink size={11} color="#2563eb" />
+                            </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '1px' }}>
+                              <Calendar size={10} /> {new Date(lead.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            </div>
                           </div>
                         </div>
 
                         {getPriorityBadge(priority)}
                       </div>
 
-                      {/* Course tag */}
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#4f46e5',
-                          background: '#f5f3ff',
-                          padding: '0.2rem 0.5rem',
-                          borderRadius: 'var(--radius-sm)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          fontWeight: 600,
-                          marginBottom: '0.65rem',
-                        }}
-                      >
-                        <GraduationCap size={12} />
-                        <span>{lead.course_interest}</span>
+                      {/* Course badge */}
+                      <div style={{ marginBottom: '0.55rem' }}>
+                        <CourseBadge courseName={lead.course_interest} size="sm" />
                       </div>
 
                       {/* Lost reason if applicable */}

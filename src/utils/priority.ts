@@ -28,3 +28,4 @@ export function formatNotesWithPriority(existingNotes: string | null | undefined
 
   return `[Priority: ${priority}]\n${cleanNotes}`.trim();
 }
+

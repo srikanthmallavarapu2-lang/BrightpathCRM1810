@@ -79,3 +79,4 @@ export function exportFollowUpsToCSV(followUps: FollowUp[], filenamePrefix = 'br
   const dateStr = new Date().toISOString().split('T')[0];
   downloadCSV(csvContent, `${filenamePrefix}_${dateStr}.csv`);
 }
+

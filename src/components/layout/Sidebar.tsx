@@ -4,11 +4,11 @@ import {
   Users, 
   Clock, 
   Settings, 
-  GraduationCap, 
   ChevronLeft, 
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
+import { AcademyLogo } from '../common/AcademyLogo';
 
 export type NavigationTab = 'dashboard' | 'leads' | 'followups' | 'settings';
 
@@ -57,9 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Brand Header */}
       <div className="sidebar-header">
         <div className="brand-wrapper">
-          <div className="brand-icon-box">
-            <GraduationCap size={22} color="#ffffff" />
-          </div>
+          <AcademyLogo size={32} />
           {!isCollapsed && (
             <div>
               <span className="brand-title">BrightPath</span>
