@@ -78,7 +78,7 @@ const COURSES_DATA = [
     fee: '₹38,000 / $440',
     description: 'Craft high-converting SaaS interfaces, user journey maps, enterprise design systems, interactive Figma prototypes, and design handoffs.',
     topics: ['UX Research', 'Information Arch', 'Figma Systems', 'Micro-interactions', 'Design Handoff'],
-    image: 'https://images.unsplash.com/photo-1581291518655-9523c932dede?auto=format&fit=crop&w=700&q=80',
+    image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=700&q=80',
     accentColor: '#ea580c',
   },
 ];
@@ -683,6 +683,10 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                     src={course.image}
                     alt={course.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      // Fallback to high-reliability design/tech image if primary CDN fails
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=700&q=80';
+                    }}
                   />
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.2) 60%, rgba(0,0,0,0) 100%)' }} />
                   
