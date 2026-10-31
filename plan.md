@@ -231,5 +231,7 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 - [x] **Phase 3: PostgreSQL Schema Migrations, RLS Policies & Seed Data** completed (DDL migration, RLS policies, indexes, seed data, commit `69a023f`, fix `383b751`).
 - [x] **Phase 4: Authentication, Session Management & Role Lifecycle** completed (Supabase Auth, AuthContext, role resolution, AuthModal, commit `78b507a`, build verified).
 - [x] **Phase 5: Lead Management Core Module (CRUD, Search, Multi-Filter)** completed (Live Supabase queries, search, multi-filter by status/source/assignee, lost reason modal, create/edit modals, commit `047c880`, build verified).
-- [x] **Phase 7: Activity History & Audit Trail** completed (Activity audit service, vertical timeline stepper with relative timestamps, LeadDetailModal student dossier, counsellor note composer, live event logging across all lifecycle actions, build verified).
-- [ ] **Phase 8: Operational Analytics & Dashboard Metrics** ready for inspection.
+- [x] **Phase 6: Follow-up Scheduling Engine & Overdue Logic** completed (Overdue calculation, OverdueBadge, FollowUpList tabs, ScheduleFollowUpModal, RescheduleModal, Lead navigation, commit `d5d597d`, build verified).
+- [x] **Phase 7: Activity History & Audit Trail** completed (Activity audit service, vertical timeline stepper with relative timestamps, LeadDetailModal student dossier, counsellor note composer, live event logging across all lifecycle actions, commit `007f969`, build verified).
+- [x] **Phase 8: Operational Analytics & Dashboard Metrics** completed (Real-time KPI calculations, modular KPICards, admission funnel StatusDistribution, channel SourceDistribution, Urgent Action Center with top overdue tasks and 1-click completion, drill-down interactive filtering, build verified).
+- [ ] **Phase 9: Accessibility, Responsive Polish & Global Error Resilience** ready for inspection.

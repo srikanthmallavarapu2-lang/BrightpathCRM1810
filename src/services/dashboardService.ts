@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabaseClient';
-import { LeadStatus } from '../types/database';
+import { FollowUp, LeadStatus } from '../types/database';
 
 export interface DashboardMetrics {
   totalLeads: number;
@@ -69,7 +69,7 @@ export const dashboardService = {
       // 4. Source breakdown
       const sourceCounts: Record<string, number> = {};
 
-      // 5. Leads created today
+      // 5. Leads created today (in user's local day)
       const todayString = new Date().toISOString().split('T')[0];
       let addedToday = 0;
 
@@ -146,6 +146,37 @@ export const dashboardService = {
         metrics: getDefaultMetrics(),
         error: message,
       };
+    }
+  },
+
+  /**
+   * Fetches top overdue follow-up tasks (status = pending and due_at < now),
+   * ordered by oldest due first, with joined lead information.
+   */
+  async getTopOverdueFollowUps(limit: number = 5): Promise<{ followUps: FollowUp[]; error: string | null }> {
+    try {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('follow_ups')
+        .select(`
+          *,
+          lead:leads(id, full_name, phone, course_interest, status),
+          assigned_profile:profiles!assigned_to(id, full_name, role)
+        `)
+        .eq('status', 'pending')
+        .lt('due_at', now)
+        .order('due_at', { ascending: true })
+        .limit(limit);
+
+      if (error) {
+        console.error('Error fetching top overdue follow-ups:', error.message);
+        return { followUps: [], error: error.message };
+      }
+
+      return { followUps: (data as unknown as FollowUp[]) || [], error: null };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to retrieve top overdue follow-ups.';
+      return { followUps: [], error: message };
     }
   },
 };

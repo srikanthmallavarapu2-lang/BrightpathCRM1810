@@ -10,7 +10,7 @@ import { ConnectionAssistant } from './components/common/ConnectionAssistant';
 import { AuthModal } from './components/auth/AuthModal';
 import { LeadFormModal } from './features/leads/LeadFormModal';
 import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModal';
-import { Lead } from './types/database';
+import { Lead, LeadStatus } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
 
@@ -23,6 +23,8 @@ const AppContent: React.FC = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [overdueCount, setOverdueCount] = useState(0);
   const [targetLeadFilterQuery, setTargetLeadFilterQuery] = useState<string | undefined>(undefined);
+  const [targetStatusFilter, setTargetStatusFilter] = useState<string | undefined>(undefined);
+  const [targetSourceFilter, setTargetSourceFilter] = useState<string | undefined>(undefined);
   const [scheduleModalLeadId, setScheduleModalLeadId] = useState<string | undefined>(undefined);
   const [isAppScheduleModalOpen, setIsAppScheduleModalOpen] = useState(false);
 
@@ -45,6 +47,22 @@ const AppContent: React.FC = () => {
 
   const handleViewLeadFromFollowUp = (_leadId: string, leadName: string) => {
     setTargetLeadFilterQuery(leadName);
+    setTargetStatusFilter('all');
+    setTargetSourceFilter('all');
+    setCurrentTab('leads');
+  };
+
+  const handleNavigateToLeadsWithStatus = (status: LeadStatus) => {
+    setTargetLeadFilterQuery(undefined);
+    setTargetSourceFilter('all');
+    setTargetStatusFilter(status);
+    setCurrentTab('leads');
+  };
+
+  const handleNavigateToLeadsWithSource = (source: string) => {
+    setTargetLeadFilterQuery(undefined);
+    setTargetStatusFilter('all');
+    setTargetSourceFilter(source);
     setCurrentTab('leads');
   };
 
@@ -66,6 +84,8 @@ const AppContent: React.FC = () => {
       onSelectTab={(tab) => {
         if (tab !== 'leads') {
           setTargetLeadFilterQuery(undefined);
+          setTargetStatusFilter(undefined);
+          setTargetSourceFilter(undefined);
         }
         setCurrentTab(tab);
       }}
@@ -113,10 +133,19 @@ const AppContent: React.FC = () => {
 
       {currentTab === 'dashboard' && (
         <DashboardView
-          onNavigateToLeads={() => setCurrentTab('leads')}
+          onNavigateToLeads={() => {
+            setTargetLeadFilterQuery(undefined);
+            setTargetStatusFilter('all');
+            setTargetSourceFilter('all');
+            setCurrentTab('leads');
+          }}
           onNavigateToFollowUps={() => setCurrentTab('followups')}
+          onNavigateToLeadsWithStatus={handleNavigateToLeadsWithStatus}
+          onNavigateToLeadsWithSource={handleNavigateToLeadsWithSource}
           onOpenAssistant={() => setIsAssistantOpen(true)}
           onOpenCreateLead={handleOpenCreateLead}
+          onEditLead={handleEditLead}
+          onScheduleFollowUpForLead={handleScheduleForLead}
         />
       )}
 
@@ -126,6 +155,8 @@ const AppContent: React.FC = () => {
           onEditLead={handleEditLead}
           onScheduleFollowUpForLead={handleScheduleForLead}
           initialSearchQuery={targetLeadFilterQuery}
+          initialStatusFilter={targetStatusFilter}
+          initialSourceFilter={targetSourceFilter}
           refreshTrigger={refreshTrigger}
         />
       )}

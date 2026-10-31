@@ -27,6 +27,8 @@ interface LeadsViewProps {
   onEditLead?: (lead: Lead) => void;
   onScheduleFollowUpForLead?: (lead: Lead) => void;
   initialSearchQuery?: string;
+  initialStatusFilter?: string;
+  initialSourceFilter?: string;
   refreshTrigger?: number;
 }
 
@@ -35,6 +37,8 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   onEditLead,
   onScheduleFollowUpForLead,
   initialSearchQuery,
+  initialStatusFilter,
+  initialSourceFilter,
   refreshTrigger = 0,
 }) => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -45,8 +49,8 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || '');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [selectedSource, setSelectedSource] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>(initialStatusFilter || 'all');
+  const [selectedSource, setSelectedSource] = useState<string>(initialSourceFilter || 'all');
   const [selectedAssignee, setSelectedAssignee] = useState<string>('all');
 
   useEffect(() => {
@@ -54,6 +58,18 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
       setSearchQuery(initialSearchQuery);
     }
   }, [initialSearchQuery]);
+
+  useEffect(() => {
+    if (initialStatusFilter !== undefined) {
+      setSelectedStatus(initialStatusFilter);
+    }
+  }, [initialStatusFilter]);
+
+  useEffect(() => {
+    if (initialSourceFilter !== undefined) {
+      setSelectedSource(initialSourceFilter);
+    }
+  }, [initialSourceFilter]);
 
   // Status transition state for LostReasonModal
   const [lostModalState, setLostModalState] = useState<{ isOpen: boolean; lead: Lead | null }>({
