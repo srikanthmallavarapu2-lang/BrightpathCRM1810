@@ -28,6 +28,7 @@ import { PublicEnquiryModal } from '../simulator/PublicEnquiryModal';
 import { LeadDetailModal } from '../leads/LeadDetailModal';
 import { RescheduleModal } from '../followups/RescheduleModal';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 
 export interface DashboardViewProps {
   onNavigateToLeads: () => void;
@@ -62,6 +63,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   const toast = useToast();
+  const { role, isAdmin, isManager, isCounsellor } = useAuth();
+  const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true);
@@ -167,6 +170,55 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <ArrowRight size={14} />
           </button>
         </div>
+      </div>
+
+      {/* Role-Specific Operational Directive Banner */}
+      <div 
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+          padding: '0.75rem 1.25rem',
+          borderRadius: 'var(--radius-md)',
+          background: isAdmin ? 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)' : isManager ? 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)' : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+          border: `1px solid ${isAdmin ? '#d8b4fe' : isManager ? '#bfdbfe' : '#bbf7d0'}`,
+          fontSize: '0.825rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {isAdmin ? (
+            <span style={{ fontSize: '1.1rem' }}>👑</span>
+          ) : isManager ? (
+            <span style={{ fontSize: '1.1rem' }}>🛡️</span>
+          ) : (
+            <span style={{ fontSize: '1.1rem' }}>🎓</span>
+          )}
+          <div>
+            <strong style={{ color: isAdmin ? '#6b21a8' : isManager ? '#1e40af' : '#15803d' }}>
+              Active Workspace: {formattedRole} Mode
+            </strong>
+            <span style={{ color: 'var(--text-secondary)', marginLeft: '6px' }}>
+              {isAdmin 
+                ? 'Full administrative privileges active. All 5 technical tracks, revenue telemetry, permanent lead purging, and staff role provisioning unlocked.'
+                : isManager 
+                ? 'Branch supervisory mode active. Pipeline auditing, counsellor leaderboard analysis, and lead deletion enabled.'
+                : 'Admissions counseling mode active. Focus on converting student enquiries, 1-Click WhatsApp follow-ups, and issuing official admission slips.'}
+            </span>
+          </div>
+        </div>
+
+        {isCounsellor && (
+          <button
+            onClick={() => onNavigateToLeads()}
+            className="btn btn-outline"
+            style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem', borderColor: '#86efac', color: '#166534', background: '#ffffff', gap: '4px' }}
+          >
+            <span>My Assigned Leads</span>
+            <ArrowRight size={12} />
+          </button>
+        )}
       </div>
 
       {/* Error state if query fails */}

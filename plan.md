@@ -220,6 +220,34 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
   - Generate comprehensive `README.md` and `TESTING_CHECKLIST.md`.
 - **Acceptance Criteria**: Live Vercel deployment URL tested and operational; all core user stories pass.
 
+### Phase 11: Option B Suite & Package 3 Full Professional Enhancements
+- **Goal**: Implement university-grade admissions tools, lead pipeline Kanban, multi-currency tuition revenue telemetry, and 1-Click WhatsApp outreach.
+- **Actions**:
+  - Build `KanbanBoard.tsx` with Drag & Drop column transitions (`New`, `Contacted`, `Qualified`, `Converted`, `Lost`).
+  - Wire 1-Click WhatsApp outreach across lead cards, detail modal, and follow-up tasks (`https://wa.me/...`).
+  - Build CSV Export engine for leads and follow-ups.
+  - Build `CounsellorLeaderboard.tsx` with active lead counts, conversions, and win rate ranks.
+  - Build `PublicEnquiryModal.tsx` website lead intake simulator with pre-configured dummy personas.
+  - Build `AdmissionLetterModal.tsx` printable official admission offer letter slip with academy shield seal and registrar signature.
+  - Build `RevenueMetricsCard.tsx` with ₹ INR and $ USD toggle and pipeline valuation counter.
+  - Build `ConversionFunnel.tsx` tracking drop-offs across admission pipeline stages.
+- **Acceptance Criteria**: Full Option B and Package 3 tools functional; zero TypeScript errors; verified in production.
+
+### Phase 12: Public Student Portal, Visual Curricula & Role-Based Access Control
+- **Goal**: Implement dedicated public student admission portal (`?portal=student`), rich course catalog, live application status tracker, and complete staff role management.
+- **Actions**:
+  - Build `StudentPortalView.tsx` with high-resolution academy campus hero branding and high-visibility CTAs.
+  - Implement 5 technology curricula cards with cover images (*Full Stack Web Dev, Data Science & AI, Cloud & DevOps, Cybersecurity, UI/UX Design*), fees, duration, schedules, and 1-click course pre-selection.
+  - Build real-time Enrolment Status Checker with 4-Stage visual milestone stepper (*Step 1: Enquiry Received, Step 2: Counsellor Review, Step 3: Batch Eligibility, Step 4: Confirmed Enrolment*), auto-generated student roll reference (`BP-2026-XXXXXX`), and 1-Click WhatsApp advisor button.
+  - Enhance "Check My Admission Status" CTA with instant populated verification of student profile (`9876543210` - Arjun Patel) and official PDF admission slip download.
+  - Build Staff Team & Role Provisioning Table in `SettingsView.tsx` with live role dropdown updating, PostgreSQL RLS compliance, and local cache resilience.
+  - Enforce role-based feature permissions:
+    - **Administrator** (`admin@brightpath-academy.com` / `Admin@123456`): Full pipeline oversight, lead permanent deletion, staff role modification unlocked.
+    - **Branch Manager** (`manager@brightpath-academy.com` / `Manager@123456`): Team pipeline auditing, lead deletion enabled, staff role modification locked (read-only).
+    - **Academic Counsellor** (`counsellor@brightpath-academy.com` / `Counsellor@123456`): Lead deletion hidden & blocked, staff role modification disabled, 1-click "My Assigned Leads" filter pill.
+  - Build 1-Click Instant Role Switcher in `AuthModal.tsx` and header avatar badge for zero-friction account switching.
+- **Acceptance Criteria**: Student portal and staff CRM fully functional, responsive, verified with `npm run build` (0 errors), and deployed to Vercel.
+
 ---
 
 - [x] Master specification completely reviewed.
@@ -236,3 +264,5 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 - [x] **Phase 8: Operational Analytics & Dashboard Metrics** completed (Real-time KPI calculations, modular KPICards, admission funnel StatusDistribution, channel SourceDistribution, Urgent Action Center with top overdue tasks and 1-click completion, drill-down interactive filtering, build verified).
 - [x] **Phase 9: Accessibility, Responsive Polish & Global Error Resilience** completed (React ErrorBoundary fallback recovery, accessible Toast notification system replacing alerts, Escape key modal dismissals, SkipLink keyboard navigation, table momentum scrolling, responsive media queries, build verified).
 - [x] **Phase 10: Production Verification, GitHub Setup & Vercel Deployment** completed (Static build verified with 0 errors, vercel.json SPA rewrites, comprehensive README.md student handover guide, complete 8-suite TESTING_CHECKLIST.md, git committed and pushed to origin/main).
+- [x] **Phase 11: Option B Suite & Package 3 Full Professional Enhancements** completed (Lead Kanban board with drag & drop, 1-Click WhatsApp outreach, CSV export, Counsellor Leaderboard, Public Enquiry Simulator, Printable Admission Letter PDF Slip, Multi-currency tuition revenue counter, Admission conversion funnel).
+- [x] **Phase 12: Public Student Portal, Visual Curricula & Role-Based Access Control** completed (Dedicated student portal at `?portal=student`, 5 visual course curricula cards with cover images & fees, real-time enrolment status checker with 4-step milestone progress stepper, populated "Check My Admission Status" CTA with instant verification, Staff Team & Role Provisioning with live dropdown and RLS compliance, 1-click role switcher in AuthModal & header, role-based visibility matrix for Admin, Manager, and Counsellor).

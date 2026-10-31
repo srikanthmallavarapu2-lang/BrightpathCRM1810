@@ -388,6 +388,34 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
             <option value="Cold">❄️ Cold Leads</option>
           </select>
 
+          {/* Quick My Assigned Leads Toggle */}
+          <button
+            onClick={() => {
+              if (selectedAssignee === 'me') {
+                setSelectedAssignee('all');
+              } else {
+                setSelectedAssignee('me');
+              }
+            }}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-sm)',
+              border: selectedAssignee === 'me' ? '1px solid #3b82f6' : '1px solid var(--border-subtle)',
+              background: selectedAssignee === 'me' ? '#eff6ff' : '#ffffff',
+              color: selectedAssignee === 'me' ? '#1d4ed8' : 'var(--text-secondary)',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            title="Filter to view leads assigned to your account"
+          >
+            <span>👤 My Assigned Leads</span>
+            {selectedAssignee === 'me' && <span>✓</span>}
+          </button>
+
           {/* Quick Enrolled Students Filter Toggle */}
           <button
             onClick={() => {

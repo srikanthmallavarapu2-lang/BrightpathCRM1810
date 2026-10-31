@@ -28,43 +28,58 @@ interface StudentPortalViewProps {
 const COURSES_DATA = [
   {
     title: 'Full Stack Web Dev',
+    badge: 'Popular Bootcamp',
     duration: '16 Weeks',
     timing: 'Mon–Thu (10am–1pm) or Weekend',
     fee: '₹45,000 / $550',
-    description: 'Master React, TypeScript, Node.js, Express, PostgreSQL, and full-stack cloud deployments.',
+    description: 'Master React, TypeScript, Node.js, Express, PostgreSQL, and full-stack cloud deployments with live production projects.',
     topics: ['HTML/CSS/JS', 'React & Vite', 'Node & Express', 'PostgreSQL DB', 'Docker & CI/CD'],
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=700&q=80',
+    accentColor: '#2563eb',
   },
   {
     title: 'Data Science & AI',
+    badge: 'High Demand',
     duration: '16 Weeks',
     timing: 'Mon–Thu (2pm–5pm) or Weekend',
     fee: '₹55,000 / $640',
-    description: 'Learn Python, statistical modelling, deep learning, PyTorch, OpenAI APIs, and Generative AI.',
+    description: 'Learn Python, statistical modelling, deep learning, PyTorch, OpenAI APIs, and Generative AI to engineer intelligent agents.',
     topics: ['Python Analytics', 'Pandas & NumPy', 'Machine Learning', 'Deep Learning', 'LLMs & RAG'],
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80',
+    accentColor: '#7c3aed',
   },
   {
     title: 'Cloud & DevOps',
+    badge: 'Enterprise Track',
     duration: '12 Weeks',
     timing: 'Sat & Sun (10am–3pm)',
     fee: '₹50,000 / $580',
-    description: 'Enterprise container orchestration with AWS, Docker, Kubernetes, Terraform, and GitOps pipelines.',
+    description: 'Enterprise container orchestration with AWS, Docker, Kubernetes, Terraform, and GitOps CI/CD delivery pipelines.',
     topics: ['Linux Core', 'AWS Solutions', 'Docker Containers', 'Kubernetes K8s', 'Terraform IaC'],
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=700&q=80',
+    accentColor: '#0284c7',
   },
   {
     title: 'Cybersecurity',
+    badge: 'SOC Certified',
     duration: '14 Weeks',
     timing: 'Mon–Thu (6pm–9pm) Evening',
     fee: '₹48,000 / $560',
-    description: 'Defend enterprise infrastructure with network security, ethical penetration testing, and SOC operations.',
+    description: 'Defend enterprise infrastructure with network security, ethical penetration testing, SIEM monitoring, and SOC incident triage.',
     topics: ['Network Defense', 'Penetration Testing', 'SIEM / Splunk', 'Identity Access', 'Incident Response'],
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=700&q=80',
+    accentColor: '#dc2626',
   },
   {
     title: 'UI/UX Design',
+    badge: 'Portfolio Ready',
     duration: '10 Weeks',
     timing: 'Fri & Sat (11am–3pm)',
     fee: '₹38,000 / $440',
-    description: 'Craft high-converting SaaS interfaces, user journey maps, design systems, and Figma prototypes.',
+    description: 'Craft high-converting SaaS interfaces, user journey maps, enterprise design systems, interactive Figma prototypes, and design handoffs.',
     topics: ['UX Research', 'Information Arch', 'Figma Systems', 'Micro-interactions', 'Design Handoff'],
+    image: 'https://images.unsplash.com/photo-1581291518655-9523c932dede?auto=format&fit=crop&w=700&q=80',
+    accentColor: '#ea580c',
   },
 ];
 
@@ -236,12 +251,21 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <a 
-              href="#status-checker" 
-              style={{ fontSize: '0.825rem', color: '#1d4ed8', fontWeight: 600, textDecoration: 'none', padding: '0.4rem 0.75rem' }}
+            <button 
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('status-checker');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                const target = lookupQuery.trim() || '9876543210';
+                setLookupQuery(target);
+                performLookup(target);
+              }}
+              style={{ fontSize: '0.825rem', color: '#059669', background: '#ecfdf5', border: '1px solid #a7f3d0', fontWeight: 700, padding: '0.4rem 0.75rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              title="Track your real-time enrolment status"
             >
-              Track Application
-            </a>
+              <Search size={13} />
+              <span>Track Admission</span>
+            </button>
             <a 
               href="#courses-catalog" 
               style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 600, textDecoration: 'none', padding: '0.4rem 0.75rem' }}
@@ -273,54 +297,93 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         </div>
       </header>
 
-      {/* Hero Admissions Banner */}
+      {/* Hero Admissions Banner with Modern Academy Branding & Background Image */}
       <section
         style={{
-          background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4338ca 100%)',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.90) 0%, rgba(30, 58, 138, 0.86) 50%, rgba(67, 56, 202, 0.90) 100%), url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat',
           color: '#ffffff',
-          padding: '3.5rem 1.5rem',
+          padding: '4rem 1.5rem 5rem 1.5rem',
           position: 'relative',
           overflow: 'hidden',
+          boxShadow: '0 10px 30px -10px rgba(15, 23, 42, 0.35)',
         }}
       >
         <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.15)', backdropFilter: 'blur(6px)', padding: '0.3rem 0.85rem', borderRadius: 'var(--radius-full)', fontSize: '0.785rem', fontWeight: 700, marginBottom: '1rem', border: '1px solid rgba(255,255,255,0.2)' }}>
-            <Sparkles size={14} color="#fde047" />
-            <span>Admissions Now Open for Next Batch Intake &bull; Limited Seats</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.16)', backdropFilter: 'blur(6px)', padding: '0.35rem 0.95rem', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '1.25rem', border: '1px solid rgba(255,255,255,0.25)', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <Sparkles size={15} color="#fde047" />
+            <span>Admissions Now Open for Next Batch Intake &bull; Limited Classroom &amp; Virtual Seats</span>
           </div>
 
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, lineHeight: 1.2, margin: '0 0 1rem 0', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 1.2, margin: '0 0 1rem 0', letterSpacing: '-0.5px' }}>
             Launch Your Career in High-Growth Technology
           </h1>
-          <p style={{ fontSize: '1.05rem', opacity: 0.9, maxWidth: '640px', margin: '0 auto 1.75rem auto', lineHeight: 1.5 }}>
-            Practical hands-on bootcamps in Full Stack, Data Science, AI, and DevOps. Get trained by industry veterans and achieve your career breakthrough.
+          <p style={{ fontSize: '1.08rem', opacity: 0.92, maxWidth: '680px', margin: '0 auto 2rem auto', lineHeight: 1.55 }}>
+            Practical hands-on tech bootcamps in Full Stack, Data Science, AI, Cloud DevOps, and Cybersecurity. Trained by industry veterans with 1-on-1 career counselling.
           </p>
 
+          {/* Primary Action Buttons - Populated and High-Visibility */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <a 
               href="#apply-form" 
               className="btn" 
-              style={{ background: '#ffffff', color: '#1e3a8a', fontWeight: 800, padding: '0.75rem 1.75rem', fontSize: '0.95rem', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+              style={{ 
+                background: '#ffffff', 
+                color: '#1e3a8a', 
+                fontWeight: 800, 
+                padding: '0.85rem 1.85rem', 
+                fontSize: '0.95rem', 
+                boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                borderRadius: 'var(--radius-md)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                textDecoration: 'none',
+              }}
             >
-              Register for Free Consultation
+              <Send size={16} color="#2563eb" />
+              <span>Register for Free Consultation</span>
             </a>
-            <a 
-              href="#status-checker" 
-              className="btn btn-outline" 
-              style={{ color: '#ffffff', borderColor: 'rgba(255,255,255,0.4)', padding: '0.75rem 1.5rem', fontSize: '0.95rem' }}
+
+            <button 
+              type="button"
+              onClick={() => {
+                const el = document.getElementById('status-checker');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                // If query empty, populate Arjun Patel demo number to instantly display populated status card
+                const targetPhone = lookupQuery.trim() || '9876543210';
+                setLookupQuery(targetPhone);
+                performLookup(targetPhone);
+              }}
+              className="btn" 
+              style={{ 
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                color: '#ffffff', 
+                border: '1px solid #34d399',
+                padding: '0.85rem 1.85rem', 
+                fontSize: '0.95rem',
+                fontWeight: 800,
+                boxShadow: '0 8px 24px rgba(16, 185, 129, 0.35)',
+                borderRadius: 'var(--radius-md)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+              }}
+              title="Click to check live admission status (Auto-populates verified student profile)"
             >
-              Check My Admission Status &rarr;
-            </a>
+              <Search size={16} />
+              <span>Check My Admission Status (Instant Verify) &rarr;</span>
+            </button>
           </div>
 
           {/* Social Proof Strip */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '2.5rem', fontSize: '0.85rem', opacity: 0.9, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '2.5rem', fontSize: '0.85rem', opacity: 0.95, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <ShieldCheck size={18} color="#86efac" />
-              <span>AICTE &amp; ISO 9001 Certified</span>
+              <span>AICTE &amp; ISO 9001:2015 Certified</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span>⭐ 4.9/5 Rating (2,400+ Alumni)</span>
+              <span>⭐ 4.9/5 Rating (2,400+ Placed Alumni)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={18} color="#86efac" />
@@ -577,66 +640,96 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             {COURSES_DATA.map((course) => (
               <div 
                 key={course.title}
                 className="card"
                 style={{
-                  padding: '1.5rem',
+                  padding: 0,
+                  overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   borderRadius: 'var(--radius-lg)',
                   border: '1px solid var(--border-subtle)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.15s ease',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
+                  transition: 'all 0.2s ease',
+                  background: '#ffffff',
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                    <CourseBadge courseName={course.title} size="md" />
-                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#047857', background: '#ecfdf5', padding: '0.2rem 0.5rem', borderRadius: 'var(--radius-sm)' }}>
+                {/* Course Cover Image Banner with Overlays */}
+                <div style={{ position: 'relative', width: '100%', height: '160px', overflow: 'hidden' }}>
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.2) 60%, rgba(0,0,0,0) 100%)' }} />
+                  
+                  {/* Top Badges: Category Tag & Fee */}
+                  <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, background: 'rgba(15, 23, 42, 0.75)', color: '#ffffff', backdropFilter: 'blur(4px)', padding: '0.2rem 0.55rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                      {course.badge}
+                    </span>
+                    <span style={{ fontSize: '0.785rem', fontWeight: 800, color: '#059669', background: '#ffffff', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-sm)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
                       {course.fee}
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', marginTop: '0.5rem' }}>
-                    {course.title}
-                  </h3>
-                  <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0.85rem 0', lineHeight: 1.45 }}>
-                    {course.description}
-                  </p>
-
-                  <div style={{ fontSize: '0.785rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                    <span>⏱️ Duration: <strong>{course.duration}</strong></span>
-                    <span>📅 Schedule: <strong>{course.timing}</strong></span>
-                  </div>
-
-                  {/* Curriculum highlights */}
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                      Core Modules Included:
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                      {course.topics.map((t) => (
-                        <span key={t} style={{ fontSize: '0.72rem', background: '#f1f5f9', color: '#334155', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 500 }}>
-                          {t}
-                        </span>
-                      ))}
-                    </div>
+                  {/* Bottom Image Overlay: Course Badge */}
+                  <div style={{ position: 'absolute', bottom: '10px', left: '12px' }}>
+                    <CourseBadge courseName={course.title} size="md" />
                   </div>
                 </div>
 
-                <a
-                  href="#apply-form"
-                  onClick={() => setFormCourse(course.title)}
-                  className="btn btn-outline"
-                  style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, gap: '4px' }}
-                >
-                  <span>Apply for this Course</span>
-                  <ArrowRight size={14} />
-                </a>
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', margin: '0 0 0.35rem 0' }}>
+                      {course.title}
+                    </h3>
+                    <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: '0 0 0.85rem 0', lineHeight: 1.45 }}>
+                      {course.description}
+                    </p>
+
+                    <div style={{ fontSize: '0.785rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+                      <span style={{ background: '#f8fafc', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                        ⏱️ <strong>{course.duration}</strong>
+                      </span>
+                      <span style={{ background: '#f8fafc', padding: '0.2rem 0.5rem', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                        📅 <strong>{course.timing}</strong>
+                      </span>
+                    </div>
+
+                    {/* Curriculum highlights */}
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.4rem', letterSpacing: '0.4px' }}>
+                        Core Modules &amp; Technologies:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                        {course.topics.map((t) => (
+                          <span key={t} style={{ fontSize: '0.72rem', background: '#f1f5f9', color: '#1e293b', border: '1px solid #e2e8f0', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 600 }}>
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <a
+                    href="#apply-form"
+                    onClick={() => {
+                      setFormCourse(course.title);
+                      const el = document.getElementById('apply-form');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="btn btn-outline"
+                    style={{ width: '100%', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 700, gap: '6px', borderColor: '#2563eb', color: '#1d4ed8', background: '#eff6ff' }}
+                  >
+                    <span>Apply for this Program</span>
+                    <ArrowRight size={14} />
+                  </a>
+                </div>
               </div>
             ))}
           </div>
@@ -646,10 +739,13 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         <section id="apply-form" className="card" style={{ padding: '2.5rem', borderRadius: 'var(--radius-lg)', background: '#ffffff', border: '1px solid var(--border-subtle)' }}>
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-              <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1d4ed8', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-full)', fontWeight: 800, textTransform: 'uppercase' }}>
-                Online Application
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                <AcademyLogo size={44} />
+              </div>
+              <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '0.2rem 0.65rem', borderRadius: 'var(--radius-full)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                Official Academy Application &bull; Intake 2026–2027
               </span>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)', marginTop: '0.35rem' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)', marginTop: '0.5rem' }}>
                 Register for Provisional Admission
               </h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
