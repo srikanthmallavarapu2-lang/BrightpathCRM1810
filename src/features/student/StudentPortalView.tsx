@@ -9,7 +9,8 @@ import {
   ArrowRight,
   ShieldCheck,
   AlertCircle,
-  Lock
+  Lock,
+  MessageCircle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { leadService } from '../../services/leadService';
@@ -93,9 +94,9 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
 
   const toast = useToast();
 
-  const handleLookup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!lookupQuery.trim()) {
+  const performLookup = async (queryStr: string) => {
+    const clean = queryStr.trim();
+    if (!clean) {
       setSearchError('Please enter your registered phone number or email.');
       return;
     }
@@ -106,7 +107,6 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
     setSearchedLead(null);
 
     try {
-      const clean = lookupQuery.trim();
       const { data, error } = await supabase
         .from('leads')
         .select(`
@@ -118,18 +118,56 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         .limit(1)
         .maybeSingle();
 
-      if (error) {
-        setSearchError('Could not verify records at this moment. Please try again.');
-      } else if (!data) {
-        setSearchError('No matching application found. Please check your phone number or apply below.');
-      } else {
+      if (data) {
         setSearchedLead(data as Lead);
+      } else {
+        // Fallback demo student if searching for 9876543210 or 9123456789 and database doesn't have it
+        if (clean.includes('9876543210')) {
+          setSearchedLead({
+            id: 'a1000000-0000-4000-8000-000000000001',
+            full_name: 'Arjun Patel',
+            phone: '9876543210',
+            email: 'arjun.patel@gmail.com',
+            course_interest: 'Full Stack Web Dev',
+            status: 'Converted',
+            source: 'Website Form',
+            notes: 'Provisional enrolment confirmed. Batch start 16 Nov 2026.',
+            created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+            updated_at: new Date().toISOString(),
+            assigned_profile: { id: 'p1', full_name: 'Dr. S. K. Jenkins', role: 'admin' },
+          } as Lead);
+          setSearchError(null);
+        } else if (clean.includes('9123456789')) {
+          setSearchedLead({
+            id: 'b2000000-0000-4000-8000-000000000002',
+            full_name: 'Priya Sharma',
+            phone: '9123456789',
+            email: 'priya.sharma@gmail.com',
+            course_interest: 'Data Science & AI',
+            status: 'Qualified',
+            source: 'Website Form',
+            notes: 'Technical screening passed. Academic counseling complete.',
+            created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+            updated_at: new Date().toISOString(),
+            assigned_profile: { id: 'p2', full_name: 'Sarah Jenkins', role: 'counsellor' },
+          } as Lead);
+          setSearchError(null);
+        } else if (error) {
+          setSearchError('Could not verify records at this moment. Please try again.');
+        } else {
+          setSearchError('No matching application found. Please check your phone number or apply below.');
+        }
       }
     } catch {
       setSearchError('Failed to query application status.');
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleLookup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await performLookup(lookupQuery);
   };
 
   const handleApplySubmit = async (e: React.FormEvent) => {
@@ -317,7 +355,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
               Enter the phone number or email you used when registering to verify your real-time enrolment status.
             </p>
 
-            <form onSubmit={handleLookup} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+            <form onSubmit={handleLookup} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
               <input
                 type="text"
                 placeholder="Enter phone number (e.g. 9876543210) or email..."
@@ -342,6 +380,37 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 <span>Verify Status</span>
               </button>
             </form>
+
+            {/* Quick Demo Candidate Lookup Chips */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', fontSize: '0.785rem' }}>
+              <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>💡 Try Demo Numbers:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setLookupQuery('9876543210');
+                  performLookup('9876543210');
+                }}
+                className="btn btn-outline"
+                style={{ padding: '0.2rem 0.65rem', fontSize: '0.75rem', borderColor: '#86efac', background: '#f0fdf4', color: '#16a34a', gap: '5px' }}
+                title="Verify Converted Student (Arjun Patel) with Official PDF Admission Slip"
+              >
+                <span>9876543210</span>
+                <span style={{ fontWeight: 800 }}>🎉 Enrolment Confirmed (PDF Slip)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLookupQuery('9123456789');
+                  performLookup('9123456789');
+                }}
+                className="btn btn-outline"
+                style={{ padding: '0.2rem 0.65rem', fontSize: '0.75rem', borderColor: '#bfdbfe', background: '#eff6ff', color: '#2563eb', gap: '5px' }}
+                title="Verify Qualified Candidate (Priya Sharma)"
+              >
+                <span>9123456789</span>
+                <span style={{ fontWeight: 800 }}>⚡ Qualified</span>
+              </button>
+            </div>
 
             {searchError && (
               <div style={{ padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', background: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', textAlign: 'left' }}>
@@ -414,25 +483,84 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                   </div>
                 </div>
 
-                {searchedLead.status === 'Converted' ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', borderTop: '1px solid #bbf7d0', paddingTop: '1rem' }}>
-                    <div style={{ fontSize: '0.85rem', color: '#166534' }}>
-                      <strong>Congratulations!</strong> Your admission has been validated and your classroom/portal seat is secured.
+                {/* 4-Step Visual Progress Stepper */}
+                <div style={{ margin: '1.25rem 0', padding: '1rem', background: '#ffffff', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                    Admission Milestones &amp; Progress:
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem' }}>
+                    {[
+                      { step: 1, label: 'Enquiry Received', done: true },
+                      { step: 2, label: 'Counsellor Review', done: searchedLead.status !== 'New' },
+                      { step: 3, label: 'Batch Eligibility', done: searchedLead.status === 'Qualified' || searchedLead.status === 'Converted' },
+                      { step: 4, label: 'Confirmed Enrolment', done: searchedLead.status === 'Converted' },
+                    ].map((m) => (
+                      <div
+                        key={m.step}
+                        style={{
+                          padding: '0.55rem 0.5rem',
+                          borderRadius: 'var(--radius-sm)',
+                          background: m.done ? '#ecfdf5' : '#f8fafc',
+                          border: m.done ? '1px solid #a7f3d0' : '1px solid #e2e8f0',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.7rem', fontWeight: 800, color: m.done ? '#059669' : '#94a3b8' }}>
+                          {m.done ? '✓ Step ' + m.step : '○ Step ' + m.step}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: m.done ? '#065f46' : 'var(--text-secondary)', marginTop: '2px' }}>
+                          {m.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Batch & Enrolment Information Details */}
+                <div style={{ padding: '0.85rem 1rem', background: '#f8fafc', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', marginBottom: '1.25rem', fontSize: '0.8rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)' }}>Student Roll Ref: </span>
+                      <strong style={{ fontFamily: 'monospace', color: '#1d4ed8' }}>BP-2026-{searchedLead.id.substring(0, 6).toUpperCase()}</strong>
                     </div>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)' }}>Next Batch Intake: </span>
+                      <strong>16th November 2026</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)' }}>Classroom / Lab: </span>
+                      <strong>Indiranagar Campus &amp; LMS Portal</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Actions: WhatsApp Support & Printable Slip */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', borderTop: searchedLead.status === 'Converted' ? '1px solid #bbf7d0' : '1px solid #e2e8f0', paddingTop: '1rem' }}>
+                  <button
+                    onClick={() => {
+                      const msg = encodeURIComponent(`Hello! I am ${searchedLead.full_name}. I am checking my admission application for ${searchedLead.course_interest} at BrightPath Academy.`);
+                      window.open(`https://wa.me/919876543210?text=${msg}`, '_blank');
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.85rem', gap: '5px', borderColor: '#86efac', color: '#15803d', background: '#f0fdf4' }}
+                    title="Direct WhatsApp chat with Admissions Counselor"
+                  >
+                    <MessageCircle size={14} color="#16a34a" />
+                    <span>WhatsApp Admissions Advisor</span>
+                  </button>
+
+                  {searchedLead.status === 'Converted' && (
                     <button
                       onClick={() => setIsLetterModalOpen(true)}
                       className="btn btn-primary"
                       style={{ background: '#16a34a', borderColor: '#15803d', gap: '6px' }}
                     >
                       <Printer size={15} />
-                      <span>Download My Admission Slip (PDF)</span>
+                      <span>Download Official Admission Slip (PDF)</span>
                     </button>
-                  </div>
-                ) : (
-                  <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.85rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                    Your application is currently active. Your assigned advisor will be contacting you on <strong>{searchedLead.phone}</strong> with batch timings and demo schedules.
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -538,19 +666,35 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 <p style={{ fontSize: '0.85rem', color: '#14532d', maxWidth: '440px', margin: '0 auto 1.25rem auto' }}>
                   Thank you, <strong>{formName}</strong>. Your profile has been queued for evaluation. You can track your status above using your phone number: <strong>{formPhone}</strong>.
                 </p>
-                <button
-                  onClick={() => {
-                    setSubmitSuccess(false);
-                    setFormName('');
-                    setFormPhone('');
-                    setFormEmail('');
-                    setFormMessage('');
-                  }}
-                  className="btn btn-primary"
-                  style={{ fontSize: '0.85rem' }}
-                >
-                  Submit Another Application
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => {
+                      const submittedPhone = formPhone;
+                      setLookupQuery(submittedPhone);
+                      performLookup(submittedPhone);
+                      const el = document.getElementById('status-checker');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="btn btn-primary"
+                    style={{ fontSize: '0.85rem', gap: '6px' }}
+                  >
+                    <Search size={14} />
+                    <span>Track My Status Now</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSubmitSuccess(false);
+                      setFormName('');
+                      setFormPhone('');
+                      setFormEmail('');
+                      setFormMessage('');
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.85rem' }}
+                  >
+                    Submit Another Application
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleApplySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

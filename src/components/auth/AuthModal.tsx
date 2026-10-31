@@ -216,8 +216,80 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   style={{ width: '100%', justifyContent: 'center' }}
                 >
                   <LogIn size={16} />
-                  <span>Sign In as Another Staff Member</span>
+                  <span>Custom Sign In Form</span>
                 </button>
+              </div>
+
+              {/* 1-Click Role Switcher */}
+              <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.65rem', textAlign: 'center', letterSpacing: '0.5px' }}>
+                  1-Click Switch Account (Demo Role Credentials)
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {/* Admin */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting || role === 'admin'}
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      const res = await signIn('admin@brightpath-academy.com', 'Admin@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Switched to Administrator (Dr. S. K. Jenkins).');
+                        onClose();
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#c4b5fd', background: role === 'admin' ? '#f3e8ff' : '#faf5ff', color: '#6d28d9', opacity: role === 'admin' ? 0.75 : 1 }}
+                    title="Switch to Administrator"
+                  >
+                    <span style={{ fontWeight: 700 }}>👑 Administrator</span>
+                    <span style={{ fontSize: '0.72rem', color: '#7c3aed' }}>{role === 'admin' ? '● Active' : 'admin@brightpath-academy.com'}</span>
+                  </button>
+
+                  {/* Manager */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting || role === 'manager'}
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      const res = await signIn('manager@brightpath-academy.com', 'Manager@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Switched to Admissions Manager (Marcus Vance).');
+                        onClose();
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#bfdbfe', background: role === 'manager' ? '#dbeafe' : '#eff6ff', color: '#1d4ed8', opacity: role === 'manager' ? 0.75 : 1 }}
+                    title="Switch to Manager"
+                  >
+                    <span style={{ fontWeight: 700 }}>🛡️ Branch Manager</span>
+                    <span style={{ fontSize: '0.72rem', color: '#2563eb' }}>{role === 'manager' ? '● Active' : 'manager@brightpath-academy.com'}</span>
+                  </button>
+
+                  {/* Counsellor */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting || role === 'counsellor'}
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      const res = await signIn('counsellor@brightpath-academy.com', 'Counsellor@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Switched to Academic Counsellor (Sarah Jenkins).');
+                        onClose();
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#bbf7d0', background: role === 'counsellor' ? '#dcfce7' : '#f0fdf4', color: '#15803d', opacity: role === 'counsellor' ? 0.75 : 1 }}
+                    title="Switch to Counsellor"
+                  >
+                    <span style={{ fontWeight: 700 }}>🎓 Counsellor</span>
+                    <span style={{ fontSize: '0.72rem', color: '#16a34a' }}>{role === 'counsellor' ? '● Active' : 'counsellor@brightpath-academy.com'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -416,6 +488,93 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
+
+              {/* 1-Click Role Login Demo Panel */}
+              <div style={{ marginTop: '1.25rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', textAlign: 'left' }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.65rem', textAlign: 'center', letterSpacing: '0.5px' }}>
+                  1-Click Instant Sign-In (Demo Role Credentials)
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {/* Admin */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      setEmail('admin@brightpath-academy.com');
+                      setPassword('Admin@123456');
+                      setIsSubmitting(true);
+                      setErrorMessage(null);
+                      const res = await signIn('admin@brightpath-academy.com', 'Admin@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Signed in as Administrator (Dr. S. K. Jenkins).');
+                        onClose();
+                      } else {
+                        setErrorMessage(res.error);
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#c4b5fd', background: '#faf5ff', color: '#6d28d9' }}
+                    title="Click to sign in with pre-configured Administrator credentials"
+                  >
+                    <span style={{ fontWeight: 700 }}>👑 Administrator</span>
+                    <span style={{ fontSize: '0.72rem', color: '#7c3aed' }}>admin@brightpath-academy.com</span>
+                  </button>
+
+                  {/* Manager */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      setEmail('manager@brightpath-academy.com');
+                      setPassword('Manager@123456');
+                      setIsSubmitting(true);
+                      setErrorMessage(null);
+                      const res = await signIn('manager@brightpath-academy.com', 'Manager@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Signed in as Admissions Manager (Marcus Vance).');
+                        onClose();
+                      } else {
+                        setErrorMessage(res.error);
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#bfdbfe', background: '#eff6ff', color: '#1d4ed8' }}
+                    title="Click to sign in with pre-configured Manager credentials"
+                  >
+                    <span style={{ fontWeight: 700 }}>🛡️ Branch Manager</span>
+                    <span style={{ fontSize: '0.72rem', color: '#2563eb' }}>manager@brightpath-academy.com</span>
+                  </button>
+
+                  {/* Counsellor */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      setEmail('counsellor@brightpath-academy.com');
+                      setPassword('Counsellor@123456');
+                      setIsSubmitting(true);
+                      setErrorMessage(null);
+                      const res = await signIn('counsellor@brightpath-academy.com', 'Counsellor@123456');
+                      setIsSubmitting(false);
+                      if (res.success) {
+                        toast.success('Signed in as Academic Counsellor (Sarah Jenkins).');
+                        onClose();
+                      } else {
+                        setErrorMessage(res.error);
+                      }
+                    }}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.8rem', padding: '0.45rem 0.75rem', justifyContent: 'space-between', borderColor: '#bbf7d0', background: '#f0fdf4', color: '#15803d' }}
+                    title="Click to sign in with pre-configured Counsellor credentials"
+                  >
+                    <span style={{ fontWeight: 700 }}>💼 Counsellor</span>
+                    <span style={{ fontSize: '0.72rem', color: '#16a34a' }}>counsellor@brightpath-academy.com</span>
+                  </button>
+                </div>
+              </div>
             </>
           )}
         </div>

@@ -12,7 +12,7 @@ interface SettingsViewProps {
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) => {
-  const { user, profile, role } = useAuth();
+  const { user, profile, role, isAdmin } = useAuth();
   const [latencyMs, setLatencyMs] = useState<number | null>(null);
   const [isPinging, setIsPinging] = useState(false);
   const [staffList, setStaffList] = useState<Profile[]>([]);
@@ -34,6 +34,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
   }, []);
 
   const handleRoleChange = async (targetUserId: string, newRole: 'admin' | 'manager' | 'counsellor') => {
+    if (!isAdmin) {
+      toast.error('Only Administrators are authorized to update staff roles.');
+      return;
+    }
     setUpdatingStaffId(targetUserId);
     const { success, error } = await leadService.updateStaffRole(targetUserId, newRole);
     if (success) {
@@ -212,6 +216,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
           </button>
         </div>
 
+        {/* Role Authorization Status Banner */}
+        {isAdmin ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.65rem 1rem', background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.8rem', color: '#6d28d9' }}>
+            <Shield size={16} color="#7c3aed" />
+            <span><strong>Administrator Mode:</strong> You are authorized to modify staff roles and security assignments using the dropdowns below.</span>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.65rem 1rem', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.8rem', color: '#475569' }}>
+            <Key size={16} color="#64748b" />
+            <span><strong>Active Session: {formattedRole}</strong> &bull; Staff role modifications are strictly restricted to Administrators. Switch to an Administrator account to adjust permissions.</span>
+          </div>
+        )}
+
         {/* Staff Table */}
         <div className="table-responsive" style={{ border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '1.25rem' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
@@ -259,18 +276,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
                     <td style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>
                       <select
                         value={member.role}
-                        disabled={isUpdating}
+                        disabled={isUpdating || !isAdmin}
                         onChange={(e) => handleRoleChange(member.id, e.target.value as 'admin' | 'manager' | 'counsellor')}
                         style={{
                           fontSize: '0.785rem',
                           padding: '0.25rem 0.5rem',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid var(--border-subtle)',
-                          background: '#ffffff',
-                          cursor: 'pointer',
+                          background: !isAdmin ? '#f1f5f9' : '#ffffff',
+                          cursor: !isAdmin ? 'not-allowed' : 'pointer',
                           fontWeight: 600,
+                          color: !isAdmin ? '#94a3b8' : 'var(--text-main)',
                         }}
-                        title="Change role permission"
+                        title={isAdmin ? "Change role permission" : "Only Administrators can modify staff roles"}
                       >
                         <option value="counsellor">Counsellor</option>
                         <option value="manager">Manager</option>

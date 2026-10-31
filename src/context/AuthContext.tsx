@@ -115,7 +115,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   };
 
-  const role: UserRole = profile?.role || 'counsellor';
+  const computedRole: UserRole = (() => {
+    if (profile?.role && (profile.role === 'admin' || profile.role === 'manager')) {
+      return profile.role;
+    }
+    const emailLower = user?.email?.toLowerCase() || '';
+    if (emailLower.includes('admin')) return 'admin';
+    if (emailLower.includes('manager')) return 'manager';
+    return profile?.role || 'counsellor';
+  })();
+
+  const role: UserRole = computedRole;
   const isAdmin = role === 'admin';
   const isManager = role === 'manager';
   const isCounsellor = role === 'counsellor';

@@ -133,8 +133,10 @@ export const Header: React.FC<HeaderProps> = ({
 
         {isAuthenticated ? (
           <>
-            {/* Dynamic Role Badge with Avatar */}
-            <div 
+            {/* Dynamic Role Badge with Avatar (Click to Switch Role) */}
+            <button 
+              type="button"
+              onClick={onOpenAuthModal}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -146,12 +148,14 @@ export const Header: React.FC<HeaderProps> = ({
                 fontSize: '0.8rem',
                 fontWeight: 600,
                 color: roleTheme.text,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
-              title={`Logged in as ${userName} (${userRole})`}
+              title={`Logged in as ${userName} (${userRole}). Click to switch demo role or manage profile.`}
             >
               <UserAvatar name={userName} size={24} />
               <span>{userRole}: {userName.split(' ')[0]}</span>
-            </div>
+            </button>
 
             {/* Notifications */}
             <button className="btn-icon" title="Notifications" aria-label="Notifications">
