@@ -280,4 +280,24 @@ export const leadService = {
       return { profiles: [], error: message };
     }
   },
+
+  /**
+   * Updates a staff member's role (admin, manager, or counsellor).
+   */
+  async updateStaffRole(userId: string, role: 'admin' | 'manager' | 'counsellor'): Promise<{ success: boolean; error: string | null }> {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role })
+        .eq('id', userId);
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+      return { success: true, error: null };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update staff role.';
+      return { success: false, error: message };
+    }
+  },
 };

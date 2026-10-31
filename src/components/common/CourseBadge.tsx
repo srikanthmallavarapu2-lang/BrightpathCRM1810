@@ -115,3 +115,4 @@ export const CourseBadge: React.FC<CourseBadgeProps> = ({
     </span>
   );
 };
+

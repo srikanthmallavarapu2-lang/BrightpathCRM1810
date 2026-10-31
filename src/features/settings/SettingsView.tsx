@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Building, Database, Mail, Calendar, RefreshCw } from 'lucide-react';
+import { Shield, Building, Database, Mail, Calendar, RefreshCw, Users, Key } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, isSupabaseConfigured } from '../../lib/supabaseClient';
+import { leadService } from '../../services/leadService';
+import { Profile } from '../../types/database';
+import { UserAvatar } from '../../components/common/UserAvatar';
+import { useToast } from '../../context/ToastContext';
 
 interface SettingsViewProps {
   onOpenAssistant?: () => void;
@@ -11,7 +15,35 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
   const { user, profile, role } = useAuth();
   const [latencyMs, setLatencyMs] = useState<number | null>(null);
   const [isPinging, setIsPinging] = useState(false);
+  const [staffList, setStaffList] = useState<Profile[]>([]);
+  const [isLoadingStaff, setIsLoadingStaff] = useState(false);
+  const [updatingStaffId, setUpdatingStaffId] = useState<string | null>(null);
   const isConfigured = isSupabaseConfigured();
+
+  const toast = useToast();
+
+  const loadStaff = async () => {
+    setIsLoadingStaff(true);
+    const { profiles } = await leadService.getStaffProfiles();
+    setStaffList(profiles);
+    setIsLoadingStaff(false);
+  };
+
+  useEffect(() => {
+    loadStaff();
+  }, []);
+
+  const handleRoleChange = async (targetUserId: string, newRole: 'admin' | 'manager' | 'counsellor') => {
+    setUpdatingStaffId(targetUserId);
+    const { success, error } = await leadService.updateStaffRole(targetUserId, newRole);
+    if (success) {
+      toast.success(`Role updated to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)}.`);
+      await loadStaff();
+    } else {
+      toast.error(error || 'Failed to update role.');
+    }
+    setUpdatingStaffId(null);
+  };
 
   const pingDatabase = async () => {
     setIsPinging(true);
@@ -154,6 +186,116 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
               style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', background: '#f8fafc', fontSize: '0.875rem' }} 
             />
           </div>
+        </div>
+      </div>
+
+      {/* Staff Team Management & Role Provisioning (Admins & Managers) */}
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Users size={20} color="#2563eb" />
+            <div>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Staff Team &amp; Role Provisioning</h2>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Registered team accounts in Supabase ({staffList.length} staff members)
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={loadStaff}
+            className="btn btn-outline"
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', gap: '4px' }}
+          >
+            <RefreshCw size={13} className={isLoadingStaff ? 'spin' : ''} />
+            <span>Sync Team</span>
+          </button>
+        </div>
+
+        {/* Staff Table */}
+        <div className="table-responsive" style={{ border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '1.25rem' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
+            <thead>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+                <th style={{ padding: '0.75rem 1rem', textAlign: 'left', fontWeight: 600 }}>Staff Member</th>
+                <th style={{ padding: '0.75rem 1rem', textAlign: 'left', fontWeight: 600 }}>Security UUID</th>
+                <th style={{ padding: '0.75rem 1rem', textAlign: 'left', fontWeight: 600 }}>Assigned Role</th>
+                <th style={{ padding: '0.75rem 1rem', textAlign: 'right', fontWeight: 600 }}>Modify Permission</th>
+              </tr>
+            </thead>
+            <tbody>
+              {staffList.map((member) => {
+                const isCurrent = member.id === user?.id;
+                const isUpdating = updatingStaffId === member.id;
+
+                return (
+                  <tr key={member.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <UserAvatar name={member.full_name || 'Staff User'} size={32} />
+                        <div>
+                          <div style={{ fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span>{member.full_name || 'Unnamed Staff'}</span>
+                            {isCurrent && (
+                              <span style={{ fontSize: '0.65rem', background: '#eff6ff', color: '#1d4ed8', padding: '0.1rem 0.4rem', borderRadius: '4px', fontWeight: 700 }}>
+                                You
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td style={{ padding: '0.75rem 1rem', fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
+                      {member.id.substring(0, 13)}...
+                    </td>
+
+                    <td style={{ padding: '0.75rem 1rem' }}>
+                      <span className={`status-badge ${member.role === 'admin' ? 'converted' : member.role === 'manager' ? 'qualified' : 'new'}`} style={{ fontSize: '0.75rem' }}>
+                        {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                      </span>
+                    </td>
+
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>
+                      <select
+                        value={member.role}
+                        disabled={isUpdating}
+                        onChange={(e) => handleRoleChange(member.id, e.target.value as 'admin' | 'manager' | 'counsellor')}
+                        style={{
+                          fontSize: '0.785rem',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: '1px solid var(--border-subtle)',
+                          background: '#ffffff',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                        title="Change role permission"
+                      >
+                        <option value="counsellor">Counsellor</option>
+                        <option value="manager">Manager</option>
+                        <option value="admin">Administrator</option>
+                      </select>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* How to Provision New Accounts Guide */}
+        <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: 'var(--radius-md)', padding: '1rem', fontSize: '0.8rem', color: '#475569' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, color: '#1e3a8a', marginBottom: '0.35rem' }}>
+            <Key size={15} color="#2563eb" />
+            <span>How to Create &amp; Provision Credentials for New Staff:</span>
+          </div>
+          <ol style={{ margin: '0 0 0 1.25rem', padding: 0, lineHeight: 1.5 }}>
+            <li>Provide your new team member the main CRM link: <code style={{ background: '#e2e8f0', padding: '1px 5px', borderRadius: 3 }}>https://brightpath-crm-1810.vercel.app/</code>.</li>
+            <li>Instruct them to click <strong>"Sign In / Create Account"</strong> and complete the <strong>"Register Staff Account"</strong> form.</li>
+            <li>By default, their account is initialized with the <strong>Counsellor</strong> role.</li>
+            <li>As an Administrator, return to this table and use the dropdown above to elevate them to <strong>Manager</strong> or <strong>Administrator</strong> at any time.</li>
+          </ol>
         </div>
       </div>
 

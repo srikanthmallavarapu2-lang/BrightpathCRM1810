@@ -11,6 +11,7 @@ import { AuthModal } from './components/auth/AuthModal';
 import { LeadFormModal } from './features/leads/LeadFormModal';
 import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModal';
 import { PublicEnquiryModal } from './features/simulator/PublicEnquiryModal';
+import { StudentPortalView } from './features/student/StudentPortalView';
 import { Lead, LeadStatus } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
@@ -19,6 +20,14 @@ import { ToastProvider } from './context/ToastContext';
 import { SkipLink } from './components/layout/SkipLink';
 
 const AppContent: React.FC = () => {
+  const [activePortal, setActivePortal] = useState<'staff' | 'student'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('portal') === 'student') return 'student';
+    }
+    return 'staff';
+  });
+
   const [currentTab, setCurrentTab] = useState<NavigationTab>('leads');
   const [isNewLeadModalOpen, setIsNewLeadModalOpen] = useState(false);
   const [leadToEdit, setLeadToEdit] = useState<Lead | null>(null);
@@ -83,6 +92,27 @@ const AppContent: React.FC = () => {
   const displayName = profile?.full_name || (user?.email ? user.email.split('@')[0] : 'Guest Counsellor');
   const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
 
+  if (activePortal === 'student') {
+    return (
+      <>
+        <SkipLink />
+        <StudentPortalView
+          onSwitchToStaff={() => {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('portal');
+            window.history.replaceState({}, '', url.toString());
+            setActivePortal('staff');
+          }}
+          onOpenStaffAuth={() => setIsAuthModalOpen(true)}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <SkipLink />
@@ -100,6 +130,12 @@ const AppContent: React.FC = () => {
       onOpenAssistant={() => setIsAssistantOpen(true)}
       onOpenAuthModal={() => setIsAuthModalOpen(true)}
       onOpenSimulator={() => setIsSimulatorOpen(true)}
+      onSwitchToStudentPortal={() => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('portal', 'student');
+        window.history.replaceState({}, '', url.toString());
+        setActivePortal('student');
+      }}
       onSignOut={signOut}
       isAuthenticated={isAuthenticated}
       userRole={formattedRole}

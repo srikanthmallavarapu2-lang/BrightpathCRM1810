@@ -11,6 +11,7 @@ interface LayoutProps {
   onOpenAuthModal?: () => void;
   onSignOut?: () => void;
   onOpenSimulator?: () => void;
+  onSwitchToStudentPortal?: () => void;
   isAuthenticated?: boolean;
   children: React.ReactNode;
   userRole?: string;
@@ -26,6 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onOpenAuthModal,
   onSignOut,
   onOpenSimulator,
+  onSwitchToStudentPortal,
   isAuthenticated = false,
   children,
   userRole = 'Counsellor',
@@ -69,6 +71,7 @@ export const Layout: React.FC<LayoutProps> = ({
           onOpenAuthModal={onOpenAuthModal}
           onSignOut={onSignOut}
           onOpenSimulator={onOpenSimulator}
+          onSwitchToStudentPortal={onSwitchToStudentPortal}
           isAuthenticated={isAuthenticated}
           userRole={userRole}
           userName={userName}

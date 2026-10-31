@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Plus, Bell, LogIn, LogOut, Globe } from 'lucide-react';
+import { Menu, Plus, Bell, LogIn, LogOut, Globe, GraduationCap } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
 import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 import { UserAvatar } from '../common/UserAvatar';
@@ -12,6 +12,7 @@ interface HeaderProps {
   onOpenAuthModal?: () => void;
   onSignOut?: () => void;
   onOpenSimulator?: () => void;
+  onSwitchToStudentPortal?: () => void;
   isAuthenticated?: boolean;
   userRole?: string;
   userName?: string;
@@ -25,6 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuthModal,
   onSignOut,
   onOpenSimulator,
+  onSwitchToStudentPortal,
   isAuthenticated = false,
   userRole = 'Counsellor',
   userName = 'Sarah Jenkins',
@@ -90,6 +92,25 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-right">
         {/* Database Status Pill */}
         <DatabaseStatusBadge onOpenAssistant={onOpenAssistant} />
+
+        {onSwitchToStudentPortal && (
+          <button
+            onClick={onSwitchToStudentPortal}
+            className="btn btn-outline"
+            style={{ 
+              padding: '0.4rem 0.75rem', 
+              fontSize: '0.8rem', 
+              gap: '6px', 
+              borderColor: '#93c5fd', 
+              color: '#1d4ed8',
+              background: '#eff6ff',
+            }}
+            title="Open Public Student & Admissions Portal (Browse courses, apply online, track status)"
+          >
+            <GraduationCap size={14} color="#2563eb" />
+            <span>Student Portal</span>
+          </button>
+        )}
 
         {onOpenSimulator && (
           <button

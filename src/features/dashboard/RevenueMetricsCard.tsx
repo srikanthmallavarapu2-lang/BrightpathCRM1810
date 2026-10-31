@@ -184,3 +184,4 @@ export const RevenueMetricsCard: React.FC<RevenueMetricsCardProps> = ({ leads })
     </div>
   );
 };
+

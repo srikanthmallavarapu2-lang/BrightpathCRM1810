@@ -388,6 +388,34 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
             <option value="Cold">❄️ Cold Leads</option>
           </select>
 
+          {/* Quick Enrolled Students Filter Toggle */}
+          <button
+            onClick={() => {
+              if (selectedStatus === 'Converted') {
+                setSelectedStatus('all');
+              } else {
+                setSelectedStatus('Converted');
+              }
+            }}
+            style={{
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-sm)',
+              border: selectedStatus === 'Converted' ? '1px solid #10b981' : '1px solid var(--border-subtle)',
+              background: selectedStatus === 'Converted' ? '#ecfdf5' : '#ffffff',
+              color: selectedStatus === 'Converted' ? '#047857' : 'var(--text-secondary)',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+            title="Filter to view only enrolled students with course details"
+          >
+            <span>🎓 Enrolled Students</span>
+            {selectedStatus === 'Converted' && <span>✓</span>}
+          </button>
+
           {(selectedStatus !== 'all' || selectedSource !== 'all' || selectedAssignee !== 'all' || selectedPriority !== 'all' || searchQuery !== '') && (
             <button
               onClick={() => {

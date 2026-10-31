@@ -92,3 +92,4 @@ export const AcademyLogo: React.FC<AcademyLogoProps> = ({
     </div>
   );
 };
+
