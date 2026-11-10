@@ -312,5 +312,16 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 - [x] **Phase 16: Human-Crafted Visual Architecture & Client-Winning Conversion Suite** completed (Plus Jakarta Sans and Outfit font pairings, luminous ambient mesh hero, hiring network marquee, interactive salary jump calculator, 3D bento curricula cards, alumni testimonials, spring micro-interactions).
 - [x] **Phase 17: Staff CRM Bento Grid & Agency Workspace Overhaul** completed (21st.dev / ThreeUI / TasteSkill / GSAP standards applied across the Staff CRM: ambient dot-grid workspace canvas, bento glassmorphic cards with glowing top borders, 1-click role switcher pills in header & operational banner, admissions cohort target progress gauge with live % completion, 1-click demo student ingestion button for live sales pitches, and tactile spring micro-interactions).
 - [x] **Phase 18: Full-Spectrum Agency Polish, Bento UI Harmonization & Interactive Admissions FAQ** completed (Applied Bento card surfaces across Leads Pipeline, Follow-ups list, and Settings view; added online session pulse radar dot and role-tinted credentials to Sidebar; integrated an interactive 5-question Admissions FAQ Accordion with smooth Chevron spring transitions on Student Portal; verified 0 TypeScript compiler errors and live deployed to Vercel).
+- [x] **Phase 19: Streamlined Header & Ergonomic Leads Pipeline Data Grid** completed:
+  - Eliminated header button overcrowding by merging user avatar, staff name, role badge, and role switcher into a consolidated SaaS Profile Menu Pill.
+  - Removed redundant `+ New Lead` CTA from the header (retaining the prominent `+ Record Enquiry` action in the view below).
+  - Cleaned up the harsh blue neon line cutting across the search bar (`bento-glow-top-blue` removed).
+  - Added global `/` keyboard shortcut to focus the student search bar, with instant `✕` clear button.
+  - Resolved Assignee dropdown text truncation (`Sarah Jenkins (counsell...`, `Ananya Rao (Tech Advis...`) by removing the hardcoded `maxWidth: 185px` constraint and expanding the column to `minWidth: 220px` with a `980px` table base.
+  - De-cluttered the student cell by decoupling priority into a dedicated **Priority** column (`🔥 Hot`, `⚡ Warm`, `❄️ Cold` pills).
+  - Added 1-click phone copy to clipboard with toast confirmation and visual feedback.
+  - Upgraded WhatsApp outreach button into a prominent emerald tactile action pill (`💬 WhatsApp`) with `.btn-micro-spring` physics.
+  - Zero TypeScript errors (`npm run build` passing cleanly) and verified git deployment.
+
 
 

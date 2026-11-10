@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Plus, Bell, LogIn, LogOut, Globe, GraduationCap } from 'lucide-react';
+import { Menu, Bell, LogIn, Globe, GraduationCap, ChevronDown, LogOut } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
 import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 import { UserAvatar } from '../common/UserAvatar';
@@ -21,7 +21,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   currentTab,
   onOpenMobileDrawer,
-  onQuickAction,
+  onQuickAction: _onQuickAction,
   onOpenAssistant,
   onOpenAuthModal,
   onSignOut,
@@ -133,55 +133,67 @@ export const Header: React.FC<HeaderProps> = ({
 
         {isAuthenticated ? (
           <>
-            {/* Dynamic Role Badge with Avatar (Click to Switch Role) */}
-            <button 
-              type="button"
-              onClick={onOpenAuthModal}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.25rem 0.65rem',
-                borderRadius: 'var(--radius-full)',
-                background: roleTheme.bg,
-                border: `1px solid ${roleTheme.border}`,
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                color: roleTheme.text,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              title={`Logged in as ${userName} (${userRole}). Click to switch demo role or manage profile.`}
-            >
-              <UserAvatar name={userName} size={24} />
-              <span>{userRole}: {userName.split(' ')[0]}</span>
-            </button>
-
-            {/* Notifications */}
-            <button className="btn-icon" title="Notifications" aria-label="Notifications">
+            {/* Notifications Button */}
+            <button className="btn-icon btn-micro-spring" title="Notifications & Activity" aria-label="Notifications" style={{ position: 'relative' }}>
               <Bell size={18} />
+              <span 
+                style={{ 
+                  position: 'absolute', 
+                  top: '8px', 
+                  right: '8px', 
+                  width: '7px', 
+                  height: '7px', 
+                  borderRadius: '50%', 
+                  background: '#2563eb',
+                  border: '1.5px solid #ffffff'
+                }} 
+              />
             </button>
 
-            {/* Primary Action Button */}
-            {onQuickAction && (
-              <button onClick={onQuickAction} className="btn btn-primary">
-                <Plus size={16} />
-                <span>New Lead</span>
-              </button>
-            )}
-
-            {/* Sign Out Button */}
-            {onSignOut && (
-              <button
-                onClick={onSignOut}
-                className="btn btn-outline"
-                style={{ padding: '0.45rem 0.75rem', fontSize: '0.8rem', gap: '4px' }}
-                title="Sign out of your account"
+            {/* Consolidated User Profile & Role Menu Pill */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <button 
+                type="button"
+                onClick={onOpenAuthModal}
+                className="btn-micro-spring"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  padding: '0.35rem 0.85rem 0.35rem 0.45rem',
+                  borderRadius: 'var(--radius-full)',
+                  background: '#ffffff',
+                  border: `1.5px solid ${roleTheme.border}`,
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                }}
+                title={`Active Session: ${userName} (${userRole}). Click to switch role or manage account.`}
               >
-                <LogOut size={14} />
-                <span>Sign Out</span>
+                <UserAvatar name={userName} size={28} />
+                <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-display)' }}>
+                    {userName}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: roleTheme.text, fontWeight: 700, textTransform: 'capitalize' }}>
+                    {userRole}
+                  </div>
+                </div>
+                <ChevronDown size={14} color="#64748b" style={{ marginLeft: '2px' }} />
               </button>
-            )}
+
+              {onSignOut && (
+                <button
+                  type="button"
+                  onClick={onSignOut}
+                  className="btn-icon btn-micro-spring"
+                  style={{ width: 34, height: 34, color: '#64748b', background: '#f8fafc', border: '1px solid var(--border-subtle)' }}
+                  title="Sign Out of Active Session"
+                  aria-label="Sign Out"
+                >
+                  <LogOut size={15} />
+                </button>
+              )}
+            </div>
           </>
         ) : (
           <button

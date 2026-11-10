@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   Search, 
   Filter, 
@@ -17,7 +17,10 @@ import {
   MessageCircle,
   Download,
   LayoutGrid,
-  List
+  List,
+  Copy,
+  Check,
+  X
 } from 'lucide-react';
 import { Lead, LeadStatus, Profile } from '../../types/database';
 import { leadService } from '../../services/leadService';
@@ -64,6 +67,28 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   const [selectedAssignee, setSelectedAssignee] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
+  const [copiedPhoneId, setCopiedPhoneId] = useState<string | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Global '/' keyboard shortcut to focus search input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleCopyPhone = (leadId: string, phone: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(phone);
+    setCopiedPhoneId(leadId);
+    toast.success(`Copied phone number (${phone}) to clipboard`);
+    setTimeout(() => setCopiedPhoneId(null), 2000);
+  };
 
   useEffect(() => {
     if (initialSearchQuery !== undefined) {
@@ -215,31 +240,70 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Action and Filter Toolbar */}
       <div 
-        className="bento-card-surface bento-glow-top-blue fade-in-slide" 
+        className="bento-card-surface fade-in-slide" 
         style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           {/* Live Search Box */}
-          <div style={{ position: 'relative', flex: '1', minWidth: '240px' }}>
+          <div style={{ position: 'relative', flex: '1', minWidth: '260px' }}>
             <Search 
-              size={18} 
+              size={17} 
               color="#94a3b8" 
               style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} 
             />
             <input
+              ref={searchInputRef}
               type="text"
-              placeholder="Search by student name, phone, email, course..."
+              placeholder="Search by student name, phone, email, course... (press / to focus)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                padding: '0.55rem 1rem 0.55rem 2.5rem',
+                padding: '0.55rem 3.5rem 0.55rem 2.4rem',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--border-subtle)',
                 background: '#f8fafc',
-                fontSize: '0.875rem',
+                fontSize: '0.85rem',
+                transition: 'border-color 0.2s, background 0.2s',
               }}
+              onFocus={(e) => (e.target.style.background = '#ffffff')}
+              onBlur={(e) => (e.target.style.background = '#f8fafc')}
             />
+            <div style={{ position: 'absolute', right: '0.65rem', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  style={{
+                    padding: '2px',
+                    borderRadius: '50%',
+                    background: '#e2e8f0',
+                    color: '#64748b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                  title="Clear search"
+                >
+                  <X size={12} />
+                </button>
+              )}
+              <kbd
+                style={{
+                  fontSize: '0.7rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  background: '#e2e8f0',
+                  color: '#64748b',
+                  padding: '1px 5px',
+                  borderRadius: '4px',
+                  border: '1px solid #cbd5e1',
+                  userSelect: 'none',
+                }}
+                title="Press / to focus search"
+              >
+                /
+              </kbd>
+            </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -560,16 +624,16 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
           ) : (
             /* Live Data Table */
             <div className="table-responsive">
-              <table style={{ width: '100%', minWidth: '680px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+              <table className="crm-table">
                 <thead>
-                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                    <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600 }}>Student Name &amp; Priority</th>
-                    <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Contact Info</th>
-                    <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Course Interest</th>
-                    <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Source</th>
-                    <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Status</th>
-                    <th style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>Assignee</th>
-                    <th style={{ padding: '0.85rem 1.25rem', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                  <tr>
+                    <th style={{ minWidth: '240px' }}>Student &amp; Contact</th>
+                    <th style={{ minWidth: '150px' }}>Course Track</th>
+                    <th style={{ minWidth: '100px' }}>Priority</th>
+                    <th style={{ minWidth: '120px' }}>Source</th>
+                    <th style={{ minWidth: '130px' }}>Status</th>
+                    <th style={{ minWidth: '220px' }}>Assigned Counsellor</th>
+                    <th style={{ minWidth: '180px', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -577,17 +641,12 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                     const priority = extractPriority(lead.notes, lead.status);
 
                     return (
-                      <tr 
-                        key={lead.id}
-                        style={{ borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.15s ease' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                      >
-                        {/* Student Name & Avatar */}
-                        <td style={{ padding: '0.85rem 1.25rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <UserAvatar name={lead.full_name} size={34} />
-                            <div>
+                      <tr key={lead.id}>
+                        {/* Student Name & Contact */}
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                            <UserAvatar name={lead.full_name} size={36} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                               <button
                                 onClick={() => setSelectedLeadForDetail(lead)}
                                 style={{
@@ -598,10 +657,10 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                                   fontWeight: 700,
                                   color: '#1d4ed8',
                                   textAlign: 'left',
-                                  fontSize: '0.875rem',
+                                  fontSize: '0.9rem',
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '6px',
+                                  gap: '5px',
                                 }}
                                 title="View student dossier & activity history"
                               >
@@ -609,64 +668,94 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                                 <ExternalLink size={12} color="#2563eb" />
                               </button>
 
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
-                                <span
+                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '1px' }}>
+                                <Phone size={12} color="#2563eb" />
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>{lead.phone}</span>
+                                <button
+                                  onClick={(e) => handleCopyPhone(lead.id, lead.phone, e)}
+                                  title="Copy phone to clipboard"
+                                  className="btn-micro-spring"
                                   style={{
-                                    fontSize: '0.68rem',
-                                    fontWeight: 700,
-                                    padding: '0.1rem 0.4rem',
-                                    borderRadius: 'var(--radius-full)',
-                                    background: priority === 'Hot' ? '#fef2f2' : priority === 'Warm' ? '#fffbeb' : '#f1f5f9',
-                                    color: priority === 'Hot' ? '#dc2626' : priority === 'Warm' ? '#d97706' : '#64748b',
-                                    border: `1px solid ${priority === 'Hot' ? '#fee2e2' : priority === 'Warm' ? '#fef3c7' : '#e2e8f0'}`,
+                                    padding: '2px 4px',
+                                    borderRadius: '4px',
+                                    background: copiedPhoneId === lead.id ? '#dcfce7' : '#f1f5f9',
+                                    color: copiedPhoneId === lead.id ? '#15803d' : '#64748b',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    fontSize: '0.7rem',
+                                    cursor: 'pointer',
+                                    border: '1px solid',
+                                    borderColor: copiedPhoneId === lead.id ? '#86efac' : '#e2e8f0',
                                   }}
                                 >
-                                  {priority === 'Hot' ? '🔥 Hot' : priority === 'Warm' ? '☀️ Warm' : '❄️ Cold'}
-                                </span>
-                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                                  <Calendar size={11} /> {formatDate(lead.created_at)}
+                                  {copiedPhoneId === lead.id ? <Check size={11} /> : <Copy size={11} />}
+                                  {copiedPhoneId === lead.id && <span>Copied</span>}
+                                </button>
+                              </div>
+
+                              {lead.email && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '0.775rem' }}>
+                                  <Mail size={11} />
+                                  <span>{lead.email}</span>
                                 </div>
+                              )}
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#94a3b8', fontSize: '0.725rem', marginTop: '1px' }}>
+                                <Calendar size={11} />
+                                <span>Enquired {formatDate(lead.created_at)}</span>
                               </div>
 
                               {lead.lost_reason && (
-                                <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '3px' }}>
-                                  Reason: {lead.lost_reason}
+                                <div style={{ fontSize: '0.725rem', color: '#b91c1c', marginTop: '2px', background: '#fef2f2', padding: '1px 6px', borderRadius: '4px', border: '1px solid #fee2e2', display: 'inline-block' }}>
+                                  Lost reason: {lead.lost_reason}
                                 </div>
                               )}
                             </div>
                           </div>
                         </td>
 
-                        {/* Contact Info */}
-                        <td style={{ padding: '0.85rem 1rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.825rem' }}>
-                            <Phone size={13} color="#2563eb" /> {lead.phone}
-                          </div>
-                          {lead.email && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.785rem', marginTop: '2px' }}>
-                              <Mail size={13} /> {lead.email}
-                            </div>
-                          )}
-                        </td>
-
-                        {/* Course Interest */}
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        {/* Course Track */}
+                        <td>
                           <CourseBadge courseName={lead.course_interest} size="sm" />
                         </td>
 
+                        {/* Dedicated Priority Column */}
+                        <td>
+                          {priority === 'Hot' ? (
+                            <span className="priority-pill hot" title="High enrollment velocity">🔥 Hot</span>
+                          ) : priority === 'Warm' ? (
+                            <span className="priority-pill warm" title="Moderate prospect interest">⚡ Warm</span>
+                          ) : (
+                            <span className="priority-pill cold" title="Cold / Early enquiry">❄️ Cold</span>
+                          )}
+                        </td>
+
                         {/* Source */}
-                        <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>
-                          {lead.source}
+                        <td>
+                          <span 
+                            style={{ 
+                              fontSize: '0.785rem', 
+                              color: 'var(--text-secondary)', 
+                              background: '#f8fafc', 
+                              padding: '0.2rem 0.55rem', 
+                              borderRadius: '6px', 
+                              border: '1px solid #e2e8f0',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {lead.source}
+                          </span>
                         </td>
 
                         {/* Interactive Status Selector */}
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        <td>
                           <select
                             value={lead.status}
                             onChange={(e) => handleStatusChange(lead, e.target.value as LeadStatus)}
                             className={getStatusBadgeClass(lead.status)}
                             style={{ cursor: 'pointer', border: '1px solid transparent', outline: 'none' }}
-                            title="Click to update status"
+                            title="Click to update lead status"
                           >
                             <option value="New">New</option>
                             <option value="Contacted">Contacted</option>
@@ -676,21 +765,22 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                           </select>
                         </td>
 
-                        {/* Interactive Assignee Selector */}
-                        <td style={{ padding: '0.85rem 1rem' }}>
+                        {/* Interactive Assignee Selector - WIDE, NO TRUNCATION */}
+                        <td>
                           <select
                             value={lead.assigned_to || ''}
                             onChange={(e) => handleAssigneeChange(lead, e.target.value)}
                             style={{
-                              fontSize: '0.785rem',
-                              padding: '0.25rem 0.5rem',
+                              fontSize: '0.8rem',
+                              padding: '0.35rem 0.65rem',
                               borderRadius: 'var(--radius-sm)',
-                              border: '1px solid var(--border-subtle)',
+                              border: lead.assigned_to ? '1px solid #bbf7d0' : '1px solid #fde68a',
                               background: lead.assigned_to ? '#f0fdf4' : '#fffbeb',
-                              color: lead.assigned_to ? '#15803d' : '#b45309',
+                              color: lead.assigned_to ? '#15803d' : '#92400e',
                               fontWeight: 600,
                               cursor: 'pointer',
-                              maxWidth: '185px',
+                              width: '100%',
+                              minWidth: '200px',
                               outline: 'none',
                             }}
                             title="Assign enquiry to staff member"
@@ -710,9 +800,9 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                         </td>
 
                         {/* Actions */}
-                        <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                            {/* 1-Click WhatsApp consultation button */}
+                        <td style={{ textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4rem' }}>
+                            {/* Prominent 1-Click WhatsApp outreach */}
                             <button
                               onClick={() => {
                                 launchWhatsAppOutreach({
@@ -723,19 +813,19 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                                 });
                                 toast.success(`WhatsApp consultation launched for ${lead.full_name}.`);
                               }}
-                              className="btn-icon"
-                              style={{ width: 30, height: 30, color: '#16a34a', background: '#f0fdf4', border: '1px solid #bbf7d0' }}
-                              title="Chat on WhatsApp"
+                              className="btn-whatsapp btn-micro-spring"
+                              title={`Chat with ${lead.full_name} on WhatsApp`}
                               aria-label={`WhatsApp ${lead.full_name}`}
                             >
-                              <MessageCircle size={14} />
+                              <MessageCircle size={13} />
+                              <span>WhatsApp</span>
                             </button>
 
                             {onScheduleFollowUpForLead && (
                               <button
                                 onClick={() => onScheduleFollowUpForLead(lead)}
-                                className="btn-icon"
-                                style={{ width: 30, height: 30, color: '#2563eb' }}
+                                className="btn-icon btn-micro-spring"
+                                style={{ width: 32, height: 32, color: '#2563eb', background: '#eff6ff', border: '1px solid #dbeafe' }}
                                 title="Schedule Follow-up Reminder"
                                 aria-label={`Schedule follow-up for ${lead.full_name}`}
                               >
@@ -745,23 +835,23 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                             {onEditLead && (
                               <button
                                 onClick={() => onEditLead(lead)}
-                                className="btn-icon"
-                                style={{ width: 30, height: 30 }}
+                                className="btn-icon btn-micro-spring"
+                                style={{ width: 32, height: 32, background: '#f8fafc', border: '1px solid var(--border-subtle)' }}
                                 title="Edit Enquiry Details"
                                 aria-label={`Edit ${lead.full_name}`}
                               >
-                                <Edit2 size={14} />
+                                <Edit2 size={13} color="#475569" />
                               </button>
                             )}
                             {(isAdmin || isManager) && (
                               <button
                                 onClick={() => handleDeleteLead(lead)}
-                                className="btn-icon"
-                                style={{ width: 30, height: 30, color: '#ef4444' }}
+                                className="btn-icon btn-micro-spring"
+                                style={{ width: 32, height: 32, color: '#ef4444', background: '#fef2f2', border: '1px solid #fee2e2' }}
                                 title="Delete Lead (Admin/Manager)"
                                 aria-label={`Delete ${lead.full_name}`}
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={13} />
                               </button>
                             )}
                           </div>
