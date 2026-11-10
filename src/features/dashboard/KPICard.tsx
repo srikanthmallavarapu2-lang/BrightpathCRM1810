@@ -132,9 +132,11 @@ export const KPICard: React.FC<KPICardProps> = ({
             </p>
             <h3
               style={{
-                fontSize: '1.85rem',
-                fontWeight: 800,
+                fontSize: '2.1rem',
+                fontWeight: 900,
                 color: styles.valueColor,
+                fontFamily: 'var(--font-display)',
+                letterSpacing: '-0.03em',
                 marginTop: '0.35rem',
                 lineHeight: 1.1,
               }}

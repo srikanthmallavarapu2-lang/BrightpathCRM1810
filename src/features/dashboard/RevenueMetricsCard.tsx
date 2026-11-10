@@ -145,7 +145,7 @@ export const RevenueMetricsCard: React.FC<RevenueMetricsCardProps> = ({ leads })
             <Wallet size={14} color="#059669" />
             <span>Enrolled Tuition Collected</span>
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#047857', marginTop: '0.35rem' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#047857', marginTop: '0.35rem', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
             {formatAmount(totalConvertedINR)}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
@@ -159,7 +159,7 @@ export const RevenueMetricsCard: React.FC<RevenueMetricsCardProps> = ({ leads })
             <TrendingUp size={14} color="#6366f1" />
             <span>Forecasted Pipeline Value</span>
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#4338ca', marginTop: '0.35rem' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#4338ca', marginTop: '0.35rem', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
             {formatAmount(pipelinePotentialINR)}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
@@ -173,7 +173,7 @@ export const RevenueMetricsCard: React.FC<RevenueMetricsCardProps> = ({ leads })
             <ShieldCheck size={14} color="#f59e0b" />
             <span>Avg Student Tuition</span>
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#b45309', marginTop: '0.35rem' }}>
+          <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#b45309', marginTop: '0.35rem', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
             {formatAmount(avgFeePerStudent)}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>

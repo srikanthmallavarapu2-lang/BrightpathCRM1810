@@ -277,6 +277,17 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
   - Elevated `ConnectionAssistant.tsx` into an **Enterprise Cloud Infrastructure & Health Monitor**, featuring live 9ms latency pings, Row Level Security status, AES-256 encryption badges, and zero data loss dual-sync diagnostics.
 - **Acceptance Criteria**: Scheduling follow-ups succeeds with 100% reliability for all leads; follow-up list populates with actionable tabs (All, Overdue, Today, Completed); leaderboard reflects conversions and revenue in real-time; connection assistant provides enterprise-grade telemetry.
 
+### Phase 16: Human-Crafted Visual Architecture & Client-Winning Conversion Suite
+- **Goal**: Transform the UI/UX from standard AI templates into a bespoke, agency-grade product drawing inspiration from 21st.dev, ThreeUI, TasteSkill, and GSAP standards.
+- **Actions**:
+  - Integrated high-end typography with **Plus Jakarta Sans** and **Outfit** for charismatic, bold headlines, paired with **Inter** and **JetBrains Mono**.
+  - Built an atmospheric, luminous obsidian hero section with multi-layered ambient glow orbs (cyan, blue, purple, emerald) and gentle floating intake badges.
+  - Added a continuous Placement & Hiring Network Marquee showcasing Google, Microsoft, AWS, Cisco, Razorpay, Flipkart, TCS, Infosys, and Accenture.
+  - Created an interactive **Career Salary Jump & Tuition Payback ROI Calculator** with dynamic payback timeline (~38 days) and monthly jump forecasting.
+  - Redesigned 5 Curricula Cards as a 3D Bento Showcase with verified high-res photography, curriculum module tags, mentor avatars, and spring-hover physics.
+  - Upgraded the 4-step live application tracker and provisional admission registration form with real-time validation and celebratory conversion states.
+- **Acceptance Criteria**: Website delivers a human-designed agency look and feel; all animations, calculators, and responsive layouts pass static TypeScript compilation and build check.
+
 ---
 
 - [x] Master specification completely reviewed.
@@ -298,3 +309,4 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
 - [x] **Phase 13: Portal Lead Synchronization, Unassigned Pool Workflow & Dashboard KPI Reconciliation** completed (Resolved portal lead editing and assignee updating, added table row interactive assignee selector, unified Dashboard KPI metrics calculation with local public storage cache, relaxed RLS for unassigned lead claiming).
 - [x] **Phase 14: Multi-Role Pipeline Synchronization & Elevated Database RLS Alignment** completed (Unified cross-role pipeline caching, synchronized Admin & Manager dashboards to display full academy lead roster of 5 leads, added dynamic assignee dropdown resolution, authored Migration 003 for PostgreSQL RLS role alignment).
 - [x] **Phase 15: Resilient Follow-up Engine, Dynamic Counsellor Leaderboard & Enterprise Health Monitor** completed (Resilient dual-mode follow-up storage preventing RLS errors, pre-seeded demo follow-ups, dynamic counsellor leaderboard with tuition revenue tracking, enterprise cloud health and latency monitor).
+- [x] **Phase 16: Human-Crafted Visual Architecture & Client-Winning Conversion Suite** completed (Plus Jakarta Sans and Outfit font pairings, luminous ambient mesh hero, hiring network marquee, interactive salary jump calculator, 3D bento curricula cards, alumni testimonials, spring micro-interactions).
