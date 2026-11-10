@@ -189,11 +189,53 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
             )}
           </div>
 
-          {/* Due Date & Time */}
+          {/* Due Date & Time with Quick Preset Pills */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
-              Due Date & Time *
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Due Date &amp; Time *
+              </label>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date(Date.now() + 7200000);
+                    setDueAt(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+                  }}
+                  className="btn-micro-spring"
+                  style={{ fontSize: '0.685rem', padding: '1px 6px', background: '#eff6ff', color: '#1d4ed8', borderRadius: '4px', border: '1px solid #bfdbfe', cursor: 'pointer' }}
+                >
+                  +2h Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 1);
+                    d.setHours(10, 0, 0, 0);
+                    setDueAt(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+                  }}
+                  className="btn-micro-spring"
+                  style={{ fontSize: '0.685rem', padding: '1px 6px', background: '#f0fdf4', color: '#15803d', borderRadius: '4px', border: '1px solid #bbf7d0', cursor: 'pointer' }}
+                >
+                  Tomorrow 10am
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 3);
+                    d.setHours(11, 0, 0, 0);
+                    setDueAt(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+                  }}
+                  className="btn-micro-spring"
+                  style={{ fontSize: '0.685rem', padding: '1px 6px', background: '#f8fafc', color: '#475569', borderRadius: '4px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                >
+                  In 3 Days
+                </button>
+              </div>
+            </div>
+
             <div style={{ position: 'relative' }}>
               <Clock size={16} color="#94a3b8" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
               <input
@@ -207,6 +249,7 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
                   borderRadius: 'var(--radius-md)',
                   border: '1px solid var(--border-subtle)',
                   fontSize: '0.875rem',
+                  outline: 'none',
                 }}
               />
             </div>
@@ -230,6 +273,7 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
                 border: '1px solid var(--border-subtle)',
                 fontSize: '0.875rem',
                 resize: 'vertical',
+                outline: 'none',
               }}
             />
           </div>
@@ -242,8 +286,8 @@ export const ScheduleFollowUpModal: React.FC<ScheduleFollowUpModalProps> = ({
             <button 
               type="submit" 
               disabled={isSubmitting || leads.length === 0} 
-              className="btn btn-primary" 
-              style={{ fontSize: '0.85rem' }}
+              className="btn-shimmer" 
+              style={{ fontSize: '0.85rem', padding: '0.6rem 1.25rem', gap: '6px', display: 'inline-flex', alignItems: 'center' }}
             >
               <Check size={16} />
               <span>{isSubmitting ? 'Scheduling...' : 'Save Follow-up'}</span>

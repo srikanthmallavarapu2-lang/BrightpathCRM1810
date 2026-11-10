@@ -44,12 +44,20 @@ const AppContent: React.FC = () => {
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
-  // Global ⌘K / Ctrl+K listener for Command Palette
+  // Global ⌘K Command Palette and 1-4 view navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsCommandPaletteOpen((prev) => !prev);
+        return;
+      }
+
+      if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        if (e.key === '1') setCurrentTab('dashboard');
+        else if (e.key === '2') setCurrentTab('leads');
+        else if (e.key === '3') setCurrentTab('followups');
+        else if (e.key === '4') setCurrentTab('settings');
       }
     };
     window.addEventListener('keydown', handleKeyDown);

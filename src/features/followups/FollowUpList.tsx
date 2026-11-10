@@ -241,7 +241,7 @@ export const FollowUpList: React.FC<FollowUpListProps> = ({
               Clear Search
             </button>
           ) : (
-            <button onClick={onOpenScheduleModal} className="btn btn-primary" style={{ fontSize: '0.8rem' }}>
+            <button onClick={onOpenScheduleModal} className="btn-shimmer" style={{ fontSize: '0.825rem', padding: '0.5rem 1.15rem' }}>
               Schedule Follow-up
             </button>
           )}

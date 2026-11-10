@@ -77,14 +77,14 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
             Scheduled Follow-ups
           </h2>
           <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Track pending callbacks, admissions consultations, and time-sensitive reminders from live Supabase.
+            Track pending callbacks, admissions consultations, and time-sensitive reminders with real-time sync.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button 
             onClick={fetchFollowUps} 
             className="btn btn-outline" 
-            title="Refresh tasks from Supabase"
+            title="Refresh tasks from cloud database"
             style={{ padding: '0.55rem 0.75rem' }}
           >
             <RefreshCw size={15} className={isLoading ? 'spin' : ''} />
@@ -106,7 +106,11 @@ export const FollowUpsView: React.FC<FollowUpsViewProps> = ({
             <Download size={15} />
             <span>Export CSV</span>
           </button>
-          <button onClick={() => setIsScheduleModalOpen(true)} className="btn btn-primary">
+          <button 
+            onClick={() => setIsScheduleModalOpen(true)} 
+            className="btn-shimmer"
+            style={{ padding: '0.55rem 1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          >
             <Plus size={16} />
             <span>Schedule Follow-up</span>
           </button>

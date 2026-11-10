@@ -150,6 +150,72 @@ const DEFAULT_SHARED_FOLLOW_UPS: FollowUp[] = [
       updated_at: new Date().toISOString(),
     },
   },
+  {
+    id: 'fu-105',
+    lead_id: 'lead-009-aarav',
+    assigned_to: '44444444-4444-4000-a000-000000000004',
+    due_at: new Date(Date.now() + 3600000 * 2).toISOString(), // Today in 2h
+    note: 'Technical aptitude assessment debrief & batch curriculum walkthrough.',
+    status: 'pending',
+    completed_at: null,
+    created_by: '44444444-4444-4000-a000-000000000004',
+    created_at: new Date().toISOString(),
+    lead: {
+      id: 'lead-009-aarav',
+      full_name: 'Aarav Patel',
+      email: 'aarav.patel@gmail.com',
+      phone: '+91 9711882233',
+      course_interest: 'Cybersecurity',
+      status: 'Qualified',
+      source: 'Website Form',
+      lost_reason: null,
+      notes: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      assigned_to: '44444444-4444-4000-a000-000000000004',
+      created_by: '44444444-4444-4000-a000-000000000004',
+    },
+    assigned_profile: {
+      id: '44444444-4444-4000-a000-000000000004',
+      full_name: 'Ananya Rao',
+      role: 'counsellor',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  },
+  {
+    id: 'fu-106',
+    lead_id: 'lead-012-simran',
+    assigned_to: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    due_at: new Date(Date.now() + 86400000 * 1).toISOString(), // Tomorrow
+    note: 'Parent campus tour follow-up and tuition instalment schedule discussion.',
+    status: 'pending',
+    completed_at: null,
+    created_by: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    created_at: new Date().toISOString(),
+    lead: {
+      id: 'lead-012-simran',
+      full_name: 'Simran Kaur',
+      email: 'simran.kaur@gmail.com',
+      phone: '+91 9720448811',
+      course_interest: 'Data Science & AI',
+      status: 'Contacted',
+      source: 'Website Form',
+      lost_reason: null,
+      notes: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      assigned_to: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+      created_by: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    },
+    assigned_profile: {
+      id: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+      full_name: 'Marcus Vance',
+      role: 'manager',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  },
 ];
 
 function getStoredFollowUps(): FollowUp[] {
@@ -163,6 +229,12 @@ function getStoredFollowUps(): FollowUp[] {
     if (!Array.isArray(parsed) || parsed.length === 0) {
       localStorage.setItem(LOCAL_FOLLOW_UPS_KEY, JSON.stringify(DEFAULT_SHARED_FOLLOW_UPS));
       return DEFAULT_SHARED_FOLLOW_UPS;
+    }
+    // Guarantee baseline tasks exist
+    for (const defTask of DEFAULT_SHARED_FOLLOW_UPS) {
+      if (!parsed.some((p: FollowUp) => p.id === defTask.id)) {
+        parsed.push(defTask);
+      }
     }
     return parsed;
   } catch {

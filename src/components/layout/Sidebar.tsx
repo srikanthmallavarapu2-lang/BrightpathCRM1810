@@ -78,7 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Links */}
       <nav className="sidebar-nav">
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
           return (
@@ -86,12 +86,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
               key={item.id}
               onClick={() => onSelectTab(item.id)}
               className={`nav-link ${isActive ? 'active' : ''}`}
-              title={isCollapsed ? item.label : undefined}
+              title={isCollapsed ? `${item.label} (${idx + 1})` : undefined}
             >
               <Icon size={20} />
               {!isCollapsed && <span>{item.label}</span>}
               {!isCollapsed && item.badge && (
                 <span className="nav-badge-pill">{item.badge}</span>
+              )}
+              {!isCollapsed && !item.badge && (
+                <kbd 
+                  style={{ 
+                    marginLeft: 'auto', 
+                    fontSize: '0.65rem', 
+                    fontFamily: 'monospace', 
+                    padding: '1px 5px', 
+                    background: 'rgba(255,255,255,0.06)', 
+                    color: '#64748b', 
+                    borderRadius: '3px',
+                    border: '1px solid rgba(255,255,255,0.08)' 
+                  }}
+                >
+                  {idx + 1}
+                </kbd>
               )}
             </button>
           );

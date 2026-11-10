@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Building, Database, Mail, Calendar, RefreshCw, Users, Key } from 'lucide-react';
+import { Shield, Building, Database, Mail, Calendar, RefreshCw, Users, Key, Activity } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, isSupabaseConfigured } from '../../lib/supabaseClient';
 import { leadService } from '../../services/leadService';
@@ -365,9 +365,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
               <span>Ping Latency</span>
             </button>
             {onOpenAssistant && (
-              <button onClick={onOpenAssistant} className="btn btn-primary" style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem' }}>
-                <Database size={14} />
-                <span>Assistant</span>
+              <button 
+                onClick={onOpenAssistant} 
+                className="btn btn-outline" 
+                style={{ fontSize: '0.8rem', padding: '0.4rem 0.85rem', gap: '6px', borderColor: '#10b981', color: '#047857', background: '#ecfdf5' }}
+                title="View Cloud Database Health & Security Diagnostics"
+              >
+                <Activity size={14} color="#059669" />
+                <span>Cloud Diagnostics</span>
               </button>
             )}
           </div>

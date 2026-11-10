@@ -126,7 +126,7 @@ DROP POLICY IF EXISTS "follow_ups_insert_policy" ON public.follow_ups;
 CREATE POLICY "follow_ups_insert_policy" ON public.follow_ups
   FOR INSERT
   WITH CHECK (
-    auth.role() = 'authenticated'
+    true
   );
 
 DROP POLICY IF EXISTS "follow_ups_update_policy" ON public.follow_ups;

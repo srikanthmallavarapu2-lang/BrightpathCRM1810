@@ -53,6 +53,7 @@ const DEFAULT_STAFF_ROSTER: Profile[] = [
 
 // Baseline Active Leads visible across all Counsellor, Manager, and Admin workspaces
 const DEFAULT_SHARED_LEADS: Lead[] = [
+  // Sarah Jenkins (3 Converted, 2 Active = 5 leads, 60% conversion, ₹1.85 Lakh)
   {
     id: 'lead-001-sanya',
     full_name: 'sanya sharma',
@@ -61,7 +62,7 @@ const DEFAULT_SHARED_LEADS: Lead[] = [
     course_interest: 'Data Science & AI',
     source: 'Website Form',
     status: 'Converted',
-    notes: '[Priority: Hot]\nProvisional enrolment confirmed.',
+    notes: '[Priority: Hot]\nProvisional enrolment confirmed. Fee processed.',
     assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
     created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
     assigned_profile: {
@@ -98,28 +99,6 @@ const DEFAULT_SHARED_LEADS: Lead[] = [
     lost_reason: null,
   },
   {
-    id: 'lead-003-dharvik',
-    full_name: 'Dharvik',
-    phone: '+91 9876523101',
-    email: 'Dharvik.m@gail.com',
-    course_interest: 'Cloud Computing & DevOps',
-    source: 'Website Form',
-    status: 'Converted',
-    notes: '[Priority: Hot]\nEnrolment confirmed.',
-    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
-    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
-    assigned_profile: {
-      id: '8200424f-5eb4-461a-85ff-4247030f8560',
-      full_name: 'Sarah Jenkins (Counsellor)',
-      role: 'counsellor',
-      created_at: '2026-10-31T12:00:00Z',
-      updated_at: '2026-10-31T12:00:00Z',
-    },
-    created_at: '2026-10-24T11:00:00Z',
-    updated_at: '2026-10-31T14:00:00Z',
-    lost_reason: null,
-  },
-  {
     id: 'lead-004-rahul',
     full_name: 'Rahul Sharma',
     phone: '+91 9871910101',
@@ -127,7 +106,7 @@ const DEFAULT_SHARED_LEADS: Lead[] = [
     course_interest: 'Data Science & AI',
     source: 'Student Referral',
     status: 'Converted',
-    notes: '[Priority: Hot]\nReferral from Alumni.',
+    notes: '[Priority: Hot]\nReferral from Alumni. Enrolled.',
     assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
     created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
     assigned_profile: {
@@ -149,7 +128,7 @@ const DEFAULT_SHARED_LEADS: Lead[] = [
     course_interest: 'Full Stack Web Dev',
     source: 'Inbound Phone Call',
     status: 'Contacted',
-    notes: '[Priority: Warm]\nAttended initial tech counseling call.',
+    notes: '[Priority: Warm]\nAttended initial tech counseling call. Reviewing syllabus modules.',
     assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
     created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
     assigned_profile: {
@@ -161,6 +140,210 @@ const DEFAULT_SHARED_LEADS: Lead[] = [
     },
     created_at: '2026-10-22T15:00:00Z',
     updated_at: '2026-10-31T14:20:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-006-tanvi',
+    full_name: 'Tanvi Mehta',
+    phone: '+91 9876599330',
+    email: 'tanvi.mehta9933@gmail.com',
+    course_interest: 'UI/UX Design',
+    source: 'Website Form',
+    status: 'New',
+    notes: '[Priority: Warm]\nInterested in Portfolio & Design Systems track.',
+    assigned_to: '8200424f-5eb4-461a-85ff-4247030f8560',
+    created_by: '8200424f-5eb4-461a-85ff-4247030f8560',
+    assigned_profile: {
+      id: '8200424f-5eb4-461a-85ff-4247030f8560',
+      full_name: 'Sarah Jenkins (Counsellor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-11-01T11:00:00Z',
+    updated_at: '2026-11-01T11:00:00Z',
+    lost_reason: null,
+  },
+
+  // Ananya Rao (2 Converted, 2 Active = 4 leads, 50% conversion, ₹1.00 Lakh)
+  {
+    id: 'lead-007-deepak',
+    full_name: 'Deepak Verma',
+    phone: '+91 9871122334',
+    email: 'deepakverma01@gmail.com',
+    course_interest: 'Cloud & DevOps',
+    source: 'Website Form',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nFee installment cleared. AWS & Kubernetes cohort enrolled.',
+    assigned_to: '44444444-4444-4000-a000-000000000004',
+    created_by: '44444444-4444-4000-a000-000000000004',
+    assigned_profile: {
+      id: '44444444-4444-4000-a000-000000000004',
+      full_name: 'Ananya Rao (Tech Advisor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-11-01T09:00:00Z',
+    updated_at: '2026-11-02T16:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-008-priya',
+    full_name: 'Priya Nair',
+    phone: '+91 9820123456',
+    email: 'priya.nair@outlook.com',
+    course_interest: 'Full Stack Web Dev',
+    source: 'Campus Event',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nReact & Node bootcamp confirmation completed.',
+    assigned_to: '44444444-4444-4000-a000-000000000004',
+    created_by: '44444444-4444-4000-a000-000000000004',
+    assigned_profile: {
+      id: '44444444-4444-4000-a000-000000000004',
+      full_name: 'Ananya Rao (Tech Advisor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-28T14:00:00Z',
+    updated_at: '2026-10-30T17:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-009-aarav',
+    full_name: 'Aarav Patel',
+    phone: '+91 9711882233',
+    email: 'aarav.patel@gmail.com',
+    course_interest: 'Cybersecurity',
+    source: 'Website Form',
+    status: 'Qualified',
+    notes: '[Priority: Warm]\nCleared tech aptitude assessment, reviewing batch dates.',
+    assigned_to: '44444444-4444-4000-a000-000000000004',
+    created_by: '44444444-4444-4000-a000-000000000004',
+    assigned_profile: {
+      id: '44444444-4444-4000-a000-000000000004',
+      full_name: 'Ananya Rao (Tech Advisor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-11-03T10:15:00Z',
+    updated_at: '2026-11-04T12:30:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-010-neha',
+    full_name: 'Neha Gupta',
+    phone: '+91 9811447722',
+    email: 'neha.design@gmail.com',
+    course_interest: 'UI/UX Design',
+    source: 'Inbound Phone Call',
+    status: 'Contacted',
+    notes: '[Priority: Warm]\nNeeds weekend batch for working professionals.',
+    assigned_to: '44444444-4444-4000-a000-000000000004',
+    created_by: '44444444-4444-4000-a000-000000000004',
+    assigned_profile: {
+      id: '44444444-4444-4000-a000-000000000004',
+      full_name: 'Ananya Rao (Tech Advisor)',
+      role: 'counsellor',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-11-04T15:00:00Z',
+    updated_at: '2026-11-04T15:00:00Z',
+    lost_reason: null,
+  },
+
+  // Marcus Vance (2 Converted, 1 Active = 3 leads, 66.7% conversion, ₹1.03 Lakh)
+  {
+    id: 'lead-003-dharvik',
+    full_name: 'Dharvik',
+    phone: '+91 9876523101',
+    email: 'Dharvik.m@gail.com',
+    course_interest: 'Cloud & DevOps',
+    source: 'Website Form',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nBranch manager consultation completed. Enrolment confirmed.',
+    assigned_to: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    created_by: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    assigned_profile: {
+      id: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+      full_name: 'Marcus Vance (Branch Manager)',
+      role: 'manager',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-24T11:00:00Z',
+    updated_at: '2026-10-31T14:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-011-rohan',
+    full_name: 'Rohan Gupta',
+    phone: '+91 9819001122',
+    email: 'rohan.gupta@corp.in',
+    course_interest: 'Cybersecurity',
+    source: 'Direct Walk-in',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nCorporate sponsored admission. Fee verified.',
+    assigned_to: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    created_by: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    assigned_profile: {
+      id: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+      full_name: 'Marcus Vance (Branch Manager)',
+      role: 'manager',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-29T10:00:00Z',
+    updated_at: '2026-10-31T16:00:00Z',
+    lost_reason: null,
+  },
+  {
+    id: 'lead-012-simran',
+    full_name: 'Simran Kaur',
+    phone: '+91 9720448811',
+    email: 'simran.kaur@gmail.com',
+    course_interest: 'Data Science & AI',
+    source: 'Website Form',
+    status: 'Contacted',
+    notes: '[Priority: Warm]\nAttended campus tour with parents. Considering batch.',
+    assigned_to: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    created_by: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+    assigned_profile: {
+      id: 'ccd3a97a-b46a-4bab-b38c-f57dd74dbcd6',
+      full_name: 'Marcus Vance (Branch Manager)',
+      role: 'manager',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-11-02T14:00:00Z',
+    updated_at: '2026-11-02T14:00:00Z',
+    lost_reason: null,
+  },
+
+  // Dr. S. K. Jenkins (1 Converted = 1 lead, 100% conversion, ₹65,000)
+  {
+    id: 'lead-013-vikram',
+    full_name: 'Vikramaditya Singhania',
+    phone: '+91 9900112233',
+    email: 'vikram.singhania@apex.com',
+    course_interest: 'Data Science & AI',
+    source: 'Student Referral',
+    status: 'Converted',
+    notes: '[Priority: Hot]\nExecutive Fellowship in Artificial Intelligence. Director scholarship applied.',
+    assigned_to: '11111111-1111-4000-a000-000000000001',
+    created_by: '11111111-1111-4000-a000-000000000001',
+    assigned_profile: {
+      id: '11111111-1111-4000-a000-000000000001',
+      full_name: 'Dr. S. K. Jenkins (Administrator)',
+      role: 'admin',
+      created_at: '2026-10-31T12:00:00Z',
+      updated_at: '2026-10-31T12:00:00Z',
+    },
+    created_at: '2026-10-25T09:00:00Z',
+    updated_at: '2026-10-26T12:00:00Z',
     lost_reason: null,
   },
 ];
@@ -201,6 +384,15 @@ export const leadService = {
         if (typeof window !== 'undefined') {
           const storedShared = localStorage.getItem('bp_crm_all_leads');
           let sharedLeads: Lead[] = storedShared ? JSON.parse(storedShared) : [...DEFAULT_SHARED_LEADS];
+          
+          if (Array.isArray(sharedLeads)) {
+            // Guarantee all baseline leads exist so all counsellors have active pipeline demo data
+            for (const defLead of DEFAULT_SHARED_LEADS) {
+              if (!sharedLeads.some((sl) => sl.id === defLead.id || sl.phone === defLead.phone)) {
+                sharedLeads.push(defLead);
+              }
+            }
+          }
 
           // Also merge any public portal leads
           const storedPublic = localStorage.getItem('bp_public_leads');
