@@ -322,6 +322,16 @@ Supabase Cloud (PostgreSQL 15+ with Row Level Security)
   - Added 1-click phone copy to clipboard with toast confirmation and visual feedback.
   - Upgraded WhatsApp outreach button into a prominent emerald tactile action pill (`💬 WhatsApp`) with `.btn-micro-spring` physics.
   - Zero TypeScript errors (`npm run build` passing cleanly) and verified git deployment.
+- [x] **Phase 20: 21st.dev Full-Suite Design Engineering Transformation** completed:
+  - **Command Palette (`⌘K` / `Ctrl+K`)**: Added a global 21st.dev Spotlight Command Palette ([CommandPalette.tsx](file:///c:/Users/MY%20PC/Projects/BrightPath-CRM-1810/brightpath-crm/src/components/common/CommandPalette.tsx)) accessible from anywhere via `⌘K` or the header trigger button. Enables instant keyboard navigation to create enquiries, launch simulators, switch views, and toggle roles.
+  - **Metric Telemetry & Sparklines**: Embedded live SVG sparkline trend micro-curves and velocity percentage pills (`+14.2% pace`) directly into all KPI cards ([KPICard.tsx](file:///c:/Users/MY%20PC/Projects/BrightPath-CRM-1810/brightpath-crm/src/features/dashboard/KPICard.tsx)).
+  - **Sortable Data Grid Headers**: Added interactive sorting (by student name, priority, created date, and status) with dynamic ascending/descending directional carets in [LeadsView.tsx](file:///c:/Users/MY%20PC/Projects/BrightPath-CRM-1810/brightpath-crm/src/features/leads/LeadsView.tsx).
+  - **Live Pulsing Status Indicator Dots**: Implemented 21st.dev animated pulsing indicator dots (`.status-pulse-dot`) inside the table status selectors and badges for real-time visual heartbeat.
+  - **Active Session Avatar Status**: Enhanced [UserAvatar.tsx](file:///c:/Users/MY%20PC/Projects/BrightPath-CRM-1810/brightpath-crm/src/components/common/UserAvatar.tsx) with live session online green pulse indicators (`.avatar-online-dot`).
+  - **Shimmer CTA Buttons**: Applied luminous 21st.dev gradient shimmer sweep animations (`.btn-shimmer`) to primary CTA buttons across CRM pipeline and Student Portal.
+  - **Interactive Currency Switcher**: Added live `[₹ INR | $ USD]` toggle pills on the public Student Portal ([StudentPortalView.tsx](file:///c:/Users/MY%20PC/Projects/BrightPath-CRM-1810/brightpath-crm/src/features/student/StudentPortalView.tsx)) dynamically recalculating tuition across all course tracks.
+  - Verified static compilation with 0 errors and deployed live to production.
+
 
 
 

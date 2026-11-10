@@ -12,6 +12,7 @@ import { LeadFormModal } from './features/leads/LeadFormModal';
 import { ScheduleFollowUpModal } from './features/followups/ScheduleFollowUpModal';
 import { PublicEnquiryModal } from './features/simulator/PublicEnquiryModal';
 import { StudentPortalView } from './features/student/StudentPortalView';
+import { CommandPalette } from './components/common/CommandPalette';
 import { Lead, LeadStatus } from './types/database';
 import { followUpService } from './services/followUpService';
 import { Lock, LogIn } from 'lucide-react';
@@ -41,6 +42,19 @@ const AppContent: React.FC = () => {
   const [scheduleModalLeadId, setScheduleModalLeadId] = useState<string | undefined>(undefined);
   const [isAppScheduleModalOpen, setIsAppScheduleModalOpen] = useState(false);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Global ⌘K / Ctrl+K listener for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const { user, profile, role, isAuthenticated, signOut } = useAuth();
 
@@ -136,6 +150,7 @@ const AppContent: React.FC = () => {
         window.history.replaceState({}, '', url.toString());
         setActivePortal('student');
       }}
+      onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
       onSignOut={signOut}
       isAuthenticated={isAuthenticated}
       userRole={formattedRole}
@@ -257,6 +272,21 @@ const AppContent: React.FC = () => {
         isOpen={isSimulatorOpen}
         onClose={() => setIsSimulatorOpen(false)}
         onLeadIngested={handleLeadSaved}
+      />
+
+      {/* 21st.dev Command Palette (⌘K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onSelectTab={setCurrentTab}
+        onOpenCreateLead={handleOpenCreateLead}
+        onOpenSimulator={() => setIsSimulatorOpen(true)}
+        onSwitchToStudentPortal={() => {
+          const url = new URL(window.location.href);
+          url.searchParams.set('portal', 'student');
+          window.history.replaceState({}, '', url.toString());
+          setActivePortal('student');
+        }}
       />
       </Layout>
     </>

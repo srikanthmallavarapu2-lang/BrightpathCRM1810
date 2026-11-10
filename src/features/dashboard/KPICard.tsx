@@ -37,6 +37,8 @@ export const KPICard: React.FC<KPICardProps> = ({
           iconBg: '#fef2f2',
           iconColor: '#dc2626',
           titleColor: '#b91c1c',
+          sparklineColor: '#ef4444',
+          sparklineFill: 'rgba(239, 68, 68, 0.08)',
         };
       case 'success':
         return {
@@ -46,6 +48,8 @@ export const KPICard: React.FC<KPICardProps> = ({
           iconBg: '#ecfdf5',
           iconColor: '#059669',
           titleColor: 'var(--text-muted)',
+          sparklineColor: '#10b981',
+          sparklineFill: 'rgba(16, 185, 129, 0.08)',
         };
       case 'purple':
         return {
@@ -55,6 +59,8 @@ export const KPICard: React.FC<KPICardProps> = ({
           iconBg: '#f5f3ff',
           iconColor: '#7c3aed',
           titleColor: 'var(--text-muted)',
+          sparklineColor: '#8b5cf6',
+          sparklineFill: 'rgba(139, 92, 246, 0.08)',
         };
       case 'blue':
         return {
@@ -64,6 +70,8 @@ export const KPICard: React.FC<KPICardProps> = ({
           iconBg: '#eff6ff',
           iconColor: '#2563eb',
           titleColor: 'var(--text-muted)',
+          sparklineColor: '#3b82f6',
+          sparklineFill: 'rgba(59, 130, 246, 0.08)',
         };
       case 'default':
       default:
@@ -74,6 +82,8 @@ export const KPICard: React.FC<KPICardProps> = ({
           iconBg: '#f1f5f9',
           iconColor: '#64748b',
           titleColor: 'var(--text-muted)',
+          sparklineColor: '#64748b',
+          sparklineFill: 'rgba(100, 116, 139, 0.08)',
         };
     }
   };
@@ -162,34 +172,36 @@ export const KPICard: React.FC<KPICardProps> = ({
           </div>
         </div>
 
-        {trendBadge && (
-          <p
-            style={{
-              fontSize: '0.75rem',
-              color: trendBadge.positive !== false ? '#16a34a' : '#dc2626',
-              marginTop: '0.65rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontWeight: 600,
-            }}
-          >
-            <ArrowUpRight size={13} />
-            <span>{trendBadge.text}</span>
-          </p>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.65rem' }}>
+          {trendBadge ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span className={`metric-velocity-pill ${trendBadge.positive !== false ? 'positive' : 'neutral'}`}>
+                <ArrowUpRight size={12} />
+                <span>{trendBadge.text}</span>
+              </span>
+            </div>
+          ) : subtitle ? (
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              {subtitle}
+            </p>
+          ) : (
+            <div />
+          )}
 
-        {subtitle && !trendBadge && (
-          <p
-            style={{
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              marginTop: '0.65rem',
-            }}
-          >
-            {subtitle}
-          </p>
-        )}
+          {/* 21st.dev Mini Sparkline Curve */}
+          <svg width="56" height="20" viewBox="0 0 56 20" fill="none" className="sparkline-svg">
+            <path
+              d={variant === 'alert' ? "M 0 6 Q 14 16, 28 8 T 56 16" : "M 0 16 Q 14 18, 28 8 T 56 4"}
+              stroke={styles.sparklineColor}
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d={`${variant === 'alert' ? "M 0 6 Q 14 16, 28 8 T 56 16" : "M 0 16 Q 14 18, 28 8 T 56 4"} L 56 20 L 0 20 Z`}
+              fill={styles.sparklineFill}
+            />
+          </svg>
+        </div>
       </div>
 
       {drilldownLabel && (

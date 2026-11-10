@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Bell, LogIn, Globe, GraduationCap, ChevronDown, LogOut } from 'lucide-react';
+import { Menu, Bell, LogIn, Globe, GraduationCap, ChevronDown, LogOut, Search } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
 import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 import { UserAvatar } from '../common/UserAvatar';
@@ -13,6 +13,7 @@ interface HeaderProps {
   onSignOut?: () => void;
   onOpenSimulator?: () => void;
   onSwitchToStudentPortal?: () => void;
+  onOpenCommandPalette?: () => void;
   isAuthenticated?: boolean;
   userRole?: string;
   userName?: string;
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSignOut,
   onOpenSimulator,
   onSwitchToStudentPortal,
+  onOpenCommandPalette,
   isAuthenticated = false,
   userRole = 'Counsellor',
   userName = 'Sarah Jenkins',
@@ -90,6 +92,43 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div className="header-right">
+        {/* Command Palette Trigger Button */}
+        {onOpenCommandPalette && (
+          <button
+            onClick={onOpenCommandPalette}
+            className="btn-micro-spring"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '0.4rem 0.75rem',
+              borderRadius: 'var(--radius-full)',
+              background: '#f8fafc',
+              border: '1px solid var(--border-subtle)',
+              fontSize: '0.8rem',
+              color: '#64748b',
+              cursor: 'pointer',
+            }}
+            title="Open Command Palette (Press ⌘K or Ctrl+K anywhere)"
+          >
+            <Search size={14} color="#94a3b8" />
+            <span style={{ marginRight: '2px', fontWeight: 500 }}>Search or Jump to...</span>
+            <kbd 
+              style={{ 
+                fontSize: '0.68rem', 
+                fontFamily: 'var(--font-mono, monospace)', 
+                padding: '1px 5px', 
+                background: '#e2e8f0', 
+                borderRadius: '4px', 
+                border: '1px solid #cbd5e1',
+                color: '#475569'
+              }}
+            >
+              ⌘K
+            </kbd>
+          </button>
+        )}
+
         {/* Database Status Pill */}
         <DatabaseStatusBadge onOpenAssistant={onOpenAssistant} />
 
@@ -169,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 title={`Active Session: ${userName} (${userRole}). Click to switch role or manage account.`}
               >
-                <UserAvatar name={userName} size={28} />
+                <UserAvatar name={userName} size={28} showStatus={true} status="online" />
                 <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
                   <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-display)' }}>
                     {userName}

@@ -68,7 +68,18 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [copiedPhoneId, setCopiedPhoneId] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<'name' | 'priority' | 'date' | 'status'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSort = (field: 'name' | 'priority' | 'date' | 'status') => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
 
   // Global '/' keyboard shortcut to focus search input
   useEffect(() => {
@@ -229,12 +240,29 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
     }
   };
 
-  const displayedLeads = leads.filter((lead) => {
-    if (selectedPriority !== 'all') {
-      return extractPriority(lead.notes, lead.status) === selectedPriority;
-    }
-    return true;
-  });
+  const displayedLeads = leads
+    .filter((lead) => {
+      if (selectedPriority !== 'all') {
+        return extractPriority(lead.notes, lead.status) === selectedPriority;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      let comparison = 0;
+      if (sortField === 'name') {
+        comparison = a.full_name.localeCompare(b.full_name);
+      } else if (sortField === 'date') {
+        comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else if (sortField === 'status') {
+        comparison = a.status.localeCompare(b.status);
+      } else if (sortField === 'priority') {
+        const priorityOrder: Record<string, number> = { Hot: 3, Warm: 2, Cold: 1 };
+        const pA = priorityOrder[extractPriority(a.notes, a.status)] || 0;
+        const pB = priorityOrder[extractPriority(b.notes, b.status)] || 0;
+        comparison = pA - pB;
+      }
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -381,8 +409,12 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
               <span>Sync</span>
             </button>
 
-            {/* Quick Create Button */}
-            <button onClick={onOpenCreateModal} className="btn btn-primary" style={{ fontSize: '0.8rem' }}>
+            {/* Quick Create Button with 21st.dev Shimmer effect */}
+            <button 
+              onClick={onOpenCreateModal} 
+              className="btn-shimmer" 
+              style={{ fontSize: '0.8rem', padding: '0.45rem 0.95rem', gap: '6px', display: 'inline-flex', alignItems: 'center' }}
+            >
               <Plus size={15} />
               <span>Record Enquiry</span>
             </button>
@@ -627,11 +659,32 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
               <table className="crm-table">
                 <thead>
                   <tr>
-                    <th style={{ minWidth: '240px' }}>Student &amp; Contact</th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('name')}
+                      style={{ minWidth: '240px' }}
+                      title="Click to sort by student name"
+                    >
+                      Student &amp; Contact {sortField === 'name' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+                    </th>
                     <th style={{ minWidth: '150px' }}>Course Track</th>
-                    <th style={{ minWidth: '100px' }}>Priority</th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('priority')}
+                      style={{ minWidth: '100px' }}
+                      title="Click to sort by priority"
+                    >
+                      Priority {sortField === 'priority' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+                    </th>
                     <th style={{ minWidth: '120px' }}>Source</th>
-                    <th style={{ minWidth: '130px' }}>Status</th>
+                    <th 
+                      className="sortable" 
+                      onClick={() => handleSort('status')}
+                      style={{ minWidth: '140px' }}
+                      title="Click to sort by status"
+                    >
+                      Status {sortField === 'status' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
+                    </th>
                     <th style={{ minWidth: '220px' }}>Assigned Counsellor</th>
                     <th style={{ minWidth: '180px', textAlign: 'right' }}>Actions</th>
                   </tr>
@@ -748,21 +801,24 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                           </span>
                         </td>
 
-                        {/* Interactive Status Selector */}
+                        {/* Interactive Status Selector with 21st.dev Pulse Dot */}
                         <td>
-                          <select
-                            value={lead.status}
-                            onChange={(e) => handleStatusChange(lead, e.target.value as LeadStatus)}
-                            className={getStatusBadgeClass(lead.status)}
-                            style={{ cursor: 'pointer', border: '1px solid transparent', outline: 'none' }}
-                            title="Click to update lead status"
-                          >
-                            <option value="New">New</option>
-                            <option value="Contacted">Contacted</option>
-                            <option value="Qualified">Qualified</option>
-                            <option value="Converted">Converted</option>
-                            <option value="Lost">Lost</option>
-                          </select>
+                          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+                            <span className={`status-pulse-dot ${lead.status.toLowerCase()}`} />
+                            <select
+                              value={lead.status}
+                              onChange={(e) => handleStatusChange(lead, e.target.value as LeadStatus)}
+                              className={getStatusBadgeClass(lead.status)}
+                              style={{ cursor: 'pointer', border: '1px solid transparent', outline: 'none' }}
+                              title="Click to update lead status"
+                            >
+                              <option value="New">New</option>
+                              <option value="Contacted">Contacted</option>
+                              <option value="Qualified">Qualified</option>
+                              <option value="Converted">Converted</option>
+                              <option value="Lost">Lost</option>
+                            </select>
+                          </div>
                         </td>
 
                         {/* Interactive Assignee Selector - WIDE, NO TRUNCATION */}

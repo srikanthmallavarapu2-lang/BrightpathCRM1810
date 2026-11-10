@@ -37,6 +37,8 @@ const COURSES_DATA = [
     duration: '16 Weeks',
     timing: 'Mon–Thu (10am–1pm) or Weekend',
     fee: '₹45,000 / $550',
+    feeINR: '₹45,000',
+    feeUSD: '$550',
     description: 'Master modern React, TypeScript, Node.js, Express, PostgreSQL, and full-stack cloud deployments with live production projects.',
     topics: ['HTML5/CSS3/TS', 'React & Vite', 'Node & Express', 'PostgreSQL DB', 'Docker & CI/CD', 'REST & GraphQL'],
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=700&q=80',
@@ -50,6 +52,8 @@ const COURSES_DATA = [
     duration: '16 Weeks',
     timing: 'Mon–Thu (2pm–5pm) or Weekend',
     fee: '₹55,000 / $640',
+    feeINR: '₹55,000',
+    feeUSD: '$640',
     description: 'Learn Python, statistical modelling, deep learning, PyTorch, OpenAI APIs, and Generative AI to engineer intelligent agents.',
     topics: ['Python Analytics', 'Pandas & NumPy', 'Machine Learning', 'Deep Learning', 'LLMs & RAG', 'Vector DBs'],
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80',
@@ -63,6 +67,8 @@ const COURSES_DATA = [
     duration: '12 Weeks',
     timing: 'Sat & Sun (10am–3pm)',
     fee: '₹50,000 / $580',
+    feeINR: '₹50,000',
+    feeUSD: '$580',
     description: 'Enterprise container orchestration with AWS, Docker, Kubernetes, Terraform, and GitOps CI/CD delivery pipelines.',
     topics: ['Linux Core', 'AWS Solutions', 'Docker Containers', 'Kubernetes K8s', 'Terraform IaC', 'Monitoring'],
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=700&q=80',
@@ -76,6 +82,8 @@ const COURSES_DATA = [
     duration: '14 Weeks',
     timing: 'Mon–Thu (6pm–9pm) Evening',
     fee: '₹48,000 / $560',
+    feeINR: '₹48,000',
+    feeUSD: '$560',
     description: 'Defend enterprise infrastructure with network security, ethical penetration testing, SIEM monitoring, and SOC incident triage.',
     topics: ['Network Defense', 'Penetration Testing', 'SIEM / Splunk', 'Identity Access', 'Incident Response', 'OWASP Top 10'],
     image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=700&q=80',
@@ -89,6 +97,8 @@ const COURSES_DATA = [
     duration: '10 Weeks',
     timing: 'Fri & Sat (11am–3pm)',
     fee: '₹38,000 / $440',
+    feeINR: '₹38,000',
+    feeUSD: '$440',
     description: 'Craft high-converting SaaS interfaces, user journey maps, enterprise design systems, interactive Figma prototypes, and design handoffs.',
     topics: ['UX Research', 'Information Arch', 'Figma Systems', 'Micro-interactions', 'Design Handoff', 'Usability Testing'],
     image: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=700&q=80',
@@ -168,6 +178,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
 
   // Interactive ROI Calculator State
+  const [currency, setCurrency] = useState<'INR' | 'USD'>('INR');
   const [currentSalaryLPA, setCurrentSalaryLPA] = useState<number>(3.5);
   const [targetPackageLPA, setTargetPackageLPA] = useState<number>(14.0);
 
@@ -972,6 +983,46 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
             <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', maxWidth: '620px', margin: '4px auto 0 auto' }}>
               Comprehensive 10 to 16-week live programs designed to build portfolio-grade projects and crack product company interviews.
             </p>
+
+            {/* 21st.dev Currency Switcher Segmented Pill */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', background: '#f1f5f9', padding: '3px', borderRadius: '9999px', marginTop: '1.25rem', border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+              <button
+                type="button"
+                onClick={() => setCurrency('INR')}
+                style={{
+                  padding: '0.35rem 0.95rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  background: currency === 'INR' ? '#ffffff' : 'transparent',
+                  color: currency === 'INR' ? '#1e293b' : '#64748b',
+                  boxShadow: currency === 'INR' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                🇮🇳 ₹ INR (Rupees)
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrency('USD')}
+                style={{
+                  padding: '0.35rem 0.95rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  background: currency === 'USD' ? '#ffffff' : 'transparent',
+                  color: currency === 'USD' ? '#1e293b' : '#64748b',
+                  boxShadow: currency === 'USD' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                🇺🇸 $ USD (Global)
+              </button>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
@@ -1006,8 +1057,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                     <span style={{ fontSize: '0.72rem', fontWeight: 800, background: 'rgba(15, 23, 42, 0.85)', color: '#ffffff', backdropFilter: 'blur(6px)', padding: '0.25rem 0.65rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.25)' }}>
                       {course.badge}
                     </span>
-                    <span style={{ fontSize: '0.825rem', fontWeight: 800, color: '#059669', background: '#ffffff', padding: '0.25rem 0.7rem', borderRadius: 'var(--radius-sm)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-                      {course.fee}
+                    <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#059669', background: '#ffffff', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-sm)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+                      {currency === 'INR' ? course.feeINR : course.feeUSD}
                     </span>
                   </div>
 
@@ -1063,8 +1114,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                       const el = document.getElementById('apply-form');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="btn btn-outline btn-spring"
-                    style={{ width: '100%', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 800, gap: '6px', borderColor: '#2563eb', color: '#1d4ed8', background: '#eff6ff', padding: '0.65rem 1rem' }}
+                    className="btn-shimmer"
+                    style={{ width: '100%', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 800, gap: '6px', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center' }}
                   >
                     <span>Apply for this Program</span>
                     <ArrowRight size={15} />

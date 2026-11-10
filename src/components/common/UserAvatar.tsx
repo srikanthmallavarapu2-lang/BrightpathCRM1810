@@ -5,6 +5,8 @@ interface UserAvatarProps {
   size?: number;
   role?: string;
   className?: string;
+  showStatus?: boolean;
+  status?: 'online' | 'busy' | 'away';
 }
 
 const GRADIENT_PALETTES = [
@@ -40,6 +42,8 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   size = 36,
   role,
   className = '',
+  showStatus = false,
+  status = 'online',
 }) => {
   const palette = getPalette(name);
   const initials = getInitials(name);
@@ -71,6 +75,16 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
       title={role ? `${name} (${role})` : name}
     >
       <span>{initials}</span>
+      {showStatus && (
+        <span 
+          className="avatar-online-dot" 
+          style={{ 
+            backgroundColor: status === 'online' ? '#22c55e' : status === 'busy' ? '#ef4444' : '#f59e0b',
+            boxShadow: `0 0 4px ${status === 'online' ? 'rgba(34, 197, 94, 0.6)' : 'rgba(239, 68, 68, 0.6)'}`
+          }}
+          title={status === 'online' ? 'Active in session' : status}
+        />
+      )}
     </div>
   );
 };

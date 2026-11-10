@@ -12,6 +12,7 @@ interface LayoutProps {
   onSignOut?: () => void;
   onOpenSimulator?: () => void;
   onSwitchToStudentPortal?: () => void;
+  onOpenCommandPalette?: () => void;
   isAuthenticated?: boolean;
   children: React.ReactNode;
   userRole?: string;
@@ -28,6 +29,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onSignOut,
   onOpenSimulator,
   onSwitchToStudentPortal,
+  onOpenCommandPalette,
   isAuthenticated = false,
   children,
   userRole = 'Counsellor',
@@ -72,6 +74,7 @@ export const Layout: React.FC<LayoutProps> = ({
           onSignOut={onSignOut}
           onOpenSimulator={onOpenSimulator}
           onSwitchToStudentPortal={onSwitchToStudentPortal}
+          onOpenCommandPalette={onOpenCommandPalette}
           isAuthenticated={isAuthenticated}
           userRole={userRole}
           userName={userName}
