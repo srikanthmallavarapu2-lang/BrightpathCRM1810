@@ -350,18 +350,23 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', color: 'var(--text-main)', display: 'flex', flexDirection: 'column' }}>
       
-      {/* Top Floating Glassmorphic Navigation Bar */}
+      {/* Top Floating Glassmorphic Navigation Bar (ThreeUI Island Card Shape) */}
       <header
         style={{
-          background: 'rgba(255, 255, 255, 0.88)',
+          background: 'rgba(255, 255, 255, 0.94)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(226, 232, 240, 0.8)',
-          padding: '0.85rem 1.5rem',
+          border: '1px solid rgba(226, 232, 240, 0.9)',
+          borderRadius: 'var(--radius-xl, 18px)',
+          padding: '0.75rem 1.5rem',
           position: 'sticky',
-          top: 0,
+          top: '0.75rem',
           zIndex: 50,
-          boxShadow: '0 4px 20px -2px rgba(15, 23, 42, 0.05)',
+          margin: '0.75rem auto',
+          maxWidth: '1240px',
+          width: 'calc(100% - 2rem)',
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03)',
+          transition: 'all 0.3s ease',
         }}
       >
         <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
@@ -574,16 +579,32 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         </div>
       </section>
 
-      {/* Recruiter Placement Marquee Ribbon (TasteSkill Style) */}
-      <section style={{ background: '#0b0f19', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', padding: '1rem 0', overflow: 'hidden' }}>
+      {/* Recruiter Placement Marquee Ribbon (TasteSkill & ThreeUI Edge-Fade Style) */}
+      <section 
+        style={{ 
+          background: '#0b0f19', 
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)', 
+          padding: '1.25rem 0', 
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           <div style={{ paddingLeft: '2rem', flexShrink: 0, color: '#94a3b8', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Top Hiring Partners:
           </div>
-          <div style={{ overflow: 'hidden', flex: 1 }}>
-            <div className="marquee-track" style={{ gap: '3rem', alignItems: 'center' }}>
+          <div 
+            style={{ 
+              overflow: 'hidden', 
+              flex: 1,
+              maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+            }}
+          >
+            <div className="marquee-track" style={{ gap: '3.5rem', alignItems: 'center' }}>
               {[...HIRING_PARTNERS, ...HIRING_PARTNERS].map((partner, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e2e8f0', fontSize: '0.85rem', fontWeight: 700 }}>
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#e2e8f0', fontSize: '0.875rem', fontWeight: 700 }}>
                   <Building2 size={16} color="#60a5fa" />
                   <span>{partner}</span>
                 </div>
@@ -593,31 +614,49 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
         </div>
       </section>
 
-      {/* Main Content Viewport */}
-      <main style={{ maxWidth: '1240px', margin: '-2.5rem auto 4rem auto', padding: '0 1.25rem', width: '100%', display: 'flex', flexDirection: 'column', gap: '3rem', position: 'relative', zIndex: 10 }}>
+      {/* Main Content Viewport — Clean Distinct Separation, Zero Negative Margin Overlap */}
+      <main style={{ maxWidth: '1240px', margin: '3rem auto 4rem auto', padding: '0 1.25rem', width: '100%', display: 'flex', flexDirection: 'column', gap: '3.5rem', position: 'relative', zIndex: 10 }}>
 
-        {/* Section 1: Real-Time Application Status Verifier */}
+        {/* Section 1: Real-Time Application Status Verifier (ThreeUI 3D Card Shape) */}
         <section 
           id="status-checker" 
-          className="glass-card-premium" 
+          className="card-3d-surface" 
           style={{ 
-            padding: '2.5rem', 
-            borderRadius: '20px', 
-            boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.1)',
-            border: '1px solid rgba(37, 99, 235, 0.25)',
-            background: '#ffffff'
+            padding: '2.75rem 2rem', 
+            borderRadius: '24px', 
+            boxShadow: '0 25px 50px -15px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(37, 99, 235, 0.12)',
+            border: '1px solid rgba(226, 232, 240, 0.95)',
+            background: '#ffffff',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
+          {/* Top 3D Gradient Accent Bar */}
+          <div className="gradient-bar-3d" />
+
           <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ width: 50, height: 50, borderRadius: '14px', background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', color: '#2563eb', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', boxShadow: '0 8px 16px rgba(37, 99, 235, 0.15)' }}>
+            <div 
+              style={{ 
+                width: 56, 
+                height: 56, 
+                borderRadius: '16px', 
+                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+                color: '#ffffff', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                marginBottom: '1.25rem', 
+                boxShadow: '0 10px 25px -4px rgba(37, 99, 235, 0.45)' 
+              }}
+            >
               <Search size={26} />
             </div>
             
-            <h2 className="font-display" style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.4rem', letterSpacing: '-0.4px' }}>
+            <h2 className="font-display" style={{ fontSize: '1.85rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '0.45rem', letterSpacing: '-0.4px' }}>
               Check Your Admission &amp; Enrolment Status
             </h2>
             
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.925rem', color: 'var(--text-muted)', marginBottom: '1.75rem', lineHeight: 1.55 }}>
               Enter the phone number or email registered with your application to check your real-time enrolment stage, interview outcome, and download your admission slip.
             </p>
 
@@ -641,8 +680,8 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
               <button
                 type="submit"
                 disabled={isSearching}
-                className="btn btn-primary btn-spring"
-                style={{ padding: '0.85rem 1.75rem', fontWeight: 800, gap: '8px', fontSize: '0.95rem' }}
+                className="btn-shimmer"
+                style={{ padding: '0.85rem 1.85rem', fontWeight: 800, gap: '8px', fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center' }}
               >
                 {isSearching ? <Clock size={16} className="spin" /> : <Search size={16} />}
                 <span>Verify Status</span>

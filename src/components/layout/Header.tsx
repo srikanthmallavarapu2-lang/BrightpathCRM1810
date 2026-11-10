@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenCommandPalette}
-            className="btn-micro-spring"
+            className="card-3d-lift"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -109,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
               color: '#64748b',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
             }}
             title="Open Command Palette (Press ⌘K or Ctrl+K anywhere)"
           >
@@ -136,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
         {onSwitchToStudentPortal && (
           <button
             onClick={onSwitchToStudentPortal}
-            className="btn btn-outline btn-micro-spring"
+            className="btn btn-outline card-3d-lift"
             style={{ 
               padding: '0.42rem 0.85rem', 
               fontSize: '0.8rem', 
@@ -145,6 +145,7 @@ export const Header: React.FC<HeaderProps> = ({
               color: '#1d4ed8',
               background: '#eff6ff',
               whiteSpace: 'nowrap',
+              boxShadow: '0 2px 6px rgba(37, 99, 235, 0.08)',
             }}
             title="Open Public Student & Admissions Portal (Browse courses, apply online, track status)"
           >
@@ -157,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({
         {onOpenSimulator && (
           <button
             onClick={onOpenSimulator}
-            className="btn btn-outline btn-micro-spring"
+            className="btn btn-outline card-3d-lift"
             style={{ 
               padding: '0.42rem 0.85rem', 
               fontSize: '0.8rem', 
@@ -166,6 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
               color: '#6d28d9',
               background: '#f5f3ff',
               whiteSpace: 'nowrap',
+              boxShadow: '0 2px 6px rgba(124, 58, 237, 0.08)',
             }}
             title="Open Website Enquiry Form Simulator (Simulates student leads ingestion)"
           >
@@ -177,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
         {isAuthenticated ? (
           <>
             {/* Notifications Button */}
-            <button className="btn-icon btn-micro-spring" title="Notifications & Activity" aria-label="Notifications" style={{ position: 'relative' }}>
+            <button className="btn-icon card-3d-lift" title="Notifications & Activity" aria-label="Notifications" style={{ position: 'relative' }}>
               <Bell size={18} />
               <span 
                 style={{ 
@@ -198,7 +200,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button 
                 type="button"
                 onClick={onOpenAuthModal}
-                className="btn-micro-spring"
+                className="card-3d-lift"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -228,7 +230,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   type="button"
                   onClick={onSignOut}
-                  className="btn-icon btn-micro-spring"
+                  className="btn-icon card-3d-lift"
                   style={{ width: 34, height: 34, color: '#64748b', background: '#f8fafc', border: '1px solid var(--border-subtle)' }}
                   title="Sign Out of Active Session"
                   aria-label="Sign Out"
