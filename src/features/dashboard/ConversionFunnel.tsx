@@ -92,26 +92,28 @@ export const ConversionFunnel: React.FC<ConversionFunnelProps> = ({
   ];
 
   return (
-    <div className="card" style={{ padding: '1.25rem' }}>
+    <div className="bento-card-surface bento-glow-top-blue fade-in-slide" style={{ padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={18} color="#2563eb" />
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-display)' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Filter size={16} color="#2563eb" />
+          </div>
           <span>Admissions Conversion Funnel &amp; Drop-off Analysis</span>
         </h3>
-        <span style={{ fontSize: '0.785rem', color: '#047857', background: '#ecfdf5', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-full)', fontWeight: 700, border: '1px solid #a7f3d0' }}>
+        <span style={{ fontSize: '0.785rem', color: '#047857', background: '#ecfdf5', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', fontWeight: 800, border: '1px solid #a7f3d0' }}>
           Overall Pipeline Yield: {convertedPct}%
         </span>
       </div>
 
-      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-        Visualizing student progression across pipeline milestones and identifying admission drop-off points
+      <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+        Visualizing prospective student progression across milestones and identifying stage-by-stage counselling drop-offs
       </p>
 
       {/* Funnel Stages Grid */}
       <div 
         style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
           gap: '1rem',
           position: 'relative',
         }}
@@ -124,82 +126,71 @@ export const ConversionFunnel: React.FC<ConversionFunnelProps> = ({
             <div
               key={stage.status}
               onClick={() => onSelectStage && onSelectStage(stage.status)}
+              className="btn-micro-spring"
               style={{
                 background: stage.bg,
                 border: `1px solid ${stage.border}`,
-                borderRadius: 'var(--radius-md)',
-                padding: '1rem',
+                borderRadius: 'var(--radius-lg)',
+                padding: '1.15rem',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 cursor: onSelectStage ? 'pointer' : 'default',
-                transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                 position: 'relative',
-              }}
-              onMouseEnter={(e) => {
-                if (onSelectStage) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 12px rgba(0,0,0,0.06)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (onSelectStage) {
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
               }}
               title={onSelectStage ? `Filter leads with status "${stage.status}"` : undefined}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div 
                       style={{ 
-                        width: 28, 
-                        height: 28, 
-                        borderRadius: 'var(--radius-sm)', 
+                        width: 32, 
+                        height: 32, 
+                        borderRadius: 'var(--radius-md)', 
                         background: '#ffffff', 
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center',
                         color: stage.color,
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.06)'
                       }}
                     >
-                      <Icon size={15} />
+                      <Icon size={16} />
                     </div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Stage {idx + 1}
                     </span>
                   </div>
 
-                  <span style={{ fontSize: '0.825rem', fontWeight: 800, color: stage.color }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 900, color: stage.color, fontFamily: 'var(--font-mono)' }}>
                     {stage.pct}%
                   </span>
                 </div>
 
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-main)', margin: '0.25rem 0' }}>
-                  {stage.count} <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-muted)' }}>students</span>
+                <div style={{ fontSize: '1.65rem', fontWeight: 900, color: 'var(--text-main)', margin: '0.25rem 0', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
+                  {stage.count} <span style={{ fontSize: '0.785rem', fontWeight: 600, color: 'var(--text-muted)' }}>students</span>
                 </div>
 
-                <div style={{ fontSize: '0.825rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-main)' }}>
                   {stage.label}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                   {stage.sublabel}
                 </div>
               </div>
 
               {/* Progress bar inside stage */}
-              <div style={{ marginTop: '0.85rem' }}>
-                <div style={{ height: 6, background: 'rgba(0,0,0,0.06)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ marginTop: '1rem' }}>
+                <div style={{ height: 7, background: 'rgba(0,0,0,0.08)', borderRadius: 4, overflow: 'hidden' }}>
                   <div 
                     style={{ 
                       width: `${stage.pct}%`, 
                       height: '100%', 
                       background: stage.color, 
-                      borderRadius: 3,
-                      transition: 'width 0.5s ease' 
+                      borderRadius: 4,
+                      transition: 'width 0.6s cubic-bezier(0.16, 1, 0.3, 1)' 
                     }} 
                   />
                 </div>
@@ -210,21 +201,21 @@ export const ConversionFunnel: React.FC<ConversionFunnelProps> = ({
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '4px', 
-                      fontSize: '0.7rem', 
+                      fontSize: '0.72rem', 
                       color: stage.dropOff > 30 ? '#dc2626' : '#d97706',
-                      marginTop: '0.4rem',
-                      fontWeight: 600,
+                      marginTop: '0.45rem',
+                      fontWeight: 700,
                     }}
                   >
-                    <TrendingDown size={11} />
+                    <TrendingDown size={12} />
                     <span>{stage.dropOff}% drop-off from previous</span>
                   </div>
                 )}
 
                 {isFinal && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: '#059669', marginTop: '0.4rem', fontWeight: 700 }}>
-                    <CheckCircle2 size={11} />
-                    <span>Full Tuition Unlocked</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', color: '#059669', marginTop: '0.45rem', fontWeight: 800 }}>
+                    <CheckCircle2 size={12} />
+                    <span>Full Tuition Realized</span>
                   </div>
                 )}
               </div>

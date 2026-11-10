@@ -45,7 +45,7 @@ export const ActionCenter: React.FC<ActionCenterProps> = ({
   };
 
   return (
-    <div className="card" style={{ padding: '1.25rem' }}>
+    <div className="bento-card-surface bento-glow-top-alert fade-in-slide" style={{ padding: '1.5rem' }}>
       {/* Action Center Header */}
       <div 
         style={{ 
@@ -54,45 +54,46 @@ export const ActionCenter: React.FC<ActionCenterProps> = ({
           justifyContent: 'space-between', 
           flexWrap: 'wrap', 
           gap: '0.75rem',
-          marginBottom: '1rem',
-          paddingBottom: '0.75rem',
+          marginBottom: '1.15rem',
+          paddingBottom: '0.85rem',
           borderBottom: '1px solid var(--border-subtle)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div
             style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: 'var(--radius-md)',
               background: followUps.length > 0 ? '#fef2f2' : '#ecfdf5',
               color: followUps.length > 0 ? '#dc2626' : '#059669',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              boxShadow: followUps.length > 0 ? '0 2px 8px rgba(220, 38, 38, 0.15)' : 'none',
             }}
           >
-            {followUps.length > 0 ? <AlertTriangle size={18} /> : <CheckCircle2 size={18} />}
+            {followUps.length > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
           </div>
           <div>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.2 }}>
-              Urgent Action Center
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.2, fontFamily: 'var(--font-display)' }}>
+              Urgent Admissions Action Center
             </h3>
-            <p style={{ fontSize: '0.785rem', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               {followUps.length > 0 
-                ? `${followUps.length} overdue student enquiry reminders require immediate outreach`
-                : 'All scheduled follow-ups are on track'}
+                ? `${followUps.length} overdue student enquiry reminders require immediate counsellor contact`
+                : 'All scheduled student follow-ups are completely current'}
             </p>
           </div>
         </div>
 
         <button
           onClick={onNavigateToAllFollowUps}
-          className="btn btn-outline"
-          style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', gap: '4px' }}
+          className="btn btn-outline btn-micro-spring"
+          style={{ fontSize: '0.785rem', padding: '0.4rem 0.85rem', gap: '5px' }}
         >
-          <span>View All Tasks</span>
-          <ArrowRight size={13} />
+          <span>View All Follow-ups</span>
+          <ArrowRight size={14} />
         </button>
       </div>
 

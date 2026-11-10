@@ -61,9 +61,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [selectedLeadIdForDossier, setSelectedLeadIdForDossier] = useState<string | null>(null);
   const [rescheduleItem, setRescheduleItem] = useState<FollowUp | null>(null);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [isIngestingDemo, setIsIngestingDemo] = useState(false);
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
 
   const toast = useToast();
-  const { role, isAdmin, isManager, isCounsellor } = useAuth();
+  const { role, isAdmin, isManager, isCounsellor, signIn } = useAuth();
   const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Counsellor';
 
   const fetchDashboardData = useCallback(async () => {
@@ -101,39 +103,130 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     }
   };
 
+  const handleQuickDemoStudent = async () => {
+    setIsIngestingDemo(true);
+    try {
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const demoStudents = [
+        { name: 'Rohan Verma', course: 'Cloud & DevOps' },
+        { name: 'Kavya Nair', course: 'Data Science & AI' },
+        { name: 'Aditya Sen', course: 'Full Stack Web Dev' },
+        { name: 'Tanvi Mehta', course: 'UI/UX Design' },
+        { name: 'Sameer Joshi', course: 'Cybersecurity' },
+      ];
+      const pick = demoStudents[Math.floor(Math.random() * demoStudents.length)];
+      const phone = `98765${randomSuffix}`;
+      const email = `${pick.name.toLowerCase().replace(/\s+/g, '.')}${randomSuffix}@gmail.com`;
+
+      const result = await leadService.createLead({
+        full_name: pick.name,
+        phone,
+        email,
+        course_interest: pick.course,
+        source: 'Website Form',
+        status: 'New',
+        notes: '⚡ Live 1-click test student enquiry ingested for client demonstration',
+      });
+
+      if (result.lead) {
+        toast.success(`Demo student "${pick.name}" (${pick.course}) ingested live!`);
+        await fetchDashboardData();
+      } else {
+        toast.error(result.error || 'Failed to ingest demo student');
+      }
+    } catch {
+      toast.error('Could not complete demo student ingestion');
+    } finally {
+      setIsIngestingDemo(false);
+    }
+  };
+
+  const handleQuickRoleSwitch = async (targetRole: 'admin' | 'manager' | 'counsellor') => {
+    if (role === targetRole || isSwitchingRole) return;
+    setIsSwitchingRole(true);
+    const creds = {
+      admin: { email: 'admin@brightpath-academy.com', pass: 'Admin@123456', name: 'Dr. S. K. Jenkins' },
+      manager: { email: 'manager@brightpath-academy.com', pass: 'Manager@123456', name: 'Marcus Vance' },
+      counsellor: { email: 'counsellor@brightpath-academy.com', pass: 'Counsellor@123456', name: 'Sarah Jenkins' },
+    }[targetRole];
+
+    try {
+      const res = await signIn(creds.email, creds.pass);
+      if (res.success) {
+        toast.success(`Switched role to ${targetRole.toUpperCase()} (${creds.name})`);
+        await fetchDashboardData();
+      } else {
+        toast.error(res.error || 'Failed to switch role');
+      }
+    } catch {
+      toast.error('Role transition failed');
+    } finally {
+      setIsSwitchingRole(false);
+    }
+  };
+
+  // Admissions Target & Cohort Telemetry
+  const cohortTarget = 10;
+  const currentConverted = metrics?.convertedLeads ?? leads.filter((l) => l.status === 'Converted').length;
+  const cohortProgressPct = Math.min(100, Math.round((currentConverted / cohortTarget) * 100));
+  const seatsRemaining = Math.max(0, cohortTarget - currentConverted);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Real-time Live Operations Banner */}
+      {/* Real-time Live Operations Bento Header Banner */}
       <div 
+        className="bento-card-surface bento-glow-top-blue fade-in-slide"
         style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(79, 70, 229, 0.04))',
-          border: '1px solid rgba(37, 99, 235, 0.25)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '1.25rem 1.5rem',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.6))',
+          padding: '1.5rem 1.75rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '1rem',
+          gap: '1.25rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <AcademyLogo size={42} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <AcademyLogo size={46} />
           <div>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>BrightPath Academy &bull; Admissions Pipeline &amp; KPI Engine</span>
-              <span className="radar-dot connected" title="Supabase Database Live Connected" />
-            </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-              Intake Session 2026–2027 &bull; Reconciled 100% in real-time with your permitted Supabase PostgreSQL records.
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>BrightPath Academy &bull; Admissions Command Engine</span>
+              </h2>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '2px 8px', borderRadius: 'var(--radius-full)', background: '#ecfdf5', border: '1px solid #a7f3d0', fontSize: '0.72rem', fontWeight: 800, color: '#047857' }}>
+                <span className="radar-dot connected" style={{ width: 8, height: 8 }} />
+                <span>Supabase PostgreSQL 100% Synced</span>
+              </span>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+              Intake Session 2026–2027 &bull; Real-time conversion velocity, admissions target tracking, and role-governed enquiry telemetry.
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Quick 1-Click Demo Student Ingestion Button */}
+          <button 
+            onClick={handleQuickDemoStudent}
+            disabled={isIngestingDemo}
+            className="btn btn-micro-spring"
+            style={{ 
+              fontSize: '0.8rem', 
+              gap: '6px', 
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+              color: '#ffffff',
+              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
+              fontWeight: 700,
+            }}
+            title="Ingest a realistic test student enquiry in 1-click for sales demonstrations"
+          >
+            <Sparkles size={14} className={isIngestingDemo ? 'spin' : ''} />
+            <span>{isIngestingDemo ? 'Ingesting...' : '⚡ Demo Student (1-Click)'}</span>
+          </button>
+
           <button 
             onClick={fetchDashboardData} 
-            className="btn btn-outline" 
+            className="btn btn-outline btn-micro-spring" 
             title="Recalculate metrics from database"
             style={{ fontSize: '0.8rem', gap: '5px' }}
           >
@@ -143,82 +236,174 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button 
             onClick={() => setIsSimulatorOpen(true)}
-            className="btn btn-outline"
-            style={{ fontSize: '0.8rem', gap: '5px', borderColor: '#a78bfa', color: '#6d28d9', background: '#faf5ff' }}
+            className="btn btn-outline btn-micro-spring"
+            style={{ fontSize: '0.8rem', gap: '5px', borderColor: '#c4b5fd', color: '#6d28d9', background: '#faf5ff' }}
             title="Simulate live student website enquiry submission"
           >
             <Globe size={13} color="#7c3aed" />
-            <span>Website Form Simulator</span>
+            <span>Web Simulator</span>
           </button>
 
-          {onOpenCreateLead && (
-            <button onClick={onOpenCreateLead} className="btn btn-primary" style={{ fontSize: '0.8rem', gap: '5px' }}>
-              <Plus size={14} />
-              <span>Record Enquiry</span>
-            </button>
-          )}
-
           {onOpenAssistant && (
-            <button onClick={onOpenAssistant} className="btn btn-outline" style={{ fontSize: '0.8rem', gap: '5px' }}>
+            <button 
+              onClick={onOpenAssistant} 
+              className="btn btn-outline btn-micro-spring" 
+              style={{ fontSize: '0.8rem', gap: '5px' }}
+              title="Open Supabase Integration Assistant"
+            >
               <Database size={13} color="#059669" />
               <span>Assistant</span>
             </button>
           )}
 
-          <button onClick={onNavigateToLeads} className="btn btn-secondary" style={{ fontSize: '0.8rem', gap: '5px' }}>
+          {onOpenCreateLead && (
+            <button onClick={onOpenCreateLead} className="btn btn-primary btn-micro-spring" style={{ fontSize: '0.8rem', gap: '5px' }}>
+              <Plus size={14} />
+              <span>Record Enquiry</span>
+            </button>
+          )}
+
+          <button onClick={onNavigateToLeads} className="btn btn-secondary btn-micro-spring" style={{ fontSize: '0.8rem', gap: '5px' }}>
             <span>View Leads</span>
             <ArrowRight size={14} />
           </button>
         </div>
       </div>
 
-      {/* Role-Specific Operational Directive Banner */}
+      {/* Admissions Target & Cohort Velocity Command Bar */}
       <div 
+        className="bento-card-surface fade-in-slide"
+        style={{
+          padding: '1.15rem 1.5rem',
+          background: '#ffffff',
+          border: '1px solid rgba(226, 232, 240, 0.9)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '1.15rem' }}>🎯</span>
+            <div>
+              <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-display)' }}>
+                Cohort 04 Admissions Target: {currentConverted} / {cohortTarget} Seats Confirmed
+              </span>
+              <span style={{ fontSize: '0.785rem', color: 'var(--text-muted)', marginLeft: '8px' }}>
+                ({cohortProgressPct}% Goal Achieved)
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', fontSize: '0.8rem' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#047857', fontWeight: 700, background: '#ecfdf5', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid #a7f3d0' }}>
+              <span>Batch Intake:</span> <strong>16 Nov 2026</strong>
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: seatsRemaining <= 5 ? '#dc2626' : '#2563eb', fontWeight: 700, background: seatsRemaining <= 5 ? '#fef2f2' : '#eff6ff', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: `1px solid ${seatsRemaining <= 5 ? '#fecaca' : '#bfdbfe'}` }}>
+              <span>Seats Available:</span> <strong>{seatsRemaining} Seats Left</strong>
+            </span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#7c3aed', fontWeight: 700, background: '#f5f3ff', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid #ddd6fe' }}>
+              <span>Conversion Yield:</span> <strong>{metrics?.conversionRate ?? 50}%</strong>
+            </span>
+          </div>
+        </div>
+
+        {/* Progress bar track */}
+        <div className="target-track-container">
+          <div className="target-track-fill" style={{ width: `${cohortProgressPct}%` }} />
+        </div>
+      </div>
+
+      {/* Role-Specific Operational Directive Banner with 1-Click Role Switcher */}
+      <div 
+        className="bento-card-surface fade-in-slide"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '0.75rem',
-          padding: '0.75rem 1.25rem',
-          borderRadius: 'var(--radius-md)',
+          gap: '1rem',
+          padding: '1rem 1.5rem',
           background: isAdmin ? 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)' : isManager ? 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)' : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
           border: `1px solid ${isAdmin ? '#d8b4fe' : isManager ? '#bfdbfe' : '#bbf7d0'}`,
           fontSize: '0.825rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {isAdmin ? (
-            <span style={{ fontSize: '1.1rem' }}>👑</span>
-          ) : isManager ? (
-            <span style={{ fontSize: '1.1rem' }}>🛡️</span>
-          ) : (
-            <span style={{ fontSize: '1.1rem' }}>🎓</span>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '1.35rem' }}>{isAdmin ? '👑' : isManager ? '🛡️' : '🎓'}</span>
           <div>
-            <strong style={{ color: isAdmin ? '#6b21a8' : isManager ? '#1e40af' : '#15803d' }}>
-              Active Workspace: {formattedRole} Mode
-            </strong>
-            <span style={{ color: 'var(--text-secondary)', marginLeft: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <strong style={{ color: isAdmin ? '#6b21a8' : isManager ? '#1e40af' : '#15803d', fontSize: '0.925rem', fontFamily: 'var(--font-display)' }}>
+                Active Session: {formattedRole} Mode
+              </strong>
+              <span style={{ fontSize: '0.72rem', padding: '1px 6px', borderRadius: 'var(--radius-full)', background: '#ffffff', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)', fontWeight: 600 }}>
+                1-Click Demo Persona Toggle &darr;
+              </span>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '2px' }}>
               {isAdmin 
                 ? 'Full administrative privileges active. All 5 technical tracks, revenue telemetry, permanent lead purging, and staff role provisioning unlocked.'
                 : isManager 
                 ? 'Branch supervisory mode active. Pipeline auditing, counsellor leaderboard analysis, and lead deletion enabled.'
                 : 'Admissions counseling mode active. Focus on converting student enquiries, 1-Click WhatsApp follow-ups, and issuing official admission slips.'}
-            </span>
+            </p>
           </div>
         </div>
 
-        {isCounsellor && (
+        {/* 1-Click Role Switcher Quick Pills for Client Demos */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginRight: '4px' }}>
+            Switch Role:
+          </span>
+
           <button
-            onClick={() => onNavigateToLeads()}
-            className="btn btn-outline"
-            style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem', borderColor: '#86efac', color: '#166534', background: '#ffffff', gap: '4px' }}
+            type="button"
+            disabled={isSwitchingRole || isAdmin}
+            onClick={() => handleQuickRoleSwitch('admin')}
+            className={`role-pill-btn btn-micro-spring ${isAdmin ? 'active' : ''}`}
+            style={{
+              background: isAdmin ? '#7c3aed' : '#ffffff',
+              color: isAdmin ? '#ffffff' : '#6d28d9',
+              borderColor: '#c4b5fd',
+              boxShadow: isAdmin ? '0 2px 8px rgba(124, 58, 237, 0.3)' : 'none',
+            }}
+            title="1-Click Switch to Administrator (Dr. S. K. Jenkins)"
           >
-            <span>My Assigned Leads</span>
-            <ArrowRight size={12} />
+            <span>👑 Admin</span>
           </button>
-        )}
+
+          <button
+            type="button"
+            disabled={isSwitchingRole || isManager}
+            onClick={() => handleQuickRoleSwitch('manager')}
+            className={`role-pill-btn btn-micro-spring ${isManager ? 'active' : ''}`}
+            style={{
+              background: isManager ? '#2563eb' : '#ffffff',
+              color: isManager ? '#ffffff' : '#1d4ed8',
+              borderColor: '#93c5fd',
+              boxShadow: isManager ? '0 2px 8px rgba(37, 99, 235, 0.3)' : 'none',
+            }}
+            title="1-Click Switch to Branch Manager (Marcus Vance)"
+          >
+            <span>🛡️ Manager</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={isSwitchingRole || isCounsellor}
+            onClick={() => handleQuickRoleSwitch('counsellor')}
+            className={`role-pill-btn btn-micro-spring ${isCounsellor ? 'active' : ''}`}
+            style={{
+              background: isCounsellor ? '#16a34a' : '#ffffff',
+              color: isCounsellor ? '#ffffff' : '#15803d',
+              borderColor: '#86efac',
+              boxShadow: isCounsellor ? '0 2px 8px rgba(22, 163, 74, 0.3)' : 'none',
+            }}
+            title="1-Click Switch to Academic Counsellor (Sarah Jenkins)"
+          >
+            <span>🎓 Counsellor</span>
+          </button>
+        </div>
       </div>
 
       {/* Error state if query fails */}

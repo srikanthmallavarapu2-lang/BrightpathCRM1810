@@ -19,20 +19,22 @@ export const SourceDistribution: React.FC<SourceDistributionProps> = ({
   onSelectSource,
 }) => {
   return (
-    <div className="card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="bento-card-surface bento-glow-top-purple fade-in-slide" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Compass size={18} color="#4f46e5" />
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-display)' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Compass size={16} color="#7c3aed" />
+          </div>
           <span>Leads by Enquiry Source</span>
         </h3>
         {onSelectSource && (
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '3px', background: '#f8fafc', padding: '2px 8px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }}>
             <Filter size={11} /> Click channel to filter
           </span>
         )}
       </div>
 
-      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+      <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
         Marketing, referral, and direct walk-in acquisition channels
       </p>
 

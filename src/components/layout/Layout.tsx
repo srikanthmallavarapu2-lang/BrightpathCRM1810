@@ -62,7 +62,7 @@ export const Layout: React.FC<LayoutProps> = ({
       />
 
       {/* Main Workspace Frame */}
-      <div className="main-viewport">
+      <div className="main-viewport crm-workspace-canvas">
         <Header
           currentTab={currentTab}
           onOpenMobileDrawer={() => setIsMobileDrawerOpen(true)}

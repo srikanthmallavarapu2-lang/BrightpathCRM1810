@@ -81,9 +81,24 @@ export const KPICard: React.FC<KPICardProps> = ({
   const styles = getVariantStyles();
   const isClickable = Boolean(onClick);
 
+  const getGlowClass = () => {
+    switch (variant) {
+      case 'alert':
+        return 'bento-glow-top-alert';
+      case 'success':
+        return 'bento-glow-top-emerald';
+      case 'purple':
+        return 'bento-glow-top-purple';
+      case 'blue':
+        return 'bento-glow-top-blue';
+      default:
+        return 'bento-glow-top-blue';
+    }
+  };
+
   return (
     <div
-      className="card fade-in-slide"
+      className={`bento-card-surface ${getGlowClass()} btn-micro-spring fade-in-slide`}
       onClick={onClick}
       role={isClickable ? 'button' : undefined}
       tabIndex={isClickable ? 0 : undefined}
@@ -97,23 +112,11 @@ export const KPICard: React.FC<KPICardProps> = ({
         background: styles.cardBg,
         borderColor: styles.cardBorder,
         cursor: isClickable ? 'pointer' : 'default',
-        transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+        padding: '1.25rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         userSelect: 'none',
-      }}
-      onMouseEnter={(e) => {
-        if (isClickable) {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.06)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (isClickable) {
-          e.currentTarget.style.transform = 'none';
-          e.currentTarget.style.boxShadow = 'var(--shadow-card)';
-        }
       }}
     >
       <div>

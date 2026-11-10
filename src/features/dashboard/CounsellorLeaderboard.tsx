@@ -94,24 +94,26 @@ export const CounsellorLeaderboard: React.FC = () => {
   };
 
   return (
-    <div className="card" style={{ padding: '1.25rem' }}>
+    <div className="bento-card-surface bento-glow-top-amber fade-in-slide" style={{ padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Trophy size={18} color="#f59e0b" />
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-display)' }}>
+          <div style={{ width: 28, height: 28, borderRadius: 'var(--radius-sm)', background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Trophy size={16} color="#f59e0b" />
+          </div>
           <span>Counsellor Conversion Leaderboard</span>
         </h3>
         <button
           onClick={loadLeaderboardData}
-          className="btn-icon"
-          style={{ width: 28, height: 28 }}
-          title="Refresh Leaderboard"
+          className="btn-icon btn-micro-spring"
+          style={{ width: 32, height: 32 }}
+          title="Refresh Leaderboard Rankings"
         >
-          <RefreshCw size={13} className={isLoading ? 'spin' : ''} />
+          <RefreshCw size={14} className={isLoading ? 'spin' : ''} />
         </button>
       </div>
 
-      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-        Admissions performance ranked by successfully enrolled students (Converted stage) and tuition revenue generated
+      <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+        Admissions performance ranked by successfully enrolled students (Converted stage) and tuition revenue generated across cohorts
       </p>
 
       {isLoading ? (
