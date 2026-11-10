@@ -917,6 +917,24 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
                   })}
                 </tbody>
               </table>
+
+              {/* 21st.dev CRM Table Pagination Bar */}
+              <div className="crm-pagination">
+                <div>
+                  Showing <strong>{displayedLeads.length}</strong> of <strong>{leads.length}</strong> live enquiries
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <button type="button" className="crm-pagination-btn" disabled>
+                    <span>&larr; Previous</span>
+                  </button>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.2rem 0.6rem', background: '#eff6ff', color: '#1d4ed8', borderRadius: '4px', border: '1px solid #bfdbfe' }}>
+                    Page 1 of 1
+                  </span>
+                  <button type="button" className="crm-pagination-btn" disabled>
+                    <span>Next &rarr;</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -157,6 +157,15 @@ const AppContent: React.FC = () => {
       userName={displayName}
       overdueCount={overdueCount}
     >
+      {/* 21st.dev Top Announcement Bar */}
+      <div className="top-announcement-bar">
+        <span>🔥 <strong>Admissions Active:</strong> 2026–2027 Comprehensive Technical Bootcamps</span>
+        <span style={{ opacity: 0.6 }}>•</span>
+        <span>AICTE &amp; ISO 9001:2015 Approved</span>
+        <span style={{ opacity: 0.6 }}>•</span>
+        <span style={{ color: '#38bdf8' }}>Press <kbd style={{ padding: '1px 5px', background: 'rgba(255,255,255,0.15)', borderRadius: '3px', fontSize: '0.68rem', fontFamily: 'monospace' }}>⌘K</kbd> for instant spotlight actions</span>
+      </div>
+
       {/* Guest Mode Banner when not logged in */}
       {!isAuthenticated && (
         <div 

@@ -1340,6 +1340,107 @@ textarea:focus-visible,
   border: 1px solid #bfdbfe;
 }
 
+/* 21st.dev Text Shaders & Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gradient-amber {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 21st.dev Custom Form Inputs & Glowing Focus Rings */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+}
+
+/* 21st.dev Modern Custom Checkbox */
+.custom-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 5px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-grid;
+  place-content: center;
+  vertical-align: middle;
+}
+.custom-checkbox:checked {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+.custom-checkbox:checked::before {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+/* 21st.dev CRM Table Pagination Bar */
+.crm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  background: #f8fafc;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.crm-pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 0.775rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.crm-pagination-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+.crm-pagination-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 21st.dev Top Announcement Bar */
+.top-announcement-bar {
+  background: linear-gradient(90deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  color: #e2e8f0;
+  padding: 0.4rem 1.25rem;
+  font-size: 0.775rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
 
 
 

@@ -7,7 +7,6 @@ import {
   Sparkles, 
   RefreshCw, 
   Plus, 
-  Database, 
   ArrowRight,
   AlertCircle,
   Globe
@@ -46,7 +45,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateToFollowUps,
   onNavigateToLeadsWithStatus,
   onNavigateToLeadsWithSource,
-  onOpenAssistant,
+  onOpenAssistant: _onOpenAssistant,
   onOpenCreateLead,
   onEditLead,
   onScheduleFollowUpForLead,
@@ -195,7 +194,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </h2>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '2px 8px', borderRadius: 'var(--radius-full)', background: '#ecfdf5', border: '1px solid #a7f3d0', fontSize: '0.72rem', fontWeight: 800, color: '#047857' }}>
                 <span className="radar-dot connected" style={{ width: 8, height: 8 }} />
-                <span>Supabase PostgreSQL 100% Synced</span>
+                <span>Admissions Engine Active</span>
               </span>
             </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -244,20 +243,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>Web Simulator</span>
           </button>
 
-          {onOpenAssistant && (
-            <button 
-              onClick={onOpenAssistant} 
-              className="btn btn-outline btn-micro-spring" 
-              style={{ fontSize: '0.8rem', gap: '5px' }}
-              title="Open Supabase Integration Assistant"
-            >
-              <Database size={13} color="#059669" />
-              <span>Assistant</span>
-            </button>
-          )}
-
           {onOpenCreateLead && (
-            <button onClick={onOpenCreateLead} className="btn btn-primary btn-micro-spring" style={{ fontSize: '0.8rem', gap: '5px' }}>
+            <button 
+              onClick={onOpenCreateLead} 
+              className="btn-shimmer" 
+              style={{ fontSize: '0.8rem', padding: '0.45rem 0.95rem', gap: '6px', display: 'inline-flex', alignItems: 'center' }}
+            >
               <Plus size={14} />
               <span>Record Enquiry</span>
             </button>

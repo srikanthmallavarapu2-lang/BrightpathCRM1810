@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu, Bell, LogIn, Globe, GraduationCap, ChevronDown, LogOut, Search } from 'lucide-react';
 import { NavigationTab } from './Sidebar';
-import { DatabaseStatusBadge } from '../common/DatabaseStatusBadge';
 import { UserAvatar } from '../common/UserAvatar';
 
 interface HeaderProps {
@@ -23,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentTab,
   onOpenMobileDrawer,
   onQuickAction: _onQuickAction,
-  onOpenAssistant,
+  onOpenAssistant: _onOpenAssistant,
   onOpenAuthModal,
   onSignOut,
   onOpenSimulator,
@@ -91,37 +90,41 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      <div className="header-right">
-        {/* Command Palette Trigger Button */}
+      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        {/* 21st.dev Spotlight Command Palette Trigger */}
         {onOpenCommandPalette && (
           <button
+            type="button"
             onClick={onOpenCommandPalette}
             className="btn-micro-spring"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '0.4rem 0.75rem',
+              gap: '8px',
+              padding: '0.45rem 0.95rem',
               borderRadius: 'var(--radius-full)',
-              background: '#f8fafc',
+              background: '#ffffff',
               border: '1px solid var(--border-subtle)',
-              fontSize: '0.8rem',
+              fontSize: '0.825rem',
               color: '#64748b',
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
             }}
             title="Open Command Palette (Press ⌘K or Ctrl+K anywhere)"
           >
             <Search size={14} color="#94a3b8" />
-            <span style={{ marginRight: '2px', fontWeight: 500 }}>Search or Jump to...</span>
+            <span style={{ fontWeight: 500 }}>Search leads or actions...</span>
             <kbd 
               style={{ 
                 fontSize: '0.68rem', 
                 fontFamily: 'var(--font-mono, monospace)', 
-                padding: '1px 5px', 
-                background: '#e2e8f0', 
+                padding: '1px 6px', 
+                background: '#f1f5f9', 
                 borderRadius: '4px', 
                 border: '1px solid #cbd5e1',
-                color: '#475569'
+                color: '#475569',
+                marginLeft: '4px',
               }}
             >
               ⌘K
@@ -129,43 +132,44 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* Database Status Pill */}
-        <DatabaseStatusBadge onOpenAssistant={onOpenAssistant} />
-
+        {/* Public Student Portal Quick Action */}
         {onSwitchToStudentPortal && (
           <button
             onClick={onSwitchToStudentPortal}
-            className="btn btn-outline"
+            className="btn btn-outline btn-micro-spring"
             style={{ 
-              padding: '0.4rem 0.75rem', 
+              padding: '0.42rem 0.85rem', 
               fontSize: '0.8rem', 
               gap: '6px', 
               borderColor: '#93c5fd', 
               color: '#1d4ed8',
               background: '#eff6ff',
+              whiteSpace: 'nowrap',
             }}
             title="Open Public Student & Admissions Portal (Browse courses, apply online, track status)"
           >
-            <GraduationCap size={14} color="#2563eb" />
+            <GraduationCap size={15} color="#2563eb" />
             <span>Student Portal</span>
           </button>
         )}
 
+        {/* Website Simulator Quick Action */}
         {onOpenSimulator && (
           <button
             onClick={onOpenSimulator}
-            className="btn btn-outline"
+            className="btn btn-outline btn-micro-spring"
             style={{ 
-              padding: '0.4rem 0.75rem', 
+              padding: '0.42rem 0.85rem', 
               fontSize: '0.8rem', 
               gap: '6px', 
               borderColor: '#c4b5fd', 
               color: '#6d28d9',
               background: '#f5f3ff',
+              whiteSpace: 'nowrap',
             }}
             title="Open Website Enquiry Form Simulator (Simulates student leads ingestion)"
           >
-            <Globe size={14} color="#7c3aed" />
+            <Globe size={15} color="#7c3aed" />
             <span>Web Simulator</span>
           </button>
         )}
