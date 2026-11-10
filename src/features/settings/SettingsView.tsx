@@ -87,9 +87,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
     : 'Counsellor';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '880px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '880px' }}>
       {/* Current User Staff Profile Card */}
-      <div className="card">
+      <div className="bento-card-surface bento-glow-top-blue fade-in-slide" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div 
@@ -158,11 +158,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
       </div>
 
       {/* Institute Profile Card */}
-      <div className="card">
+      <div className="bento-card-surface fade-in-slide" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
           <Building size={20} color="#2563eb" />
           <div>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Academy Information</h2>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Academy Information</h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Organization identity and operations</p>
           </div>
         </div>
@@ -194,12 +194,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
       </div>
 
       {/* Staff Team Management & Role Provisioning (Admins & Managers) */}
-      <div className="card">
+      <div className="bento-card-surface bento-glow-top-purple fade-in-slide" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Users size={20} color="#2563eb" />
             <div>
-              <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Staff Team &amp; Role Provisioning</h2>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Staff Team &amp; Role Provisioning</h2>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                 Registered team accounts in Supabase ({staffList.length} staff members)
               </p>
@@ -208,7 +208,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
 
           <button
             onClick={loadStaff}
-            className="btn btn-outline"
+            className="btn btn-outline btn-micro-spring"
             style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', gap: '4px' }}
           >
             <RefreshCw size={13} className={isLoadingStaff ? 'spin' : ''} />
@@ -318,11 +318,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
       </div>
 
       {/* Role Access Matrix */}
-      <div className="card">
+      <div className="bento-card-surface fade-in-slide" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
           <Shield size={20} color="#4f46e5" />
           <div>
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 700 }}>Role &amp; Permissions Matrix</h2>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 800, fontFamily: 'var(--font-display)' }}>Role &amp; Permissions Matrix</h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Row Level Security (RLS) policies enforced in Supabase</p>
           </div>
         </div>
@@ -345,7 +345,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onOpenAssistant }) =
       </div>
 
       {/* Database Connection Status Card */}
-      <div className="card">
+      <div className="bento-card-surface bento-glow-top-emerald fade-in-slide" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Database size={20} color="#059669" />

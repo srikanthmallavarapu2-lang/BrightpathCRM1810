@@ -118,7 +118,7 @@ export const FollowUpList: React.FC<FollowUpListProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Navigation Filter Tabs & Search Bar */}
-      <div className="card" style={{ padding: '0.85rem 1rem' }}>
+      <div className="bento-card-surface fade-in-slide" style={{ padding: '0.85rem 1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           {/* Tabs */}
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -255,7 +255,7 @@ export const FollowUpList: React.FC<FollowUpListProps> = ({
             return (
               <div
                 key={item.id}
-                className="card fade-in-slide"
+                className="bento-card-surface btn-micro-spring fade-in-slide"
                 style={{
                   padding: '1rem 1.25rem',
                   borderLeft: overdue ? '4px solid #ef4444' : isCompleted ? '4px solid #10b981' : '4px solid #3b82f6',

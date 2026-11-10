@@ -13,7 +13,9 @@ import {
   MessageCircle,
   Star,
   Calculator,
-  Building2
+  Building2,
+  ChevronDown,
+  HelpCircle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { leadService } from '../../services/leadService';
@@ -128,6 +130,29 @@ const ALUMNI_TESTIMONIALS = [
   },
 ];
 
+const FAQS = [
+  {
+    q: 'What is the provisional admission & seat locking process?',
+    a: 'Admission is based on an initial aptitude review and 1-on-1 counseling consultation. Once you register for provisional admission, our senior technical advisors review your background, evaluate program fit, and issue your official admission offer letter within 24 hours.',
+  },
+  {
+    q: 'Can working professionals attend classes without quitting their current jobs?',
+    a: 'Yes! All courses offer Weekend Professional (Saturday & Sunday 11am–3pm) and Evening (Monday–Thursday 6pm–9pm) tracks. All live sessions are recorded in 4K and accessible on demand with lifelong access to teaching materials and repository templates.',
+  },
+  {
+    q: 'How does BrightPath Academy guarantee placement assistance?',
+    a: 'We partner with over 45+ premier technology companies including Google Cloud, AWS, Cisco, Razorpay, and Flipkart. Every enrolled student participates in 10+ mock technical interviews, resume code reviews, live project defenses, and receives direct recruiter referrals until placement.',
+  },
+  {
+    q: 'What payment plans and scholarship options are available?',
+    a: 'We provide zero-interest EMI options (starting at ₹3,800/month) through our verified financial partners. Early bird applicants locking their intake seat before the deadline receive up to ₹10,000 in tuition scholarships.',
+  },
+  {
+    q: 'What if I need 1-on-1 mentor guidance during assignments?',
+    a: 'Our mentorship team holds daily live doubt-clearing rooms from 9am to 10pm IST. You can schedule 1-on-1 pair-programming sessions with staff engineers to unblock your code, review architectures, and get real-world engineering feedback.',
+  },
+];
+
 export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   onSwitchToStaff,
   onOpenStaffAuth,
@@ -155,6 +180,7 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
   const [formMessage, setFormMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   const toast = useToast();
 
@@ -1251,6 +1277,87 @@ export const StudentPortalView: React.FC<StudentPortalViewProps> = ({
                 </button>
               </form>
             )}
+          </div>
+        </section>
+
+        {/* Section 6: Interactive Admissions FAQ Accordion */}
+        <section style={{ maxWidth: '840px', margin: '0 auto', width: '100%' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '0.2rem 0.65rem', borderRadius: 'var(--radius-full)', fontWeight: 800, textTransform: 'uppercase' }}>
+              Admissions FAQ
+            </span>
+            <h2 className="font-display" style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', marginTop: '0.4rem', letterSpacing: '-0.3px' }}>
+              Frequently Asked Questions
+            </h2>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              Everything you need to know about enrolment, batch timings, scholarships, and career assistance.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {FAQS.map((faq, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div
+                  key={index}
+                  className="bento-card-surface fade-in-slide"
+                  style={{
+                    borderRadius: '12px',
+                    border: isOpen ? '1.5px solid #2563eb' : '1px solid var(--border-subtle)',
+                    boxShadow: isOpen ? '0 8px 24px rgba(37, 99, 235, 0.08)' : '0 2px 6px rgba(0,0,0,0.02)',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                    style={{
+                      width: '100%',
+                      padding: '1.15rem 1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      textAlign: 'left',
+                      background: isOpen ? '#f8fafc' : 'transparent',
+                      cursor: 'pointer',
+                      border: 'none',
+                      gap: '1rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <HelpCircle size={18} color={isOpen ? '#2563eb' : '#64748b'} />
+                      <span style={{ fontSize: '0.95rem', fontWeight: 700, color: isOpen ? '#1d4ed8' : 'var(--text-main)', fontFamily: 'var(--font-display)' }}>
+                        {faq.q}
+                      </span>
+                    </div>
+                    <ChevronDown
+                      size={18}
+                      color={isOpen ? '#2563eb' : '#94a3b8'}
+                      style={{
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                        flexShrink: 0,
+                      }}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      style={{
+                        padding: '0 1.25rem 1.15rem 1.25rem',
+                        fontSize: '0.875rem',
+                        color: '#475569',
+                        lineHeight: 1.6,
+                        borderTop: '1px solid #f1f5f9',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <p style={{ margin: '0.75rem 0 0 0' }}>{faq.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
       </main>

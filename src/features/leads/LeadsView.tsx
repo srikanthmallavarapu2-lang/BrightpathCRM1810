@@ -215,8 +215,8 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Action and Filter Toolbar */}
       <div 
-        className="card" 
-        style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}
+        className="bento-card-surface bento-glow-top-blue fade-in-slide" 
+        style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           {/* Live Search Box */}
@@ -505,7 +505,7 @@ export const LeadsView: React.FC<LeadsViewProps> = ({
         />
       ) : (
         /* Leads Table Container */
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="bento-card-surface fade-in-slide" style={{ padding: 0, overflow: 'hidden' }}>
           {isLoading ? (
             /* Loading Skeleton */
             <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>

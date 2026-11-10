@@ -100,15 +100,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* User / Role Footer */}
       <div className="sidebar-footer">
-        <div className="user-profile-widget">
-          <div className="user-avatar-initials" title={userName}>
-            {getInitials(userName)}
+        <div className="user-profile-widget" style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
+            <div className="user-avatar-initials" title={userName}>
+              {getInitials(userName)}
+            </div>
+            <span 
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                background: '#10b981',
+                border: '2px solid #0b0f19',
+                boxShadow: '0 0 6px rgba(16, 185, 129, 0.8)',
+              }} 
+              title="Online Session Active"
+            />
           </div>
           {!isCollapsed && (
             <div className="user-meta">
-              <p className="user-name">{userName}</p>
-              <span className="user-role-tag" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <ShieldCheck size={12} color="#60a5fa" />
+              <p className="user-name" style={{ fontWeight: 700, letterSpacing: '-0.2px' }}>{userName}</p>
+              <span 
+                className="user-role-tag" 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '4px',
+                  color: userRole.toLowerCase().includes('admin') ? '#c084fc' : userRole.toLowerCase().includes('manager') ? '#93c5fd' : '#86efac',
+                  fontWeight: 600,
+                }}
+              >
+                <ShieldCheck size={12} />
                 {userRole}
               </span>
             </div>
